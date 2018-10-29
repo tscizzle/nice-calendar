@@ -238,7 +238,7 @@
     // If true, will use single instead of double quotes.
     // --------------------------------------------------------------------
 
-    "singleQuote": false,
+    "singleQuote": true,
 
     // --------------------------------------------------------------------
     // trailingComma
@@ -256,7 +256,7 @@
     // "all"  - Trailing commas wherever possible (function arguments)
     // --------------------------------------------------------------------
 
-    "trailingComma": "none",
+    "trailingComma": "es5",
 
     // --------------------------------------------------------------------
     // bracketSpacing
