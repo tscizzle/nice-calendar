@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-import DATABASE from './testData';
+import DATABASE from 'test-data';
 
 export const getLoggedInUser = (pretendItWorked = true) => {
   return new Promise(function(resolve, reject) {
@@ -11,6 +11,19 @@ export const getLoggedInUser = (pretendItWorked = true) => {
       resolve({ user });
     } else {
       reject(Error('Unable to get logged in user.'));
+    }
+  });
+};
+
+export const getEvents = ({ userId }, pretendItWorked = true) => {
+  return new Promise(function(resolve, reject) {
+    if (pretendItWorked) {
+      const events = _.find(DATABASE, { collection: 'events' });
+      const eventDocs = events.documents;
+      const userEvents = userId ? _.filter(eventDocs, { userId }) : [];
+      resolve({ events: userEvents });
+    } else {
+      reject(Error(`Unable to get events for user ${userId}.`));
     }
   });
 };
