@@ -1,4 +1,4 @@
-import { getLoggedInUser, getEvents } from 'api';
+import { getLoggedInUser, getEvents, getOccurrences } from 'api';
 
 /* Action Types */
 
@@ -68,6 +68,31 @@ export const fetchEvents = ({ userId }) => {
       })
       .catch(() => {
         dispatch(fetchEventsFailure());
+      });
+  };
+};
+
+export const fetchOccurrencesSuccess = ({ occurrences }) => ({
+  type: FETCH_OCCURRENCES_SUCCESS,
+  occurrences,
+});
+
+export const fetchOccurrencesFailure = () => ({
+  type: FETCH_OCCURRENCES_FAILURE,
+});
+
+export const fetchOccurrences = ({ userId }) => {
+  return dispatch => {
+    getOccurrences({ userId })
+      .then(({ occurrences }) => {
+        if (occurrences) {
+          dispatch(fetchOccurrencesSuccess({ occurrences }));
+        } else {
+          dispatch(fetchOccurrencesFailure());
+        }
+      })
+      .catch(() => {
+        dispatch(fetchOccurrencesFailure());
       });
   };
 };

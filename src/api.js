@@ -27,3 +27,19 @@ export const getEvents = ({ userId }, pretendItWorked = true) => {
     }
   });
 };
+
+export const getOccurrences = ({ userId }, pretendItWorked = true) => {
+  return new Promise(function(resolve, reject) {
+    if (pretendItWorked) {
+      const occurrences = _.find(DATABASE, { collection: 'occurrences' });
+      const occurrenceDocs = occurrences.documents;
+      const userOccurrences = userId
+        ? _.filter(occurrenceDocs, { userId })
+        : [];
+      console.log('userOccurrences', userOccurrences);
+      resolve({ occurrences: userOccurrences });
+    } else {
+      reject(Error(`Unable to get occurrences for user ${userId}.`));
+    }
+  });
+};

@@ -12,6 +12,7 @@ import { chainWrap } from 'state-management/helpers';
 import { userShape, getTimezoneFromUser } from 'models/user';
 import { eventShape, getScheduledDatetimes } from 'models/event';
 import { occurrenceShape } from 'models/occurrence';
+import { displayDatetime } from 'ui-helpers';
 
 import 'stylesheets/components/calendar/calendar.css';
 
@@ -155,7 +156,7 @@ class MonthView extends Component {
     const selectedMoment = moment(selectedDatetime).tz(timezone);
     const start = selectedMoment.clone().startOf('month');
     const end = selectedMoment.clone().endOf('month');
-    const occurrenceDatetimes = _.map(
+    const eventOccurrenceDatetimes = _.map(
       _.flatten(
         _.map(events, event =>
           getScheduledDatetimes({
@@ -166,19 +167,21 @@ class MonthView extends Component {
           })
         )
       ),
-      dt => {
-        return (
-          <div key={Math.random()}>
-            {moment(dt)
-              .tz(timezone)
-              .format()}
-          </div>
-        );
-      }
+      dt => (
+        <div key={Math.random()}>
+          {displayDatetime({ datetime: dt, timezone })}
+        </div>
+      )
     );
+    const occurrenceDatetimes = _.map(occurrences, occurrence => (
+      <div>{displayDatetime({ datetime: occurrence.timestamp, timezone })}</div>
+    ));
     return (
       <div className="month-view-container">
         Month View ({start.format()} - {end.format()})
+        <h2>Event Occurrences (Future)</h2>
+        <div>{eventOccurrenceDatetimes}</div>
+        <h2>Occurrences (Past)</h2>
         <div>{occurrenceDatetimes}</div>
       </div>
     );

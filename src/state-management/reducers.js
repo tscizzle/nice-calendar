@@ -17,6 +17,12 @@ const initialState = () => ({
 });
 
 const mainReducer = (state = initialState(), action) => {
+  const verbose = false;
+  if (verbose) {
+    console.log(`=== Action: ${action.type}`);
+    console.log('Action:', action);
+    console.log('State BEFORE:', state);
+  }
   let newState;
   switch (action.type) {
     case FETCH_USER_SUCCESS:
@@ -46,6 +52,9 @@ const mainReducer = (state = initialState(), action) => {
     default:
       newState = state;
       break;
+  }
+  if (verbose) {
+    console.log('State AFTER:', newState);
   }
   return newState;
 };
