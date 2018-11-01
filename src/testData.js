@@ -1,5 +1,15 @@
 const DATABASE = [
   {
+    collection: 'users',
+    documents: [
+      {
+        _id: 'u_0',
+        email: 'u_0@nicecalendar.com',
+        timezone: 'America/Los_Angeles',
+      },
+    ],
+  },
+  {
     collection: 'events',
     documents: [
       {

@@ -1,22 +1,43 @@
 import React, { Component } from 'react';
 import { PropTypes } from 'prop-types';
+import { Provider } from 'react-redux';
+import { Router, Route, Redirect, withRouter } from 'react-router-dom';
 
 import _ from 'lodash';
 import moment from 'moment-timezone';
 
+import history from './history';
+
+import withUser from './stateConnectors/withUser';
 import { userShape } from './propShapes';
-import { selectedIf } from './uiHelpers';
+import { getTimezoneFromUser } from './userHelpers';
 import logo from './images/calendar.svg';
 import './stylesheets/app.css';
 
-import DATABASE from './testData';
+const Main = ({ store }) => {
+  return (
+    <Provider store={store}>
+      <Router history={history}>
+        <App />
+      </Router>
+    </Provider>
+  );
+};
+
+export default Main;
 
 class App extends Component {
+  static propTypes = {
+    loggedInUser: userShape,
+    fetchUser: PropTypes.func.isRequired,
+  };
+
+  componentDidMount() {
+    const { fetchUser } = this.props;
+    fetchUser();
+  }
+
   state = {
-    loggedInUser: {
-      username: 'tscizzle',
-      timezone: 'America/New_York',
-    },
     selectedZoom: 'month',
     selectedDatetime: moment().toDate(),
   };
@@ -26,12 +47,13 @@ class App extends Component {
   };
 
   render() {
+    console.log('state', this.state);
     return (
       <div className="app">
         <Topbar />
         <div className="content">
           <Calendar
-            loggedInUser={this.state.loggedInUser}
+            loggedInUser={this.props.loggedInUser}
             selectedZoom={this.state.selectedZoom}
             setSelectedZoomFunc={this.setSelectedZoom}
             selectedDatetime={this.state.selectedDatetime}
@@ -42,7 +64,7 @@ class App extends Component {
   }
 }
 
-export default App;
+App = withUser(App);
 
 const Topbar = () => {
   return (
@@ -64,10 +86,12 @@ const Calendar = ({
     month: MonthView,
   };
   const calendarComponent = componentMap[selectedZoom];
-  const calendar = React.createElement(calendarComponent, {
-    loggedInUser,
-    selectedDatetime,
-  });
+  const calendar = loggedInUser
+    ? React.createElement(calendarComponent, {
+        loggedInUser,
+        selectedDatetime,
+      })
+    : null;
   const views = [
     { value: 'day', label: 'Day' },
     { value: 'week', label: 'Week' },
@@ -78,27 +102,27 @@ const Calendar = ({
   };
   return (
     <div>
-      <select onChange={onSelectZoom}>
+      <select value={selectedZoom} onChange={onSelectZoom}>
         {_.map(views, ({ value, label }) => (
-          <option value={value} {...selectedIf(value === selectedZoom)}>
+          <option value={value} key={value}>
             {label}
           </option>
         ))}
       </select>
-      <div className="calendar-container">{calendar}</div>
+      {loggedInUser && <div className="calendar-container">{calendar}</div>}
     </div>
   );
 };
 
 Calendar.propTypes = {
-  loggedInUser: userShape.isRequired,
+  loggedInUser: userShape,
   selectedZoom: PropTypes.oneOf(['day', 'week', 'month']).isRequired,
   setSelectedZoomFunc: PropTypes.func.isRequired,
   selectedDatetime: PropTypes.instanceOf(Date).isRequired,
 };
 
 const DayView = ({ loggedInUser, selectedDatetime }) => {
-  const { timezone } = loggedInUser;
+  const timezone = getTimezoneFromUser(loggedInUser);
   const selectedMoment = moment(selectedDatetime).tz(timezone);
   const start = selectedMoment.startOf('day');
   return <div className="day-view-container">Day View ({start.format()})</div>;
@@ -110,7 +134,7 @@ DayView.propTypes = {
 };
 
 const WeekView = ({ loggedInUser, selectedDatetime }) => {
-  const { timezone } = loggedInUser;
+  const timezone = getTimezoneFromUser(loggedInUser);
   const selectedMoment = moment(selectedDatetime).tz(timezone);
   const start = selectedMoment.startOf('week');
   return (
@@ -124,7 +148,7 @@ WeekView.propTypes = {
 };
 
 const MonthView = ({ loggedInUser, selectedDatetime }) => {
-  const { timezone } = loggedInUser;
+  const timezone = getTimezoneFromUser(loggedInUser);
   const selectedMoment = moment(selectedDatetime).tz(timezone);
   const start = selectedMoment.startOf('month');
   return (
