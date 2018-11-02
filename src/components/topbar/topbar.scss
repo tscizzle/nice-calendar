@@ -1,7 +1,10 @@
+@import '../../constants';
+
 .topbar {
   display: flex;
   align-items: center;
-  height: 80px;
+  justify-content: space-between;
+  height: $topbarHeight;
   padding: 20px;
 }
 

@@ -2,45 +2,39 @@ import _ from 'lodash';
 
 import DATABASE from 'test-data';
 
-export const getLoggedInUser = (pretendItWorked = true) => {
+export const getLoggedInUser = () => {
   return new Promise(function(resolve, reject) {
-    if (pretendItWorked) {
-      const users = _.find(DATABASE, { collection: 'users' });
-      const userDocs = users.documents;
-      const user = _.first(userDocs);
-      resolve({ user });
-    } else {
-      reject(Error('Unable to get logged in user.'));
-    }
+    const users = _.find(DATABASE, { collection: 'users' });
+    const userDocs = users.documents;
+    const user = _.first(userDocs);
+    resolve({ user });
   });
 };
 
-export const getEvents = ({ userId }, pretendItWorked = true) => {
+export const getEvents = ({ userId }) => {
   return new Promise(function(resolve, reject) {
-    if (pretendItWorked) {
-      const events = _.find(DATABASE, { collection: 'events' });
-      const eventDocs = events.documents;
-      const userEvents = userId ? _.filter(eventDocs, { userId }) : [];
-      const eventMap = _.keyBy(userEvents, '_id');
-      resolve({ events: eventMap });
-    } else {
-      reject(Error(`Unable to get events for user ${userId}.`));
-    }
+    const events = _.find(DATABASE, { collection: 'events' });
+    const eventDocs = events.documents;
+    const userEvents = userId ? _.filter(eventDocs, { userId }) : [];
+    const eventMap = _.keyBy(userEvents, '_id');
+    resolve({ events: eventMap });
   });
 };
 
-export const getOccurrences = ({ userId }, pretendItWorked = true) => {
+export const addEvent = ({ event }) => {
   return new Promise(function(resolve, reject) {
-    if (pretendItWorked) {
-      const occurrences = _.find(DATABASE, { collection: 'occurrences' });
-      const occurrenceDocs = occurrences.documents;
-      const userOccurrences = userId
-        ? _.filter(occurrenceDocs, { userId })
-        : [];
-      const occurrenceMap = _.keyBy(userOccurrences, '_id');
-      resolve({ occurrences: occurrenceMap });
-    } else {
-      reject(Error(`Unable to get occurrences for user ${userId}.`));
-    }
+    const events = _.find(DATABASE, { collection: 'events' });
+    const eventDocs = events.documents;
+    eventDocs.push(event);
+  });
+};
+
+export const getOccurrences = ({ userId }) => {
+  return new Promise(function(resolve, reject) {
+    const occurrences = _.find(DATABASE, { collection: 'occurrences' });
+    const occurrenceDocs = occurrences.documents;
+    const userOccurrences = userId ? _.filter(occurrenceDocs, { userId }) : [];
+    const occurrenceMap = _.keyBy(userOccurrences, '_id');
+    resolve({ occurrences: occurrenceMap });
   });
 };

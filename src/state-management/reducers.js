@@ -1,22 +1,25 @@
+import moment from 'moment-timezone';
+
 import {
+  FETCH_USER_SUCCESS,
+  FETCH_USER_FAILURE,
   FETCH_EVENTS_SUCCESS,
   FETCH_EVENTS_FAILURE,
   FETCH_OCCURRENCES_SUCCESS,
   FETCH_OCCURRENCES_FAILURE,
+  SET_SELECTED_DATETIME,
   SET_SELECTED_ZOOM,
-  FETCH_USER_SUCCESS,
-  FETCH_USER_FAILURE,
-  RESET_APP_STATE,
 } from 'state-management/actions';
 
-const initialState = () => ({
+const initialState = {
   loggedInUser: null,
   events: {},
   occurrences: {},
+  selectedDatetime: moment().toDate(),
   selectedZoom: 'month',
-});
+};
 
-const mainReducer = (state = initialState(), action) => {
+const mainReducer = (state = initialState, action) => {
   const verbose = false;
   if (verbose) {
     console.log(`=== Action: ${action.type}`);
@@ -43,11 +46,11 @@ const mainReducer = (state = initialState(), action) => {
     case FETCH_OCCURRENCES_FAILURE:
       newState = { ...state, occurrences: {} };
       break;
+    case SET_SELECTED_DATETIME:
+      newState = { ...state, selectedDatetime: action.datetime };
+      break;
     case SET_SELECTED_ZOOM:
       newState = { ...state, selectedZoom: action.zoom };
-      break;
-    case RESET_APP_STATE:
-      newState = initialState();
       break;
     default:
       newState = state;

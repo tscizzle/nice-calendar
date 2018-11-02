@@ -1,0 +1,25 @@
+.month-view-container {
+  height: 100%;
+  width: 100%;
+}
+
+.month-view-row {
+  display: flex;
+  width: 100%;
+
+  &.num-weeks-4 {
+    height: calc(100% / 4);
+  }
+
+  &.num-weeks-5 {
+    height: calc(100% / 5);
+  }
+
+  &.num-weeks-6 {
+    height: calc(100% / 6);
+  }
+}
+
+.month-view-cell {
+  width: calc(100% / 7);
+}

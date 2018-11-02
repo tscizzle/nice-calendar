@@ -2,8 +2,6 @@ import { getLoggedInUser, getEvents, getOccurrences } from 'api';
 
 /* Action Types */
 
-export const SET_SELECTED_ZOOM = 'SET_SELECTED_ZOOM';
-
 export const FETCH_USER_SUCCESS = 'FETCH_USER_SUCCESS';
 export const FETCH_USER_FAILURE = 'FETCH_USER_FAILURE';
 
@@ -13,14 +11,10 @@ export const FETCH_EVENTS_FAILURE = 'FETCH_EVENTS_FAILURE';
 export const FETCH_OCCURRENCES_SUCCESS = 'FETCH_OCCURRENCES_SUCCESS';
 export const FETCH_OCCURRENCES_FAILURE = 'FETCH_OCCURRENCES_FAILURE';
 
-export const RESET_APP_STATE = 'RESET_APP_STATE';
+export const SET_SELECTED_DATETIME = 'SET_SELECTED_DATETIME';
+export const SET_SELECTED_ZOOM = 'SET_SELECTED_ZOOM';
 
 /* Action Creators */
-
-export const setSelectedZoom = ({ zoom }) => ({
-  type: SET_SELECTED_ZOOM,
-  zoom,
-});
 
 export const fetchUserSuccess = ({ user }) => ({
   type: FETCH_USER_SUCCESS,
@@ -97,6 +91,12 @@ export const fetchOccurrences = ({ userId }) => {
   };
 };
 
-export const resetAppState = () => ({
-  type: RESET_APP_STATE,
+export const setSelectedDatetime = ({ datetime }) => ({
+  type: SET_SELECTED_DATETIME,
+  datetime,
+});
+
+export const setSelectedZoom = ({ zoom }) => ({
+  type: SET_SELECTED_ZOOM,
+  zoom,
 });
