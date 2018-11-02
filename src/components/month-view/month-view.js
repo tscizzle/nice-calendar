@@ -97,7 +97,14 @@ let MonthViewCell = ({ containedDatetime, loggedInUser, key }) => {
   const containedMoment = moment(containedDatetime).tz(timezone);
   return (
     <div className="month-view-cell" key={key}>
-      {containedMoment.format('D')}
+      <div className="month-view-cell-top">
+        <span className="month-view-cell-day-number">
+          {containedMoment.format('D')}
+        </span>
+        <span className="month-view-cell-day-name">
+          {containedMoment.format('ddd')}
+        </span>
+      </div>
     </div>
   );
 };

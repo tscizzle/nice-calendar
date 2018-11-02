@@ -7,6 +7,8 @@ import { userShape } from 'models/user';
 import Topbar from 'components/topbar/topbar';
 import Calendar from 'components/calendar/calendar';
 
+import 'stylesheets/components/app/app.css';
+
 class App extends Component {
   static propTypes = {
     loggedInUser: userShape,

@@ -1,0 +1,10 @@
+@import '../../constants';
+
+.content {
+  margin: $contentMargin;
+  height: calc(100vh - #{$topbarHeight} - (2 * #{$contentMargin}));
+  background-color: $light;
+  box-shadow: 0 0 3px $light;
+  border-radius: 3px;
+  color: $dark;
+}

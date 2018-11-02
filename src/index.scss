@@ -1,14 +1,9 @@
-$dark: #333;
-
-$red: #ef675f;
-$blue: #747ffc;
-$yellow: #fff099;
-$green: #4fcc84;
+@import 'constants';
 
 body {
   margin: 0;
   padding: 0;
-  font-family: "Verdana", "Open Sans", sans-serif;
+  font-family: 'Verdana', 'Open Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: #fafafa;
