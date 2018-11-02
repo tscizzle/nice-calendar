@@ -8,7 +8,7 @@ export const occurrenceShape = PropTypes.shape({
   _id: PropTypes.string.isRequired,
   userId: PropTypes.string.isRequired,
   eventId: PropTypes.string.isRequired,
-  timestamp: PropTypes.instanceOf(Date).isRequired,
+  datetime: PropTypes.instanceOf(Date).isRequired,
   checkedOff: PropTypes.bool.isRequired,
 });
 
@@ -17,9 +17,9 @@ export const occurrenceShape = PropTypes.shape({
 export const getLatestPendingOccurrences = ({ occurrences }) => {
   const pendingOccurrences = _.reject(occurrences, 'checkedOff');
   const pendingOccurrencesByEvent = _.groupBy(pendingOccurrences, 'eventId');
-  const latestOccurrences = _.mapValues(
-    pendingOccurrencesByEvent,
-    eventOccurrences => _.maxBy(eventOccurrences, 'timestamp')
+  const latestOccurrences = _.map(
+    _.values(pendingOccurrencesByEvent),
+    eventOccurrences => _.maxBy(eventOccurrences, 'datetime')
   );
   const latestOccurrenceByEvent = _.keyBy(latestOccurrences, 'eventId');
   return latestOccurrenceByEvent;

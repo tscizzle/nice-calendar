@@ -11,8 +11,8 @@ import {
 
 const initialState = () => ({
   loggedInUser: null,
-  events: [],
-  occurrences: [],
+  events: {},
+  occurrences: {},
   selectedZoom: 'month',
 });
 
@@ -35,13 +35,13 @@ const mainReducer = (state = initialState(), action) => {
       newState = { ...state, events: action.events };
       break;
     case FETCH_EVENTS_FAILURE:
-      newState = { ...state, events: [] };
+      newState = { ...state, events: {} };
       break;
     case FETCH_OCCURRENCES_SUCCESS:
       newState = { ...state, occurrences: action.occurrences };
       break;
     case FETCH_OCCURRENCES_FAILURE:
-      newState = { ...state, occurrences: [] };
+      newState = { ...state, occurrences: {} };
       break;
     case SET_SELECTED_ZOOM:
       newState = { ...state, selectedZoom: action.zoom };

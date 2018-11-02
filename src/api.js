@@ -21,7 +21,8 @@ export const getEvents = ({ userId }, pretendItWorked = true) => {
       const events = _.find(DATABASE, { collection: 'events' });
       const eventDocs = events.documents;
       const userEvents = userId ? _.filter(eventDocs, { userId }) : [];
-      resolve({ events: userEvents });
+      const eventMap = _.keyBy(userEvents, '_id');
+      resolve({ events: eventMap });
     } else {
       reject(Error(`Unable to get events for user ${userId}.`));
     }
@@ -36,8 +37,8 @@ export const getOccurrences = ({ userId }, pretendItWorked = true) => {
       const userOccurrences = userId
         ? _.filter(occurrenceDocs, { userId })
         : [];
-      console.log('userOccurrences', userOccurrences);
-      resolve({ occurrences: userOccurrences });
+      const occurrenceMap = _.keyBy(userOccurrences, '_id');
+      resolve({ occurrences: occurrenceMap });
     } else {
       reject(Error(`Unable to get occurrences for user ${userId}.`));
     }

@@ -22,13 +22,7 @@ export const eventShape = PropTypes.shape({
 
 /* Methods */
 
-const getRecurringEventDatetimes = ({ event, timezone, start, end }) => {
-  return ['not', 'implemented', 'yet'];
-};
-
-const getSingleEventDatetime = ({ event, timezone, start, end }) => {
-  const now = new Date();
-  const boundedStart = _.max([now, start]);
+const getSingleEventDatetime = ({ event, timezone }) => {
   const eventTimeMoment = moment(event.timeOfDay).tz(timezone);
   const eventMoment = moment(event.startDate)
     .tz(timezone)
@@ -37,13 +31,40 @@ const getSingleEventDatetime = ({ event, timezone, start, end }) => {
       minute: eventTimeMoment.get('minute'),
     });
   const eventDatetime = eventMoment.toDate();
-  const eventIsInBounds = boundedStart <= eventDatetime && eventDatetime <= end;
-  const scheduledDatetimes = eventIsInBounds ? [eventDatetime] : [];
-  return scheduledDatetimes;
+  return eventDatetime;
+};
+
+const getRecurringEventDatetimes = ({ event, timezone, end }) => {
+  const { repetitionType } = event.recurringSchedule;
+  if (repetitionType === 'everyXUnits') {
+    const { everyX, everyUnit } = event.recurringSchedule;
+    const eventDatetime = getSingleEventDatetime({ event, timezone });
+    const eventMoment = moment(eventDatetime).tz(timezone);
+    const endMoment = moment(end).tz(timezone);
+    if (eventMoment.isAfter(endMoment)) {
+      return [];
+    }
+    const numRepeats = _.floor(endMoment.diff(eventMoment, everyUnit) / everyX);
+    const scheduledDatetimes = _.times(numRepeats + 1, repeat => {
+      const occurrenceDatetime = eventMoment
+        .clone()
+        .add(repeat * everyX, everyUnit)
+        .toDate();
+      return occurrenceDatetime;
+    });
+    return scheduledDatetimes;
+  }
 };
 
 export const getScheduledDatetimes = ({ event, timezone, start, end }) => {
-  return event.recurringSchedule
-    ? getRecurringEventDatetimes({ event, timezone, start, end })
-    : getSingleEventDatetime({ event, timezone, start, end });
+  const eventDatetimes = event.recurringSchedule
+    ? getRecurringEventDatetimes({ event, timezone, end })
+    : [getSingleEventDatetime({ event, timezone })];
+  const now = new Date();
+  const boundedStart = _.max([now, start]);
+  const eventDatetimesInWindow = _.filter(
+    eventDatetimes,
+    dt => boundedStart <= dt && dt <= end
+  );
+  return eventDatetimesInWindow;
 };
