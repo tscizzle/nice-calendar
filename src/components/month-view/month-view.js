@@ -10,7 +10,7 @@ import withEvents from 'state-management/state-connectors/with-events';
 import withOccurrences from 'state-management/state-connectors/with-occurrences';
 import withSelectedDatetime from 'state-management/state-connectors/with-selected-datetime';
 import { userShape, getTimezoneFromUser } from 'models/user';
-import { eventShape } from 'models/event';
+import { eventShape, getScheduledOccurrences } from 'models/event';
 import { occurrenceShape } from 'models/occurrence';
 
 import 'stylesheets/components/month-view/month-view.css';
@@ -18,9 +18,7 @@ import 'stylesheets/components/month-view/month-view.css';
 class MonthView extends Component {
   static propTypes = {
     loggedInUser: userShape.isRequired,
-    events: PropTypes.objectOf(eventShape).isRequired,
     fetchEvents: PropTypes.func.isRequired,
-    occurrences: PropTypes.objectOf(occurrenceShape).isRequired,
     fetchOccurrences: PropTypes.func.isRequired,
     selectedDatetime: PropTypes.instanceOf(Date).isRequired,
   };
@@ -64,7 +62,7 @@ MonthView = _.flow([
 
 export default MonthView;
 
-let MonthViewRow = ({ containedDatetime, numWeeks, loggedInUser, key }) => {
+let MonthViewRow = ({ containedDatetime, numWeeks, loggedInUser }) => {
   const timezone = getTimezoneFromUser(loggedInUser);
   const containedMoment = moment(containedDatetime).tz(timezone);
   const start = containedMoment.clone().startOf('week');
@@ -76,12 +74,8 @@ let MonthViewRow = ({ containedDatetime, numWeeks, loggedInUser, key }) => {
     return <MonthViewCell containedDatetime={containedDatetime} key={day} />;
   });
   const numWeeksClass = `num-weeks-${numWeeks}`;
-  const monthViewRowClasses = classNames('month-view-row', numWeeksClass);
-  return (
-    <div className={monthViewRowClasses} key={key}>
-      {days}
-    </div>
-  );
+  const monthViewRowClasses = classNames(['month-view-row', numWeeksClass]);
+  return <div className={monthViewRowClasses}>{days}</div>;
 };
 
 MonthViewRow.propTypes = {
@@ -92,19 +86,65 @@ MonthViewRow.propTypes = {
 
 MonthViewRow = withUser(MonthViewRow);
 
-let MonthViewCell = ({ containedDatetime, loggedInUser, key }) => {
+let MonthViewCell = ({
+  containedDatetime,
+  loggedInUser,
+  events,
+  occurrences,
+}) => {
   const timezone = getTimezoneFromUser(loggedInUser);
   const containedMoment = moment(containedDatetime).tz(timezone);
+  const start = containedMoment
+    .clone()
+    .startOf('day')
+    .toDate();
+  const end = containedMoment
+    .clone()
+    .endOf('day')
+    .toDate();
+  const dayScheduledOccurrences = [];
+  _.each(_.values(events), event => {
+    const eventOccurrences = getScheduledOccurrences({
+      event,
+      timezone,
+      start,
+      end,
+    });
+    dayScheduledOccurrences.push(...eventOccurrences);
+  });
+  const dayPastOccurrences = [];
+  _.each(_.values(occurrences), occurrence => {
+    const { eventId, datetime } = occurrence;
+    if (start <= datetime && datetime <= end) {
+      const event = events[eventId];
+      dayPastOccurrences.push({ event, occurrence });
+    }
+  });
+  const sortedOccurrences = _.sortBy(
+    _.concat(dayPastOccurrences, dayScheduledOccurrences),
+    'occurrence.datetime'
+  );
+  const occurrenceDisplays = _.map(
+    sortedOccurrences,
+    ({ event, occurrence }) => (
+      <MonthViewOccurrence
+        event={event}
+        occurrence={occurrence}
+        key={occurrence._id}
+      />
+    )
+  );
   return (
-    <div className="month-view-cell" key={key}>
+    <div className="month-view-cell">
       <div className="month-view-cell-top">
-        <span className="month-view-cell-day-number">
+        <div className="month-view-cell-day-number">
           {containedMoment.format('D')}
-        </span>
-        <span className="month-view-cell-day-name">
+        </div>
+        <div className="month-view-cell-day-name">
           {containedMoment.format('ddd')}
-        </span>
+        </div>
       </div>
+      <div className="month-view-cell-content">{occurrenceDisplays}</div>
     </div>
   );
 };
@@ -112,6 +152,27 @@ let MonthViewCell = ({ containedDatetime, loggedInUser, key }) => {
 MonthViewCell.propTypes = {
   containedDatetime: PropTypes.instanceOf(Date).isRequired,
   loggedInUser: userShape.isRequired,
+  events: PropTypes.objectOf(eventShape).isRequired,
+  occurrences: PropTypes.objectOf(occurrenceShape).isRequired,
 };
 
-MonthViewCell = withUser(MonthViewCell);
+MonthViewCell = _.flow([withUser, withEvents, withOccurrences])(MonthViewCell);
+
+let MonthViewOccurrence = ({ event, occurrence, loggedInUser }) => {
+  const timezone = getTimezoneFromUser(loggedInUser);
+  const occurrenceTime = moment(occurrence.datetime)
+    .tz(timezone)
+    .format('HH:mm');
+  return (
+    <div className="month-view-occurrence" title={occurrenceTime}>
+      <div className="month-view-occurrence-inner">{event.title}</div>
+    </div>
+  );
+};
+
+MonthViewOccurrence.propTypes = {
+  event: eventShape.isRequired,
+  occurrence: occurrenceShape.isRequired,
+};
+
+MonthViewOccurrence = withUser(MonthViewOccurrence);

@@ -22,7 +22,7 @@ export const eventShape = PropTypes.shape({
 
 /* Methods */
 
-const getSingleEventDatetime = ({ event, timezone }) => {
+const getSingleEventOccurrence = ({ event, timezone }) => {
   const eventTimeMoment = moment(event.timeOfDay).tz(timezone);
   const eventMoment = moment(event.startDate)
     .tz(timezone)
@@ -31,40 +31,56 @@ const getSingleEventDatetime = ({ event, timezone }) => {
       minute: eventTimeMoment.get('minute'),
     });
   const eventDatetime = eventMoment.toDate();
-  return eventDatetime;
+  const occurrence = {
+    _id: `${event._id}-${eventMoment.format()}`,
+    userId: event.userId,
+    eventId: event._id,
+    datetime: eventDatetime,
+    checkedOff: false,
+  };
+  return { event, occurrence };
 };
 
-const getRecurringEventDatetimes = ({ event, timezone, end }) => {
+const getRecurringEventOccurrences = ({ event, timezone, end }) => {
   const { repetitionType } = event.recurringSchedule;
   if (repetitionType === 'everyXUnits') {
     const { everyX, everyUnit } = event.recurringSchedule;
-    const eventDatetime = getSingleEventDatetime({ event, timezone });
+    const eventDatetime = getSingleEventOccurrence({ event, timezone })
+      .occurrence.datetime;
     const eventMoment = moment(eventDatetime).tz(timezone);
     const endMoment = moment(end).tz(timezone);
     if (eventMoment.isAfter(endMoment)) {
       return [];
     }
     const numRepeats = _.floor(endMoment.diff(eventMoment, everyUnit) / everyX);
-    const scheduledDatetimes = _.times(numRepeats + 1, repeat => {
-      const occurrenceDatetime = eventMoment
+    const scheduledOccurrences = _.times(numRepeats + 1, repeat => {
+      const occurrenceMoment = eventMoment
         .clone()
-        .add(repeat * everyX, everyUnit)
-        .toDate();
-      return occurrenceDatetime;
+        .add(repeat * everyX, everyUnit);
+      const occurrenceDatetime = occurrenceMoment.toDate();
+      const occurrence = {
+        _id: `${event._id}-${occurrenceMoment.format()}`,
+        userId: event.userId,
+        eventId: event._id,
+        datetime: occurrenceDatetime,
+        checkedOff: false,
+      };
+      return { event, occurrence };
     });
-    return scheduledDatetimes;
+    return scheduledOccurrences;
   }
 };
 
-export const getScheduledDatetimes = ({ event, timezone, start, end }) => {
-  const eventDatetimes = event.recurringSchedule
-    ? getRecurringEventDatetimes({ event, timezone, end })
-    : [getSingleEventDatetime({ event, timezone })];
+export const getScheduledOccurrences = ({ event, timezone, start, end }) => {
+  const eventOccurrences = event.recurringSchedule
+    ? getRecurringEventOccurrences({ event, timezone, end })
+    : [getSingleEventOccurrence({ event, timezone })];
   const now = new Date();
   const boundedStart = _.max([now, start]);
-  const eventDatetimesInWindow = _.filter(
-    eventDatetimes,
-    dt => boundedStart <= dt && dt <= end
+  const eventOccurrencesInWindow = _.filter(
+    eventOccurrences,
+    ({ occurrence }) =>
+      boundedStart <= occurrence.datetime && occurrence.datetime <= end
   );
-  return eventDatetimesInWindow;
+  return eventOccurrencesInWindow;
 };

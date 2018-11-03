@@ -24,7 +24,7 @@ const DATABASE = [
       {
         _id: 'e_1',
         userId: 'u_0',
-        title: 'Bi-Weekly joisting sesh',
+        title: 'Bi-Weekly jousting sesh long long title',
         timeOfDay: new Date('1971-01-01T08:10:00Z'),
         startDate: new Date('2018-10-15T00:00:00Z'),
         recurringSchedule: {

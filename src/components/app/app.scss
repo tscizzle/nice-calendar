@@ -3,8 +3,8 @@
 .content {
   margin: $contentMargin;
   height: calc(100vh - #{$topbarHeight} - (2 * #{$contentMargin}));
-  background-color: $light;
-  box-shadow: 0 0 3px $light;
-  border-radius: 3px;
+  background-color: $white;
+  box-shadow: 0 0 3px $white;
+  border-radius: 2px;
   color: $dark;
 }
