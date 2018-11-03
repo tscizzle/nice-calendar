@@ -1,12 +1,7 @@
 import React from 'react';
 import { PropTypes } from 'prop-types';
 
-import moment from 'moment-timezone';
-
-import withUser from 'state-management/state-connectors/with-user';
-import withSelectedDatetime from 'state-management/state-connectors/with-selected-datetime';
 import withSelectedZoom from 'state-management/state-connectors/with-selected-zoom';
-import { userShape, getTimezoneFromUser } from 'models/user';
 
 import DayView from 'components/day-view/day-view';
 import WeekView from 'components/week-view/week-view';
