@@ -9,8 +9,14 @@ import withUser from 'state-management/state-connectors/with-user';
 import withEvents from 'state-management/state-connectors/with-events';
 import withOccurrences from 'state-management/state-connectors/with-occurrences';
 import withSelectedDatetime from 'state-management/state-connectors/with-selected-datetime';
+import withAddingEventFormData from 'state-management/state-connectors/with-adding-event-form-data';
 import { userShape, getTimezoneFromUser } from 'models/user';
-import { eventShape, getScheduledOccurrences } from 'models/event';
+import {
+  eventShape,
+  makeNewEventDoc,
+  makeNewEventOccurrenceDoc,
+  getScheduledOccurrences,
+} from 'models/event';
 import { occurrenceShape } from 'models/occurrence';
 
 import 'stylesheets/components/month-view/month-view.css';
@@ -74,7 +80,7 @@ let MonthViewRow = ({ containedDatetime, numWeeks, loggedInUser }) => {
     return <MonthViewCell containedDatetime={containedDatetime} key={day} />;
   });
   const numWeeksClass = `num-weeks-${numWeeks}`;
-  const monthViewRowClasses = classNames(['month-view-row', numWeeksClass]);
+  const monthViewRowClasses = classNames('month-view-row', numWeeksClass);
   return <div className={monthViewRowClasses}>{days}</div>;
 };
 
@@ -91,9 +97,18 @@ let MonthViewCell = ({
   loggedInUser,
   events,
   occurrences,
+  addingEventFormData,
+  setAddingEventFormData,
 }) => {
   const timezone = getTimezoneFromUser(loggedInUser);
   const containedMoment = moment(containedDatetime).tz(timezone);
+  let isAddingEventToThisCell = false;
+  if (addingEventFormData) {
+    const addingToMoment = moment(addingEventFormData.startDatetime).tz(
+      timezone
+    );
+    isAddingEventToThisCell = containedMoment.isSame(addingToMoment, 'day');
+  }
   const start = containedMoment
     .clone()
     .startOf('day')
@@ -120,22 +135,49 @@ let MonthViewCell = ({
       dayPastOccurrences.push({ event, occurrence });
     }
   });
-  const sortedOccurrences = _.sortBy(
-    _.concat(dayPastOccurrences, dayScheduledOccurrences),
-    'occurrence.datetime'
+  const addingEventOccurrences = [];
+  if (isAddingEventToThisCell) {
+    const addingEventOccurrence = makeNewEventOccurrenceDoc({
+      event: addingEventFormData,
+    });
+    addingEventOccurrences.push({
+      event: addingEventFormData,
+      occurrence: addingEventOccurrence,
+      isBeingAdded: true,
+    });
+  }
+  const allOccurrences = _.concat(
+    dayPastOccurrences,
+    dayScheduledOccurrences,
+    addingEventOccurrences
   );
+  const sortedOccurrences = _.sortBy(allOccurrences, 'occurrence.datetime');
   const occurrenceDisplays = _.map(
     sortedOccurrences,
-    ({ event, occurrence }) => (
+    ({ event, occurrence, isBeingAdded }) => (
       <MonthViewOccurrence
         event={event}
         occurrence={occurrence}
+        isBeingAdded={isBeingAdded}
         key={occurrence._id}
       />
     )
   );
+  const openAddingEventForm = () => {
+    const user = loggedInUser;
+    const startDatetime = containedMoment
+      .clone()
+      .set({ hours: 12 })
+      .toDate();
+    const suppliedEvent = { startDatetime };
+    const event = makeNewEventDoc({ user, suppliedEvent });
+    setAddingEventFormData({ event });
+  };
+  const monthViewCellClasses = classNames('month-view-cell', {
+    'month-view-adding-to-cell': isAddingEventToThisCell,
+  });
   return (
-    <div className="month-view-cell">
+    <div className={monthViewCellClasses} onClick={openAddingEventForm}>
       <div className="month-view-cell-top">
         <div className="month-view-cell-day-number">
           {containedMoment.format('D')}
@@ -154,18 +196,39 @@ MonthViewCell.propTypes = {
   loggedInUser: userShape.isRequired,
   events: PropTypes.objectOf(eventShape).isRequired,
   occurrences: PropTypes.objectOf(occurrenceShape).isRequired,
+  setAddingEventFormData: PropTypes.func.isRequired,
 };
 
-MonthViewCell = _.flow([withUser, withEvents, withOccurrences])(MonthViewCell);
+MonthViewCell = _.flow([
+  withUser,
+  withEvents,
+  withOccurrences,
+  withAddingEventFormData,
+])(MonthViewCell);
 
-let MonthViewOccurrence = ({ event, occurrence, loggedInUser }) => {
+let MonthViewOccurrence = ({
+  event,
+  occurrence,
+  isBeingAdded,
+  loggedInUser,
+}) => {
   const timezone = getTimezoneFromUser(loggedInUser);
   const occurrenceTime = moment(occurrence.datetime)
     .tz(timezone)
     .format('HH:mm');
+  const text = event.title || '(Untitled event)';
+  const monthViewOccurrenceClasses = classNames('month-view-occurrence', {
+    'month-view-occurrence-being-added': isBeingAdded,
+  });
+  const monthViewOccurrenceInnerClasses = classNames(
+    'month-view-occurrence-inner',
+    {
+      'month-view-occurrence-inner-no-title': !event.title,
+    }
+  );
   return (
-    <div className="month-view-occurrence" title={occurrenceTime}>
-      <div className="month-view-occurrence-inner">{event.title}</div>
+    <div className={monthViewOccurrenceClasses} title={occurrenceTime}>
+      <div className={monthViewOccurrenceInnerClasses}>{text}</div>
     </div>
   );
 };
@@ -173,6 +236,8 @@ let MonthViewOccurrence = ({ event, occurrence, loggedInUser }) => {
 MonthViewOccurrence.propTypes = {
   event: eventShape.isRequired,
   occurrence: occurrenceShape.isRequired,
+  isBeingAdded: PropTypes.bool,
+  loggedInUser: userShape.isRequired,
 };
 
 MonthViewOccurrence = withUser(MonthViewOccurrence);

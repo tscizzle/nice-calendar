@@ -13,6 +13,7 @@ export const FETCH_OCCURRENCES_FAILURE = 'FETCH_OCCURRENCES_FAILURE';
 
 export const SET_SELECTED_DATETIME = 'SET_SELECTED_DATETIME';
 export const SET_SELECTED_ZOOM = 'SET_SELECTED_ZOOM';
+export const SET_ADDING_EVENT = 'SET_ADDING_EVENT';
 
 /* Action Creators */
 
@@ -99,4 +100,9 @@ export const setSelectedDatetime = ({ datetime }) => ({
 export const setSelectedZoom = ({ zoom }) => ({
   type: SET_SELECTED_ZOOM,
   zoom,
+});
+
+export const setAddingEventFormData = ({ event }) => ({
+  type: SET_ADDING_EVENT,
+  event,
 });

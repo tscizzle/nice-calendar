@@ -1,8 +1,36 @@
+@import '../../constants';
+
 .calendar-container {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
   height: 100%;
   width: 100%;
+}
+
+.add-event-form {
+  width: 300px;
+  padding: 10px;
+}
+
+.add-event-form-top {
+  display: flex;
+  flex-direction: row-reverse;
+}
+
+.add-event-form-close-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 2em;
+  height: 2em;
+  border-radius: 1em;
+  color: $darkGray;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $light;
+  }
+
+  &:active {
+    background-color: $lightGray;
+  }
 }

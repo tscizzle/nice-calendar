@@ -30,10 +30,19 @@
   width: calc(100% / 7);
   padding: 4px 8px;
   font-size: 0.8em;
+  cursor: pointer;
 
   &:not(:last-child) {
     border-right: solid $light 1px;
   }
+
+  &:hover:not(.month-view-adding-to-cell) {
+    background-color: $lightest;
+  }
+}
+
+.month-view-adding-to-cell {
+  background-color: $lighter;
 }
 
 .month-view-cell-top {
@@ -57,14 +66,24 @@
 .month-view-occurrence {
   width: 100%;
   padding: 2px 6px;
-  background-color: $lightBlue;
   border-radius: 1px;
+  background-color: $lightBlue;
   box-shadow: 1px 1px 2px $darkBlue;
   color: $darkBlue;
+
+  &.month-view-occurrence-being-added {
+    background-color: $lightYellow;
+    box-shadow: 1px 1px 2px $darkYellow;
+    color: $darkYellow;
+  }
 }
 
 .month-view-occurrence-inner {
   width: 100%;
   white-space: nowrap;
   overflow-x: hidden;
+}
+
+.month-view-occurrence-inner-no-title {
+  opacity: 0.7;
 }

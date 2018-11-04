@@ -3,6 +3,10 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 
+import { getTimezoneFromUser } from 'models/user';
+
+import { randomID } from 'ui-helpers';
+
 /* Schema */
 
 const recurringScheduleShape = PropTypes.shape({
@@ -15,21 +19,46 @@ export const eventShape = PropTypes.shape({
   _id: PropTypes.string.isRequired,
   userId: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  timeOfDay: PropTypes.instanceOf(Date).isRequired,
-  startDate: PropTypes.instanceOf(Date).isRequired,
+  startDatetime: PropTypes.instanceOf(Date).isRequired,
   recurringSchedule: recurringScheduleShape,
+  tags: PropTypes.arrayOf(PropTypes.string).isRequired,
 });
 
 /* Methods */
 
-const getSingleEventOccurrence = ({ event, timezone }) => {
-  const eventTimeMoment = moment(event.timeOfDay).tz(timezone);
-  const eventMoment = moment(event.startDate)
+export const makeNewEventDoc = ({ user, suppliedEvent }) => {
+  const _id = randomID();
+  const userId = user._id;
+  const timezone = getTimezoneFromUser(user);
+  const startDatetime = moment()
     .tz(timezone)
-    .set({
-      hour: eventTimeMoment.get('hour'),
-      minute: eventTimeMoment.get('minute'),
-    });
+    .toDate();
+  const event = {
+    _id,
+    userId,
+    title: '',
+    startDatetime,
+    recurringSchedule: null,
+    tags: [],
+    ...suppliedEvent,
+  };
+  return event;
+};
+
+export const makeNewEventOccurrenceDoc = ({ event }) => {
+  const _id = randomID();
+  const occurrence = {
+    _id,
+    userId: event.userId,
+    eventId: event._id,
+    datetime: event.startDatetime,
+    checkedOff: false,
+  };
+  return occurrence;
+};
+
+const getSingleEventOccurrence = ({ event, timezone }) => {
+  const eventMoment = moment(event.startDatetime).tz(timezone);
   const eventDatetime = eventMoment.toDate();
   const occurrence = {
     _id: `${event._id}-${eventMoment.format()}`,
