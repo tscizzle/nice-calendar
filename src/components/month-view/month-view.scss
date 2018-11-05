@@ -32,6 +32,10 @@
   font-size: 0.8em;
   cursor: pointer;
 
+  &:first-child {
+    border-left: solid $light 1px;
+  }
+
   &:not(:last-child) {
     border-right: solid $light 1px;
   }
@@ -82,8 +86,4 @@
   width: 100%;
   white-space: nowrap;
   overflow-x: hidden;
-}
-
-.month-view-occurrence-inner-no-title {
-  opacity: 0.7;
 }

@@ -26,6 +26,7 @@ export const addEvent = ({ event }) => {
     const events = _.find(DATABASE, { collection: 'events' });
     const eventDocs = events.documents;
     eventDocs.push(event);
+    resolve();
   });
 };
 

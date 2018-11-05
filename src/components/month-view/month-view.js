@@ -216,19 +216,13 @@ let MonthViewOccurrence = ({
   const occurrenceTime = moment(occurrence.datetime)
     .tz(timezone)
     .format('HH:mm');
-  const text = event.title || '(Untitled event)';
   const monthViewOccurrenceClasses = classNames('month-view-occurrence', {
     'month-view-occurrence-being-added': isBeingAdded,
   });
-  const monthViewOccurrenceInnerClasses = classNames(
-    'month-view-occurrence-inner',
-    {
-      'month-view-occurrence-inner-no-title': !event.title,
-    }
-  );
+  const text = event.title || '(Untitled event)';
   return (
     <div className={monthViewOccurrenceClasses} title={occurrenceTime}>
-      <div className={monthViewOccurrenceInnerClasses}>{text}</div>
+      <div className="month-view-occurrence-inner">{text}</div>
     </div>
   );
 };
