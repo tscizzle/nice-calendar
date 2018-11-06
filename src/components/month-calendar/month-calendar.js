@@ -28,6 +28,7 @@ class MonthCalendar extends Component {
     fetchEvents: PropTypes.func.isRequired,
     fetchOccurrences: PropTypes.func.isRequired,
     selectedDatetime: PropTypes.instanceOf(Date).isRequired,
+    addingEventFormData: eventShape,
   };
 
   componentDidMount() {
@@ -37,21 +38,41 @@ class MonthCalendar extends Component {
   }
 
   render() {
-    const { loggedInUser, selectedDatetime } = this.props;
+    const { loggedInUser, selectedDatetime, addingEventFormData } = this.props;
     const timezone = getTimezoneFromUser(loggedInUser);
     const selectedMoment = moment(selectedDatetime).tz(timezone);
-    const start = selectedMoment.clone().startOf('month');
-    const end = selectedMoment.clone().endOf('month');
-    const numWeeks = end.diff(start, 'weeks') + 1;
+    const monthStart = selectedMoment.clone().startOf('month');
+    const monthEnd = selectedMoment.clone().endOf('month');
+    const numWeeks = monthEnd.diff(monthStart, 'weeks') + 1;
+    let addingEventOccurrence;
+    let addingEventMoment;
+    if (addingEventFormData) {
+      const occurrence = makeNewEventOccurrenceDoc({
+        event: addingEventFormData,
+      });
+      addingEventOccurrence = {
+        event: addingEventFormData,
+        occurrence,
+        isBeingAdded: true,
+      };
+      const { datetime } = occurrence;
+      addingEventMoment = moment(datetime).tz(timezone);
+    }
     const weeks = _.times(numWeeks, week => {
-      const containedDatetime = start
-        .clone()
-        .add(week, 'weeks')
-        .toDate();
+      const containedMoment = monthStart.clone().add(week, 'weeks');
+      const containedDatetime = containedMoment.toDate();
+      const isAddingEventToThisRow = containedMoment.isSame(
+        addingEventMoment,
+        'week'
+      );
+      const addingEventOccurrenceArg = isAddingEventToThisRow
+        ? { addingEventOccurrence }
+        : {};
       return (
         <MonthCalendarRow
           containedDatetime={containedDatetime}
           numWeeks={numWeeks}
+          {...addingEventOccurrenceArg}
           key={week}
         />
       );
@@ -65,21 +86,41 @@ MonthCalendar = _.flow([
   withEvents,
   withOccurrences,
   withSelectedDatetime,
+  withAddingEventFormData,
 ])(MonthCalendar);
 
 export default MonthCalendar;
 
-let MonthCalendarRow = ({ containedDatetime, numWeeks, loggedInUser }) => {
+let MonthCalendarRow = ({
+  containedDatetime,
+  numWeeks,
+  addingEventOccurrence,
+  loggedInUser,
+}) => {
   const timezone = getTimezoneFromUser(loggedInUser);
   const containedMoment = moment(containedDatetime).tz(timezone);
-  const start = containedMoment.clone().startOf('week');
+  const weekStart = containedMoment.clone().startOf('week');
+  let addingEventMoment;
+  if (addingEventOccurrence) {
+    const { datetime } = addingEventOccurrence.occurrence;
+    addingEventMoment = moment(datetime).tz(timezone);
+  }
   const days = _.times(7, day => {
-    const containedDatetime = start
-      .clone()
-      .add(day, 'days')
-      .toDate();
+    const dayContainedMoment = weekStart.clone().add(day, 'days');
+    const dayContainedDatetime = dayContainedMoment.toDate();
+    const isAddingEventToThisCell = dayContainedMoment.isSame(
+      addingEventMoment,
+      'day'
+    );
+    const addingEventOccurrenceArg = isAddingEventToThisCell
+      ? { addingEventOccurrence }
+      : {};
     return (
-      <MonthCalendarCell containedDatetime={containedDatetime} key={day} />
+      <MonthCalendarCell
+        containedDatetime={dayContainedDatetime}
+        {...addingEventOccurrenceArg}
+        key={day}
+      />
     );
   });
   const numWeeksClass = `num-weeks-${numWeeks}`;
@@ -93,6 +134,11 @@ let MonthCalendarRow = ({ containedDatetime, numWeeks, loggedInUser }) => {
 MonthCalendarRow.propTypes = {
   containedDatetime: PropTypes.instanceOf(Date).isRequired,
   numWeeks: PropTypes.oneOf([4, 5, 6]).isRequired,
+  addingEventOccurrence: PropTypes.shape({
+    event: eventShape.isRequired,
+    occurrence: occurrenceShape.isRequired,
+    isBeingAdded: PropTypes.oneOf([true]).isRequired,
+  }),
   loggedInUser: userShape.isRequired,
 };
 
@@ -101,13 +147,16 @@ MonthCalendarRow = withUser(MonthCalendarRow);
 class MonthCalendarCell extends Component {
   static propTypes = {
     containedDatetime: PropTypes.instanceOf(Date).isRequired,
+    addingEventOccurrence: PropTypes.shape({
+      event: eventShape.isRequired,
+      occurrence: occurrenceShape.isRequired,
+      isBeingAdded: PropTypes.oneOf([true]).isRequired,
+    }),
     loggedInUser: userShape.isRequired,
     events: PropTypes.objectOf(eventShape).isRequired,
     occurrences: PropTypes.objectOf(occurrenceShape).isRequired,
     selectedDatetime: PropTypes.instanceOf(Date).isRequired,
     setSelectedDatetime: PropTypes.func.isRequired,
-    addingEventFormData: eventShape,
-    setAddingEventFormData: PropTypes.func.isRequired,
     nowMinute: PropTypes.instanceOf(Date).isRequired,
   };
 
@@ -124,49 +173,25 @@ class MonthCalendarCell extends Component {
 
   setIsNotHovered = () => this.setState({ isHovered: false });
 
-  openAddingEventForm = () => {
-    const {
-      containedDatetime,
-      loggedInUser,
-      addingEventFormData,
-      setAddingEventFormData,
-    } = this.props;
-    const timezone = getTimezoneFromUser(loggedInUser);
-    const containedMoment = moment(containedDatetime).tz(timezone);
-    const startDatetime = containedMoment
-      .clone()
-      .set({ hours: 12 })
-      .toDate();
-    const suppliedEvent = {
-      ...addingEventFormData,
-      startDatetime,
-    };
-    const event = makeNewEventDoc({ user: loggedInUser, suppliedEvent });
-    setAddingEventFormData({ event });
-  };
+  shouldComponentUpdate(nextProps, nextState) {
+    const propsChanged = !_.isEqual(this.props, nextProps);
+    const stateChanged = !_.isEqual(this.state, nextState);
+    return propsChanged || stateChanged;
+  }
 
   render() {
     const {
       containedDatetime,
+      addingEventOccurrence,
       loggedInUser,
       events,
       occurrences,
       selectedDatetime,
-      addingEventFormData,
       nowMinute,
     } = this.props;
     const { isHovered } = this.state;
     const timezone = getTimezoneFromUser(loggedInUser);
     const containedMoment = moment(containedDatetime).tz(timezone);
-    const selectedMoment = moment(selectedDatetime).tz(timezone);
-    const isSelectedCell = containedMoment.isSame(selectedMoment);
-    let isAddingEventToThisCell = false;
-    if (addingEventFormData) {
-      const addingToMoment = moment(addingEventFormData.startDatetime).tz(
-        timezone
-      );
-      isAddingEventToThisCell = containedMoment.isSame(addingToMoment, 'day');
-    }
     const start = containedMoment
       .clone()
       .startOf('day')
@@ -195,15 +220,8 @@ class MonthCalendarCell extends Component {
       }
     });
     const addingEventOccurrences = [];
-    if (isAddingEventToThisCell) {
-      const addingEventOccurrence = makeNewEventOccurrenceDoc({
-        event: addingEventFormData,
-      });
-      addingEventOccurrences.push({
-        event: addingEventFormData,
-        occurrence: addingEventOccurrence,
-        isBeingAdded: true,
-      });
+    if (addingEventOccurrence) {
+      addingEventOccurrences.push(addingEventOccurrence);
     }
     const allOccurrences = _.concat(
       dayPastOccurrences,
@@ -222,6 +240,8 @@ class MonthCalendarCell extends Component {
         />
       )
     );
+    const selectedMoment = moment(selectedDatetime).tz(timezone);
+    const isSelectedCell = containedMoment.isSame(selectedMoment);
     const monthCalendarCellClasses = classNames('month-calendar-cell', {
       'month-calendar-selected-cell': isSelectedCell,
     });
@@ -243,12 +263,9 @@ class MonthCalendarCell extends Component {
         <div className="month-calendar-cell-content">{occurrenceDisplays}</div>
         <div className="month-calendar-cell-bottom">
           {isHovered && (
-            <div
-              className="month-calendar-cell-add-event-button"
-              onClick={this.openAddingEventForm}
-            >
-              <FaPlus />
-            </div>
+            <MonthCalendarCellAddEventButton
+              containedDatetime={containedDatetime}
+            />
           )}
         </div>
       </div>
@@ -261,7 +278,6 @@ MonthCalendarCell = _.flow([
   withEvents,
   withOccurrences,
   withSelectedDatetime,
-  withAddingEventFormData,
   withNowMinute,
 ])(MonthCalendarCell);
 
@@ -297,3 +313,44 @@ MonthCalendarOccurrence.propTypes = {
 };
 
 MonthCalendarOccurrence = withUser(MonthCalendarOccurrence);
+
+let MonthCalendarCellAddEventButton = ({
+  containedDatetime,
+  loggedInUser,
+  addingEventFormData,
+  setAddingEventFormData,
+}) => {
+  const openAddingEventForm = () => {
+    const timezone = getTimezoneFromUser(loggedInUser);
+    const containedMoment = moment(containedDatetime).tz(timezone);
+    const startDatetime = containedMoment
+      .clone()
+      .set({ hours: 12 })
+      .toDate();
+    const suppliedEvent = {
+      ...addingEventFormData,
+      startDatetime,
+    };
+    const event = makeNewEventDoc({ user: loggedInUser, suppliedEvent });
+    setAddingEventFormData({ event });
+  };
+  return (
+    <div
+      className="month-calendar-cell-add-event-button"
+      onClick={openAddingEventForm}
+    >
+      <FaPlus />
+    </div>
+  );
+};
+
+MonthCalendarCellAddEventButton.propTypes = {
+  containedDatetime: PropTypes.instanceOf(Date).isRequired,
+  loggedInUser: userShape.isRequired,
+  addingEventFormData: eventShape,
+  setAddingEventFormData: PropTypes.func.isRequired,
+};
+
+MonthCalendarCellAddEventButton = _.flow([withUser, withAddingEventFormData])(
+  MonthCalendarCellAddEventButton
+);
