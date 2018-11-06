@@ -1,13 +1,6 @@
-@import '../../constants';
-
-.calendar-container {
-  display: flex;
-  height: 100%;
-  width: 100%;
-}
+@import '../../index';
 
 .add-event-form {
-  width: 300px;
   padding: 10px;
 }
 
@@ -33,4 +26,12 @@
   &:active {
     background-color: $lightGray;
   }
+}
+
+.add-event-form-content {
+  margin: 10px 0;
+}
+
+.add-event-form-date-select {
+  margin-right: 8px;
 }

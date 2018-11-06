@@ -1,0 +1,85 @@
+@import '../../index';
+
+.nice-select-container {
+  position: relative;
+  display: inline-flex;
+  border-radius: 3px;
+  background-color: $white;
+  font-size: 0.85em;
+}
+
+.nice-select {
+  padding: 7px 10px;
+  border-radius: 3px;
+  box-shadow: 1px 1px 1px $gray;
+  background-color: $lightest;
+  cursor: pointer;
+
+  &:not(:disabled) {
+    cursor: pointer;
+
+    &:hover {
+      background-color: $lighter;
+    }
+
+    &:active {
+      background-color: $light;
+    }
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+}
+
+.bare-select {
+  border: none;
+  border-bottom: solid 2px transparent;
+  border-radius: 0px;
+  box-shadow: none;
+
+  &.nice-select-open {
+    border-color: $blue;
+  }
+}
+
+.nice-select-icon {
+  position: absolute;
+  right: 0;
+  height: 100%;
+  padding: 0 3px;
+  border-radius: 0 3px 3px 0;
+  background-color: $gray;
+  color: $lightest;
+  pointer-events: none;
+}
+
+.nice-select-options-container {
+  position: absolute;
+  top: 3em;
+  left: 0;
+  max-height: 300px;
+  overflow-y: scroll;
+  box-shadow: 1px 1px 5px $gray;
+  z-index: 10;
+}
+
+.nice-select-option {
+  padding: 4px 6px;
+  white-space: nowrap;
+  background-color: $lightest;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $lighter;
+  }
+
+  &:active {
+    background-color: $light;
+  }
+}
+
+.nice-select-option-selected {
+  font-weight: bold;
+}

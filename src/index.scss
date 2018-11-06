@@ -1,4 +1,101 @@
-@import 'constants';
+/*
+ * Constants
+ */
+
+/* Colors */
+
+$dark: #555;
+
+$darkGray: #777;
+$gray: #aaa;
+$lightGray: #ccc;
+
+$light: #ddd;
+$lighter: #f0f0f0;
+$lightest: #fafafa;
+
+$white: #fff;
+
+$darkRed: #bf372f;
+$red: #ef675f;
+
+$darkBlue: #444fcc;
+$blue: #747ffc;
+$lightBlue: #b4bffd;
+
+$darkYellow: #afa049;
+$yellow: #fff099;
+$lightYellow: #fffaa9;
+
+$darkGreen: #0f9c44;
+$green: #4fcc84;
+$lightGreen: #6feca4;
+
+/* Layout */
+
+$layoutTransitionDuration: 0.2s;
+$topbarHeight: 60px;
+$contentMargin: 3px;
+$calendarViewLeftSidebarWidth: 250px;
+
+/*
+ * Miscellaneous
+ */
+
+/* Media */
+
+$mobileDesktopSplit: 480px;
+
+@mixin breakpoint($device-category) {
+  @if $device-category == mobile {
+    @media (max-width: $mobileDesktopSplit) {
+      @content;
+    }
+  } @else if $device-category == desktop {
+    @media (min-width: $mobileDesktopSplit+1) {
+      @content;
+    }
+  }
+}
+
+/* Transitions */
+
+@mixin transition($transition...) {
+  -moz-transition: $transition;
+  -o-transition: $transition;
+  -webkit-transition: $transition;
+  transition: $transition;
+}
+
+@mixin transition-property($property...) {
+  -moz-transition-property: $property;
+  -o-transition-property: $property;
+  -webkit-transition-property: $property;
+  transition-property: $property;
+}
+
+@mixin transition-duration($duration...) {
+  -moz-transition-duration: $duration;
+  -o-transition-duration: $duration;
+  -webkit-transition-duration: $duration;
+  transition-duration: $duration;
+}
+
+@mixin transition-timing-function($timing...) {
+  -moz-transition-timing-function: $timing;
+  -o-transition-timing-function: $timing;
+  -webkit-transition-timing-function: $timing;
+  transition-timing-function: $timing;
+}
+
+@mixin transition-delay($delay...) {
+  -moz-transition-delay: $delay;
+  -o-transition-delay: $delay;
+  -webkit-transition-delay: $delay;
+  transition-delay: $delay;
+}
+
+/* Overall Styles */
 
 body {
   margin: 0;
@@ -14,19 +111,16 @@ body {
   box-sizing: border-box;
 }
 
-.clickable {
-  cursor: pointer;
-
-  &.disabled {
-    pointer-events: none;
-    opacity: 0.5;
-  }
-
-  &:hover {
-    opacity: 0.9;
-  }
-
-  &:active {
-    opacity: 0.7;
-  }
+// apparently different browsers have different defaults for input box-sizing
+input {
+  box-sizing: border-box;
 }
+
+/*
+Miscellaneous Documentation
+
+z-index levels
+--------------
+- 10
+  - select options container
+*/

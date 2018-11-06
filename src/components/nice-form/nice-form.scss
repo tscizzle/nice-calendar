@@ -1,0 +1,9 @@
+.nice-form-row:not(:first-child) {
+  margin: 20px 0;
+}
+
+.nice-form-submit-row {
+  display: flex;
+  flex-direction: row-reverse;
+  margin-top: 20px;
+}

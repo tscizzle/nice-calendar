@@ -10,6 +10,7 @@ import {
   SET_SELECTED_DATETIME,
   SET_SELECTED_ZOOM,
   SET_ADDING_EVENT,
+  UPDATE_NOW_MINUTE,
 } from 'state-management/actions';
 
 const initialState = {
@@ -19,10 +20,13 @@ const initialState = {
   selectedDatetime: moment().toDate(),
   selectedZoom: 'month',
   addingEventFormData: null,
+  nowMinute: moment()
+    .startOf('minute')
+    .toDate(),
 };
 
 const mainReducer = (state = initialState, action) => {
-  const verbose = true;
+  const verbose = false;
   if (verbose) {
     console.log(`=== Action: ${action.type} ===`);
     console.log('Action:', action);
@@ -56,6 +60,9 @@ const mainReducer = (state = initialState, action) => {
       break;
     case SET_ADDING_EVENT:
       newState = { ...state, addingEventFormData: action.event };
+      break;
+    case UPDATE_NOW_MINUTE:
+      newState = { ...state, nowMinute: action.datetime };
       break;
     default:
       newState = state;

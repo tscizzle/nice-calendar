@@ -1,0 +1,62 @@
+@import '../../index';
+
+.nice-button-container {
+  display: inline-block;
+  border-radius: 3px;
+  background-color: $white;
+}
+
+.nice-button {
+  padding: 0;
+  border: none;
+  border-radius: 3px;
+  box-shadow: 1px 1px 1px $gray;
+  background-color: $lighter;
+  color: $dark;
+  font-size: 15px;
+  outline: none;
+
+  &:not(:disabled) {
+    cursor: pointer;
+
+    &:hover {
+      opacity: 0.9;
+    }
+
+    &:active {
+      opacity: 0.8;
+    }
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  &.compact-button {
+    .nice-button-inner {
+      padding: 6px 16px;
+    }
+  }
+}
+
+.nice-button-inner {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 20px;
+}
+
+.button-loading {
+  margin-left: 15px;
+}
+
+.primary-button {
+  background-color: $blue;
+  color: $lightest;
+}
+
+.secondary-button {
+  background-color: $green;
+  color: $lightest;
+}

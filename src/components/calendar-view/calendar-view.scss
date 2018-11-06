@@ -1,0 +1,30 @@
+@import '../../index';
+
+.calendar-view-container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.calendar-container {
+  @include transition(width $layoutTransitionDuration);
+  width: 100%;
+
+  &.left-sidebar-opened {
+    width: calc(100% - #{$calendarViewLeftSidebarWidth});
+  }
+}
+
+.calendar-view-left-sidebar {
+  @include transition(
+    width $layoutTransitionDuration,
+    opacity 0.1s $layoutTransitionDuration
+  );
+  width: 0;
+  opacity: 0;
+
+  &.opened {
+    width: $calendarViewLeftSidebarWidth;
+    opacity: 1;
+  }
+}

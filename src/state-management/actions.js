@@ -1,3 +1,5 @@
+import moment from 'moment-timezone';
+
 import { getLoggedInUser, getEvents, getOccurrences } from 'api';
 
 /* Action Types */
@@ -14,6 +16,8 @@ export const FETCH_OCCURRENCES_FAILURE = 'FETCH_OCCURRENCES_FAILURE';
 export const SET_SELECTED_DATETIME = 'SET_SELECTED_DATETIME';
 export const SET_SELECTED_ZOOM = 'SET_SELECTED_ZOOM';
 export const SET_ADDING_EVENT = 'SET_ADDING_EVENT';
+
+export const UPDATE_NOW_MINUTE = 'UPDATE_NOW_MINUTE';
 
 /* Action Creators */
 
@@ -106,3 +110,13 @@ export const setAddingEventFormData = ({ event }) => ({
   type: SET_ADDING_EVENT,
   event,
 });
+
+export const updateNowMinute = () => {
+  const datetime = moment()
+    .startOf('minute')
+    .toDate();
+  return {
+    type: UPDATE_NOW_MINUTE,
+    datetime,
+  };
+};

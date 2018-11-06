@@ -1,10 +1,8 @@
 import PropTypes from 'prop-types';
-
 import _ from 'lodash';
 import moment from 'moment-timezone';
 
 import { getTimezoneFromUser } from 'models/user';
-
 import { randomID } from 'ui-helpers';
 
 /* Schema */
@@ -100,11 +98,16 @@ const getRecurringEventOccurrences = ({ event, timezone, end }) => {
   }
 };
 
-export const getScheduledOccurrences = ({ event, timezone, start, end }) => {
+export const getScheduledOccurrences = ({
+  event,
+  timezone,
+  start,
+  end,
+  now,
+}) => {
   const eventOccurrences = event.recurringSchedule
     ? getRecurringEventOccurrences({ event, timezone, end })
     : [getSingleEventOccurrence({ event, timezone })];
-  const now = new Date();
   const boundedStart = _.max([now, start]);
   const eventOccurrencesInWindow = _.filter(
     eventOccurrences,

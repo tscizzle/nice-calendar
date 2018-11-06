@@ -1,11 +1,14 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import _ from 'lodash';
+import moment from 'moment-timezone';
 
 import withUser from 'state-management/state-connectors/with-user';
+import withNowMinute from 'state-management/state-connectors/with-now-minute';
 import { userShape } from 'models/user';
 
 import Topbar from 'components/topbar/topbar';
-import Calendar from 'components/calendar/calendar';
+import CalendarView from 'components/calendar-view/calendar-view';
 
 import 'stylesheets/components/app/app.css';
 
@@ -13,11 +16,25 @@ class App extends Component {
   static propTypes = {
     loggedInUser: userShape,
     fetchUser: PropTypes.func.isRequired,
+    updateNowMinute: PropTypes.func.isRequired,
   };
 
   componentDidMount() {
-    const { fetchUser } = this.props;
+    const { fetchUser, updateNowMinute } = this.props;
     fetchUser();
+    const secondsUntilNextMinute = 60 - moment().second() + 1;
+    updateNowMinute();
+    setTimeout(() => {
+      this.minuteSettingIntervalId = setInterval(() => {
+        updateNowMinute();
+      }, 60 * 1000);
+    }, secondsUntilNextMinute * 1000);
+  }
+
+  componentWillUnmount() {
+    if (this.minuteSettingIntervalId) {
+      clearInterval(this.minuteSettingIntervalId);
+    }
   }
 
   render() {
@@ -25,12 +42,12 @@ class App extends Component {
     return (
       <div className="app">
         <Topbar />
-        <div className="content">{loggedInUser && <Calendar />}</div>
+        <div className="content">{loggedInUser && <CalendarView />}</div>
       </div>
     );
   }
 }
 
-App = withUser(App);
+App = _.flow([withUser, withNowMinute])(App);
 
 export default App;
