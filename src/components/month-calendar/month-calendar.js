@@ -173,12 +173,6 @@ class MonthCalendarCell extends Component {
 
   setIsNotHovered = () => this.setState({ isHovered: false });
 
-  shouldComponentUpdate(nextProps, nextState) {
-    const propsChanged = !_.isEqual(this.props, nextProps);
-    const stateChanged = !_.isEqual(this.state, nextState);
-    return propsChanged || stateChanged;
-  }
-
   render() {
     const {
       containedDatetime,

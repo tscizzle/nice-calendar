@@ -70,13 +70,11 @@ class AddEventForm extends Component {
     const newDayMoment = moment.tz(value, timezone);
     const { startDatetime } = addingEventFormData;
     const startMoment = moment(startDatetime).tz(timezone);
-    const newStartDatetime = startMoment
+    const newStartDatetime = newDayMoment
       .clone()
       .set({
-        year: newDayMoment.year(),
-        month: newDayMoment.month(),
-        week: newDayMoment.week(),
-        day: newDayMoment.day(),
+        hour: startMoment.hour(),
+        minute: startMoment.minute(),
       })
       .toDate();
     const newEvent = {
