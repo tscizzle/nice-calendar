@@ -4,6 +4,7 @@
 
 /* Colors */
 
+$darker: #333;
 $dark: #555;
 
 $darkGray: #777;
@@ -34,7 +35,7 @@ $lightGreen: #6feca4;
 /* Layout */
 
 $layoutTransitionDuration: 0.2s;
-$topbarHeight: 60px;
+$topbarHeight: 50px;
 $contentMargin: 3px;
 $calendarViewLeftSidebarWidth: 250px;
 
@@ -103,8 +104,8 @@ body {
   font-family: 'Verdana', 'Open Sans', sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  color: #fafafa;
-  background-color: $dark;
+  color: $white;
+  background-color: $darkGray;
 }
 
 * {
