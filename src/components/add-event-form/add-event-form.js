@@ -7,14 +7,20 @@ import { FaTimes } from 'react-icons/fa';
 import { addEvent } from 'api';
 import withUser from 'state-management/state-connectors/with-user';
 import withEvents from 'state-management/state-connectors/with-events';
+import withSelectedDatetime from 'state-management/state-connectors/with-selected-datetime';
 import withSelectedZoom from 'state-management/state-connectors/with-selected-zoom';
 import withAddingEventFormData from 'state-management/state-connectors/with-adding-event-form-data';
+import withNowMinute from 'state-management/state-connectors/with-now-minute';
 import { userShape, getTimezoneFromUser } from 'models/user';
 
 import NiceButton from 'components/nice-button/nice-button';
 import NiceInput from 'components/nice-input/nice-input';
 import NiceSelect from 'components/nice-select/nice-select';
-import { NiceFormRow, NiceFormSubmitRow } from 'components/nice-form/nice-form';
+import {
+  NiceFormRow,
+  NiceFormSubmitRow,
+  NiceFormErrorMsg,
+} from 'components/nice-form/nice-form';
 
 import 'stylesheets/components/add-event-form/add-event-form.css';
 
@@ -22,26 +28,57 @@ class AddEventForm extends Component {
   static propTypes = {
     loggedInUser: userShape.isRequired,
     fetchEvents: PropTypes.func.isRequired,
+    selectedDatetime: PropTypes.instanceOf(Date).isRequired,
     selectedZoom: PropTypes.oneOf(['day', 'week', 'month']).isRequired,
     addingEventFormData: PropTypes.object.isRequired,
     setAddingEventFormData: PropTypes.func.isRequired,
+    nowMinute: PropTypes.instanceOf(Date).isRequired,
+  };
+
+  state = {
+    validationErrorMsg: null,
   };
 
   dayOptions = () => {
-    const { loggedInUser, selectedZoom, addingEventFormData } = this.props;
+    const {
+      loggedInUser,
+      selectedDatetime,
+      selectedZoom,
+      addingEventFormData,
+      nowMinute,
+    } = this.props;
     const { startDatetime } = addingEventFormData;
     const timezone = getTimezoneFromUser(loggedInUser);
-    const startMoment = moment(startDatetime).tz(timezone);
-    const start = startMoment.clone().startOf(selectedZoom);
-    const end = startMoment.clone().endOf(selectedZoom);
-    const numDays = end.diff(start, 'days') + 1;
-    const options = _.times(numDays, day => {
-      const dayMoment = start.clone().add(day, 'days');
-      const value = dayMoment.format('YYYY-MM-DD');
-      const label = dayMoment.format('MMM D');
-      const labelWhenSelected = dayMoment.format('MMM D, YYYY');
-      return { value, label, labelWhenSelected };
+    const nowMinuteMoment = moment(nowMinute).tz(timezone);
+    const selectedMoment = moment(selectedDatetime).tz(timezone);
+    const selectionStart = selectedMoment.clone().startOf(selectedZoom);
+    const selectionEnd = selectedMoment.clone().endOf(selectedZoom);
+    const numDays = selectionEnd.diff(selectionStart, 'days') + 1;
+    const options = [];
+    _.times(numDays, day => {
+      const dayMoment = selectionStart.clone().add(day, 'days');
+      const dayEnd = dayMoment.clone().endOf('day');
+      const dayIsBeforeNow = dayEnd.isBefore(nowMinuteMoment);
+      if (!dayIsBeforeNow) {
+        const value = dayMoment.format('YYYY-MM-DD');
+        const label = dayMoment.format('MMM D');
+        const labelWhenSelected = dayMoment.format('MMM D, YYYY');
+        options.push({ value, label, labelWhenSelected });
+      }
     });
+    const addingEventMoment = moment(startDatetime).tz(timezone);
+    const addingEventOption = {
+      value: addingEventMoment.format('YYYY-MM-DD'),
+      label: addingEventMoment.format('MMM D'),
+      labelWhenSelected: addingEventMoment.format('MMM D, YYYY'),
+    };
+    const isAddingBeforeSelection = selectionStart.isAfter(addingEventMoment);
+    const isAddingAfterSelection = selectionEnd.isBefore(addingEventMoment);
+    if (isAddingBeforeSelection) {
+      options.unshift(addingEventOption);
+    } else if (isAddingAfterSelection) {
+      options.push(addingEventOption);
+    }
     return options;
   };
 
@@ -109,6 +146,26 @@ class AddEventForm extends Component {
     return setStartTime;
   };
 
+  validateEventDoc = eventDoc => {
+    const { loggedInUser, nowMinute } = this.props;
+    const { title, startDatetime } = eventDoc;
+    // validate there is a title
+    if (!title) {
+      return 'Give your Event a title.';
+    }
+    // validate the event datetime is in the future
+    const timezone = getTimezoneFromUser(loggedInUser);
+    const startMoment = moment(startDatetime).tz(timezone);
+    const nowMinuteMoment = moment(nowMinute).tz(timezone);
+    const earliestAllowedMoment = nowMinuteMoment.clone().add(1, 'minutes');
+    const isTooEarly = startMoment.isBefore(earliestAllowedMoment);
+    if (isTooEarly) {
+      return 'Make your Event later than now.';
+    }
+    // if everything is fine, return no message
+    return false;
+  };
+
   saveEvent = () => {
     const {
       loggedInUser,
@@ -116,14 +173,20 @@ class AddEventForm extends Component {
       addingEventFormData,
       setAddingEventFormData,
     } = this.props;
-    addEvent({ event: addingEventFormData }).then(() => {
-      setAddingEventFormData({ event: null });
-      fetchEvents({ user: loggedInUser });
-    });
+    const validationErrorMsg = this.validateEventDoc(addingEventFormData);
+    if (validationErrorMsg) {
+      this.setState({ validationErrorMsg });
+    } else {
+      addEvent({ event: addingEventFormData }).then(() => {
+        setAddingEventFormData({ event: null });
+        fetchEvents({ user: loggedInUser });
+      });
+    }
   };
 
   render() {
     const { loggedInUser, addingEventFormData } = this.props;
+    const { validationErrorMsg } = this.state;
     const { title, startDatetime } = addingEventFormData;
     const timezone = getTimezoneFromUser(loggedInUser);
     const startMoment = moment(startDatetime).tz(timezone);
@@ -187,6 +250,9 @@ class AddEventForm extends Component {
               Save
             </NiceButton>
           </NiceFormSubmitRow>
+          {validationErrorMsg && (
+            <NiceFormErrorMsg errorMsg={validationErrorMsg} />
+          )}
         </div>
       </div>
     );
@@ -196,8 +262,10 @@ class AddEventForm extends Component {
 AddEventForm = _.flow([
   withUser,
   withEvents,
+  withSelectedDatetime,
   withSelectedZoom,
   withAddingEventFormData,
+  withNowMinute,
 ])(AddEventForm);
 
 export default AddEventForm;

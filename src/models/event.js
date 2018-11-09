@@ -2,7 +2,6 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 
-import { getTimezoneFromUser } from 'models/user';
 import { randomID } from 'ui-helpers';
 
 /* Schema */
@@ -27,9 +26,9 @@ export const eventShape = PropTypes.shape({
 export const makeNewEventDoc = ({ user, suppliedEvent }) => {
   const _id = randomID();
   const userId = user._id;
-  const timezone = getTimezoneFromUser(user);
   const startDatetime = moment()
-    .tz(timezone)
+    .add(2, 'hours')
+    .startOf('hour')
     .toDate();
   const event = {
     _id,

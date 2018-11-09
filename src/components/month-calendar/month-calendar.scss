@@ -33,7 +33,7 @@
   width: calc(100% / 7);
   padding: 4px 8px 8px;
   font-size: 0.8em;
-  cursor: pointer;
+  overflow-y: hidden;
 
   &:first-child {
     border-left: solid $light 1px;
@@ -43,57 +43,70 @@
     border-right: solid $light 1px;
   }
 
-  &:hover:not(.month-calendar-selected-cell) {
+  &.month-calendar-cell-not-selected-month {
     background-color: $lightest;
   }
-}
 
-.month-calendar-selected-cell {
-  background-color: $lighter;
-}
+  .month-calendar-cell-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
 
-.month-calendar-cell-top {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-}
+    .month-calendar-cell-day-number {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 1.5em;
+      width: 1.5em;
 
-.month-calendar-cell-day-name {
-  font-weight: bold;
-  color: $gray;
-}
+      &.month-calendar-cell-day-number-today {
+        border-radius: 50%;
+        background-color: $blue;
+        color: $white;
+        font-weight: bold;
+      }
+    }
 
-.month-calendar-cell-content {
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  width: 100%;
-  margin: 6px 0;
-}
-
-.month-calendar-cell-bottom {
-  display: flex;
-  flex-direction: row-reverse;
-  height: 2em;
-  font-size: 0.8em;
-}
-
-.month-calendar-cell-add-event-button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 2em;
-  height: 2em;
-  border-radius: 1em;
-  color: $darkGray;
-  cursor: pointer;
-
-  &:hover {
-    background-color: $light;
+    .month-calendar-cell-day-name {
+      font-weight: bold;
+      color: $gray;
+    }
   }
 
-  &:active {
-    background-color: $lightGray;
+  .month-calendar-cell-content {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: 6px 0;
+  }
+
+  .month-calendar-cell-bottom {
+    display: flex;
+    flex-direction: row-reverse;
+    height: 2em;
+    font-size: 0.8em;
+
+    .month-calendar-cell-add-event-button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 2em;
+      height: 2em;
+      border-radius: 1em;
+      background-color: $white;
+      color: $darkGray;
+      cursor: pointer;
+
+      &:hover {
+        background-color: $light;
+      }
+
+      &:active {
+        background-color: $lightGray;
+      }
+    }
   }
 }
 
@@ -105,15 +118,19 @@
   box-shadow: 1px 1px 1px $blue;
   color: $darkBlue;
 
+  &:not(:last-child) {
+    margin-bottom: 4px;
+  }
+
   &.month-calendar-occurrence-being-added {
     background-color: $lightYellow;
     box-shadow: 1px 1px 1px $darkYellow;
     color: $darkYellow;
   }
-}
 
-.month-calendar-occurrence-inner {
-  width: 100%;
-  white-space: nowrap;
-  overflow-x: hidden;
+  .month-calendar-occurrence-inner {
+    width: 100%;
+    white-space: nowrap;
+    overflow-x: hidden;
+  }
 }

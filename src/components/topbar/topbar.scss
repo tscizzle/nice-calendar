@@ -6,8 +6,17 @@
   justify-content: space-between;
   height: $topbarHeight;
   padding: 10px;
-}
 
-.topbar-logo {
-  height: 100%;
+  .topbar-logo {
+    height: 100%;
+  }
+
+  .topbar-right {
+    display: flex;
+    align-items: center;
+
+    .topbar-selected-month {
+      margin-left: 20px;
+    }
+  }
 }

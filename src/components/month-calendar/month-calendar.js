@@ -156,17 +156,11 @@ class MonthCalendarCell extends Component {
     events: PropTypes.objectOf(eventShape).isRequired,
     occurrences: PropTypes.objectOf(occurrenceShape).isRequired,
     selectedDatetime: PropTypes.instanceOf(Date).isRequired,
-    setSelectedDatetime: PropTypes.func.isRequired,
     nowMinute: PropTypes.instanceOf(Date).isRequired,
   };
 
   state = {
     isHovered: false,
-  };
-
-  selectDatetime = () => {
-    const { containedDatetime, setSelectedDatetime } = this.props;
-    setSelectedDatetime({ datetime: containedDatetime });
   };
 
   setIsHovered = () => this.setState({ isHovered: true });
@@ -186,21 +180,17 @@ class MonthCalendarCell extends Component {
     const { isHovered } = this.state;
     const timezone = getTimezoneFromUser(loggedInUser);
     const containedMoment = moment(containedDatetime).tz(timezone);
-    const start = containedMoment
-      .clone()
-      .startOf('day')
-      .toDate();
-    const end = containedMoment
-      .clone()
-      .endOf('day')
-      .toDate();
+    const dayStartMoment = containedMoment.clone().startOf('day');
+    const dayStart = dayStartMoment.toDate();
+    const dayEndMoment = containedMoment.clone().endOf('day');
+    const dayEnd = dayEndMoment.toDate();
     const dayScheduledOccurrences = [];
     _.each(_.values(events), event => {
       const eventOccurrences = getScheduledOccurrences({
         event,
         timezone,
-        start,
-        end,
+        start: dayStart,
+        end: dayEnd,
         now: nowMinute,
       });
       dayScheduledOccurrences.push(...eventOccurrences);
@@ -208,7 +198,7 @@ class MonthCalendarCell extends Component {
     const dayPastOccurrences = [];
     _.each(_.values(occurrences), occurrence => {
       const { eventId, datetime } = occurrence;
-      if (start <= datetime && datetime <= end) {
+      if (dayStart <= datetime && datetime <= dayEnd) {
         const event = events[eventId];
         dayPastOccurrences.push({ event, occurrence });
       }
@@ -234,20 +224,28 @@ class MonthCalendarCell extends Component {
         />
       )
     );
+    const nowMinuteMoment = moment(nowMinute).tz(timezone);
+    const isDayPast = dayEndMoment.isBefore(nowMinuteMoment);
     const selectedMoment = moment(selectedDatetime).tz(timezone);
-    const isSelectedCell = containedMoment.isSame(selectedMoment);
+    const isInSelectedMonth = containedMoment.isSame(selectedMoment, 'month');
     const monthCalendarCellClasses = classNames('month-calendar-cell', {
-      'month-calendar-selected-cell': isSelectedCell,
+      'month-calendar-cell-not-selected-month': !isInSelectedMonth,
     });
+    const isTodayCell = containedMoment.isSame(nowMinuteMoment, 'day');
+    const monthCalendarCellDayNumberClasses = classNames(
+      'month-calendar-cell-day-number',
+      {
+        'month-calendar-cell-day-number-today': isTodayCell,
+      }
+    );
     return (
       <div
         className={monthCalendarCellClasses}
-        onClick={this.selectDatetime}
         onMouseEnter={this.setIsHovered}
         onMouseLeave={this.setIsNotHovered}
       >
         <div className="month-calendar-cell-top">
-          <div className="month-calendar-cell-day-number">
+          <div className={monthCalendarCellDayNumberClasses}>
             {containedMoment.format('D')}
           </div>
           <div className="month-calendar-cell-day-name">
@@ -256,11 +254,12 @@ class MonthCalendarCell extends Component {
         </div>
         <div className="month-calendar-cell-content">{occurrenceDisplays}</div>
         <div className="month-calendar-cell-bottom">
-          {isHovered && (
-            <MonthCalendarCellAddEventButton
-              containedDatetime={containedDatetime}
-            />
-          )}
+          {isHovered &&
+            !isDayPast && (
+              <MonthCalendarCellAddEventButton
+                containedDatetime={containedDatetime}
+              />
+            )}
         </div>
       </div>
     );
@@ -285,7 +284,8 @@ let MonthCalendarOccurrence = ({
   const occurrenceTime = moment(occurrence.datetime)
     .tz(timezone)
     .format('HH:mm');
-  const text = event.title || '(Untitled event)';
+  const text =
+    event.title || (isBeingAdded ? '(Adding event…)' : '(Untitled event)');
   const monthCalendarOccurrenceClasses = classNames(
     'month-calendar-occurrence',
     {
@@ -313,14 +313,30 @@ let MonthCalendarCellAddEventButton = ({
   loggedInUser,
   addingEventFormData,
   setAddingEventFormData,
+  nowMinute,
 }) => {
   const openAddingEventForm = () => {
     const timezone = getTimezoneFromUser(loggedInUser);
     const containedMoment = moment(containedDatetime).tz(timezone);
-    const startDatetime = containedMoment
-      .clone()
-      .set({ hours: 12 })
-      .toDate();
+    const nowMinuteMoment = moment(nowMinute).tz(timezone);
+    const endOfTodayMoment = nowMinuteMoment.clone().endOf('day');
+    const isFutureDayCell = containedMoment.isAfter(endOfTodayMoment);
+    let startDatetime;
+    if (isFutureDayCell) {
+      startDatetime = containedMoment
+        .clone()
+        .set({ hours: 12 })
+        .toDate();
+    } else {
+      const candidateStartMoment = nowMinuteMoment
+        .clone()
+        .add(5, 'minutes')
+        .startOf('minute');
+      const startMoment = candidateStartMoment.isAfter(endOfTodayMoment)
+        ? endOfTodayMoment
+        : candidateStartMoment;
+      startDatetime = startMoment.toDate();
+    }
     const suppliedEvent = {
       ...addingEventFormData,
       startDatetime,
@@ -343,8 +359,11 @@ MonthCalendarCellAddEventButton.propTypes = {
   loggedInUser: userShape.isRequired,
   addingEventFormData: eventShape,
   setAddingEventFormData: PropTypes.func.isRequired,
+  nowMinute: PropTypes.instanceOf(Date).isRequired,
 };
 
-MonthCalendarCellAddEventButton = _.flow([withUser, withAddingEventFormData])(
-  MonthCalendarCellAddEventButton
-);
+MonthCalendarCellAddEventButton = _.flow([
+  withUser,
+  withAddingEventFormData,
+  withNowMinute,
+])(MonthCalendarCellAddEventButton);

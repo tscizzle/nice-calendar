@@ -17,8 +17,13 @@ let Topbar = ({ loggedInUser, selectedDatetime }) => {
   return (
     <div className="topbar">
       <img className="topbar-logo" src={logo} alt="" />
-      <div>
-        <ZoomSelector /> of {selectedMoment.format('YYYY-MM-DD')}
+      <div className="topbar-right">
+        <div>
+          <ZoomSelector />
+        </div>
+        <div className="topbar-selected-month">
+          {selectedMoment.format('MMMM YYYY')}
+        </div>
       </div>
     </div>
   );
