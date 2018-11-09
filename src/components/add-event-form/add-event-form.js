@@ -194,6 +194,7 @@ class AddEventForm extends Component {
     const startHourValue = startMoment.format('HH');
     const startMinuteValue = startMoment.format('mm');
     const validationErrorMsg = this.validateEventDoc(addingEventFormData);
+    const isError = hasAttemptedSave && Boolean(validationErrorMsg);
     return (
       <div className="add-event-form">
         <div className="add-event-form-top">
@@ -247,14 +248,12 @@ class AddEventForm extends Component {
               onClick={this.saveEvent}
               isPrimary={true}
               isCompact={true}
+              isDisabled={isError}
             >
               Save
             </NiceButton>
           </NiceFormSubmitRow>
-          {hasAttemptedSave &&
-            validationErrorMsg && (
-              <NiceFormErrorMsg errorMsg={validationErrorMsg} />
-            )}
+          {isError && <NiceFormErrorMsg errorMsg={validationErrorMsg} />}
         </div>
       </div>
     );

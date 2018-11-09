@@ -1,10 +1,8 @@
 @import '../../index';
 
 .content {
-  margin: $contentMargin;
-  height: calc(100vh - #{$topbarHeight} - (2 * #{$contentMargin}));
-  border-radius: 2px;
+  height: calc(100vh - #{$topbarHeight});
   background-color: $white;
   box-shadow: 0 0 3px $white;
-  color: $dark;
+  color: $darker;
 }
