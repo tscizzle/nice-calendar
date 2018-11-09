@@ -36,7 +36,7 @@ class AddEventForm extends Component {
   };
 
   state = {
-    validationErrorMsg: null,
+    hasAttemptedSave: false,
   };
 
   dayOptions = () => {
@@ -163,7 +163,7 @@ class AddEventForm extends Component {
       return 'Make your Event later than now.';
     }
     // if everything is fine, return no message
-    return false;
+    return '';
   };
 
   saveEvent = () => {
@@ -173,26 +173,27 @@ class AddEventForm extends Component {
       addingEventFormData,
       setAddingEventFormData,
     } = this.props;
-    const validationErrorMsg = this.validateEventDoc(addingEventFormData);
-    if (validationErrorMsg) {
-      this.setState({ validationErrorMsg });
-    } else {
-      addEvent({ event: addingEventFormData }).then(() => {
-        setAddingEventFormData({ event: null });
-        fetchEvents({ user: loggedInUser });
-      });
-    }
+    this.setState({ hasAttemptedSave: true }, () => {
+      const validationErrorMsg = this.validateEventDoc(addingEventFormData);
+      if (!validationErrorMsg) {
+        addEvent({ event: addingEventFormData }).then(() => {
+          setAddingEventFormData({ event: null });
+          fetchEvents({ user: loggedInUser });
+        });
+      }
+    });
   };
 
   render() {
     const { loggedInUser, addingEventFormData } = this.props;
-    const { validationErrorMsg } = this.state;
+    const { hasAttemptedSave } = this.state;
     const { title, startDatetime } = addingEventFormData;
     const timezone = getTimezoneFromUser(loggedInUser);
     const startMoment = moment(startDatetime).tz(timezone);
     const startDateValue = startMoment.format('YYYY-MM-DD');
     const startHourValue = startMoment.format('HH');
     const startMinuteValue = startMoment.format('mm');
+    const validationErrorMsg = this.validateEventDoc(addingEventFormData);
     return (
       <div className="add-event-form">
         <div className="add-event-form-top">
@@ -250,9 +251,10 @@ class AddEventForm extends Component {
               Save
             </NiceButton>
           </NiceFormSubmitRow>
-          {validationErrorMsg && (
-            <NiceFormErrorMsg errorMsg={validationErrorMsg} />
-          )}
+          {hasAttemptedSave &&
+            validationErrorMsg && (
+              <NiceFormErrorMsg errorMsg={validationErrorMsg} />
+            )}
         </div>
       </div>
     );
