@@ -90,6 +90,12 @@ class AddEventForm extends Component {
     return options;
   };
 
+  everyUnitOptions = () => [
+    { value: 'day', label: 'days' },
+    { value: 'week', label: 'weeks' },
+    { value: 'month', label: 'months' },
+  ];
+
   closeAddingEventForm = () => {
     const { setAddingEventFormData } = this.props;
     setAddingEventFormData({ event: null });
@@ -105,7 +111,7 @@ class AddEventForm extends Component {
     setAddingEventFormData({ event: newEvent });
   };
 
-  setStartDate = ({ value }, callback) => {
+  setStartDate = ({ value }) => {
     const {
       loggedInUser,
       addingEventFormData,
@@ -127,7 +133,6 @@ class AddEventForm extends Component {
       startDatetime: newStartDatetime,
     };
     setAddingEventFormData({ event: newEvent });
-    callback();
   };
 
   getSetStartTimeFunc = unit => {
@@ -152,6 +157,52 @@ class AddEventForm extends Component {
       setAddingEventFormData({ event: newEvent });
     };
     return setStartTime;
+  };
+
+  setIsRecurring = evt => {
+    const { addingEventFormData, setAddingEventFormData } = this.props;
+    const newIsRecurring = evt.target.checked;
+    const newEvent = {
+      ...addingEventFormData,
+      isRecurring: newIsRecurring,
+    };
+    if (newEvent.isRecurring && !newEvent.recurringSchedule) {
+      newEvent.recurringSchedule = {
+        repetitionType: 'everyXUnits',
+        everyX: 1,
+        everyUnit: 'week',
+      };
+    }
+    setAddingEventFormData({ event: newEvent });
+  };
+
+  setEveryX = evt => {
+    const { addingEventFormData, setAddingEventFormData } = this.props;
+    const newEveryX = evt.target.value;
+    const { recurringSchedule } = addingEventFormData;
+    const newRecurringSchedule = {
+      ...recurringSchedule,
+      everyX: newEveryX,
+    };
+    const newEvent = {
+      ...addingEventFormData,
+      recurringSchedule: newRecurringSchedule,
+    };
+    setAddingEventFormData({ event: newEvent });
+  };
+
+  setEveryUnit = ({ value }) => {
+    const { addingEventFormData, setAddingEventFormData } = this.props;
+    const { recurringSchedule } = addingEventFormData;
+    const newRecurringSchedule = {
+      ...recurringSchedule,
+      everyUnit: value,
+    };
+    const newEvent = {
+      ...addingEventFormData,
+      recurringSchedule: newRecurringSchedule,
+    };
+    setAddingEventFormData({ event: newEvent });
   };
 
   validateEventDoc = eventDoc => {
@@ -199,12 +250,19 @@ class AddEventForm extends Component {
       isEditingExistingEvent,
     } = this.props;
     const { hasAttemptedSave } = this.state;
-    const { title, startDatetime } = addingEventFormData;
+    const {
+      title,
+      startDatetime,
+      isRecurring,
+      recurringSchedule = {},
+    } = addingEventFormData;
     const timezone = getTimezoneFromUser(loggedInUser);
     const startMoment = moment(startDatetime).tz(timezone);
     const startDateValue = startMoment.format(this.dayValueFormat);
     const startHourValue = startMoment.format('HH');
     const startMinuteValue = startMoment.format('mm');
+    const everyX = recurringSchedule ? recurringSchedule.everyX : 1;
+    const everyUnit = recurringSchedule ? recurringSchedule.everyUnit : 'week';
     const validationErrorMsg = this.validateEventDoc(addingEventFormData);
     const isError = hasAttemptedSave && Boolean(validationErrorMsg);
     return (
@@ -259,6 +317,33 @@ class AddEventForm extends Component {
               max={59}
             />
           </NiceFormRow>
+          <NiceFormRow>
+            <NiceInput
+              checked={isRecurring}
+              onChange={this.setIsRecurring}
+              isBare={true}
+              type="checkbox"
+              label="Recurring every…"
+            />
+          </NiceFormRow>
+          {isRecurring && (
+            <NiceFormRow>
+              <NiceInput
+                value={everyX}
+                onChange={this.setEveryX}
+                isBare={true}
+                type="number"
+                min={1}
+                max={99}
+              />{' '}
+              <NiceSelect
+                options={this.everyUnitOptions()}
+                onChange={this.setEveryUnit}
+                selectedValue={everyUnit}
+                isBare={true}
+              />
+            </NiceFormRow>
+          )}
           <NiceFormSubmitRow>
             <NiceButton
               onClick={this.saveEvent}

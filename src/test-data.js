@@ -18,6 +18,7 @@ const DATABASE = [
         userId: 'u_0',
         title: 'Important meeting',
         startDatetime: new Date('2018-11-20T13:24:00Z'),
+        isRecurring: false,
         recurringSchedule: null,
         tags: ['work', 'important'],
       },
@@ -26,6 +27,7 @@ const DATABASE = [
         userId: 'u_0',
         title: 'Bi-Weekly jousting sesh long long title',
         startDatetime: new Date('2018-10-15T08:10:00Z'),
+        isRecurring: true,
         recurringSchedule: {
           repetitionType: 'everyXUnits',
           everyX: 2,

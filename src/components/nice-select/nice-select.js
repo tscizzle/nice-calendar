@@ -122,7 +122,8 @@ const NiceSelectOption = ({
   isSelected,
 }) => {
   const selectValue = () => {
-    onChange({ value }, toggleIsOpen);
+    onChange({ value });
+    toggleIsOpen();
   };
   const display = !_.isUndefined(label) ? label : value;
   const niceSelectOptionClasses = classNames('nice-select-option', {

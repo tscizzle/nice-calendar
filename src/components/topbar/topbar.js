@@ -83,10 +83,7 @@ let ZoomSelector = ({ selectedZoom, setSelectedZoom }) => {
     { value: 'week', label: 'Week' },
     { value: 'month', label: 'Month' },
   ];
-  const handleChange = ({ value }, callback) => {
-    setSelectedZoom({ zoom: value });
-    callback();
-  };
+  const handleChange = ({ value }) => setSelectedZoom({ zoom: value });
   return (
     <NiceSelect
       options={zoomOptions}

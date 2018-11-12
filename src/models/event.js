@@ -17,7 +17,8 @@ export const eventShape = PropTypes.shape({
   userId: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
   startDatetime: PropTypes.instanceOf(Date).isRequired,
-  recurringSchedule: recurringScheduleShape,
+  isRecurring: PropTypes.bool.isRequired,
+  recurringSchedule: recurringScheduleShape, // required if isRecurring: true
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
 });
 
@@ -35,6 +36,7 @@ export const makeNewEventDoc = ({ user, suppliedEvent }) => {
     userId,
     title: '',
     startDatetime,
+    isRecurring: false,
     recurringSchedule: null,
     tags: [],
     ...suppliedEvent,
@@ -93,7 +95,7 @@ export const getScheduledOccurrences = ({
   end,
   now,
 }) => {
-  const eventOccurrences = event.recurringSchedule
+  const eventOccurrences = event.isRecurring
     ? getRecurringEventOccurrences({ event, timezone, end })
     : [getSingleEventOccurrence({ event, timezone })];
   const boundedStart = _.max([now, start]);
@@ -106,16 +108,24 @@ export const getScheduledOccurrences = ({
 };
 
 export const getNextScheduledOccurrence = ({ event, timezone, now }) => {
-  if (event.recurringSchedule) {
+  if (event.isRecurring) {
     const { everyX, everyUnit } = event.recurringSchedule;
     const eventDatetime = getSingleEventOccurrence({ event, timezone })
       .occurrence.datetime;
     const eventMoment = moment(eventDatetime).tz(timezone);
     const nowMoment = moment(now).tz(timezone);
-    const numRepeats = _.max([
+    let numRepeats = _.max([
       _.ceil(nowMoment.diff(eventMoment, everyUnit) / everyX),
       0,
     ]);
+    // since moment.diff doesn't return the fractional amount, that alone may
+    // not tell us enough repeats, so check if it is and add one if needed
+    const candidateOccurrenceMoment = eventMoment
+      .clone()
+      .add(numRepeats * everyX, everyUnit);
+    if (candidateOccurrenceMoment.isBefore(nowMoment)) {
+      numRepeats += 1;
+    }
     const occurrenceMoment = eventMoment
       .clone()
       .add(numRepeats * everyX, everyUnit);

@@ -3,40 +3,53 @@
 .nice-input-container {
   display: inline-flex;
   position: relative;
-}
 
-.full-input-container {
-  width: 100%;
-}
-
-.nice-input {
-  width: 100%;
-  padding: 7px 10px;
-  border: solid 1px $light;
-  border-radius: 3px;
-  box-shadow: 1px 1px 1px $gray;
-  background-color: $white;
-  color: $dark;
-  font-size: 1em;
-  outline: none;
-
-  &[type='number'] {
-    padding: 7px 2px 7px 10px;
+  &.full-input-container {
+    width: 100%;
   }
-}
 
-.bare-input {
-  border: none;
-  border-bottom: solid 2px transparent;
-  border-radius: 0px;
-  box-shadow: none;
-  background-color: $lightest;
+  &.checkbox-input-container {
+    font-size: 0.85em;
+    cursor: pointer;
 
-  &:focus {
-    border-color: $blue;
+    input {
+      cursor: pointer;
+    }
   }
-}
 
-.bold-input {
-  font-weight: bold;
+  .nice-input {
+    width: 100%;
+    padding: 7px 10px;
+    border: solid 1px $light;
+    border-radius: 3px;
+    box-shadow: 1px 1px 1px $gray;
+    background-color: $white;
+    color: $dark;
+    font-size: 1em;
+    outline: none;
+
+    &[type='number'] {
+      padding: 7px 2px 7px 10px;
+    }
+
+    &[type='checkbox'] {
+      width: 1em;
+    }
+
+    &.bare-input {
+      border: none;
+      border-bottom: solid 2px transparent;
+      border-radius: 0px;
+      box-shadow: none;
+      background-color: $lightest;
+
+      &:focus {
+        border-color: $blue;
+      }
+    }
+
+    &.bold-input {
+      font-weight: bold;
+    }
+  }
 }
