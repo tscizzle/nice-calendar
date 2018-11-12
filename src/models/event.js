@@ -42,18 +42,6 @@ export const makeNewEventDoc = ({ user, suppliedEvent }) => {
   return event;
 };
 
-export const makeNewEventOccurrenceDoc = ({ event }) => {
-  const _id = randomID();
-  const occurrence = {
-    _id,
-    userId: event.userId,
-    eventId: event._id,
-    datetime: event.startDatetime,
-    checkedOff: false,
-  };
-  return occurrence;
-};
-
 const getSingleEventOccurrence = ({ event, timezone }) => {
   const eventMoment = moment(event.startDatetime).tz(timezone);
   const eventDatetime = eventMoment.toDate();

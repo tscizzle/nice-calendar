@@ -15,7 +15,6 @@ import { userShape, getTimezoneFromUser } from 'models/user';
 import {
   eventShape,
   makeNewEventDoc,
-  makeNewEventOccurrenceDoc,
   getScheduledOccurrences,
   getNextScheduledOccurrence,
 } from 'models/event';
@@ -29,8 +28,6 @@ class MonthCalendar extends Component {
     fetchEvents: PropTypes.func.isRequired,
     fetchOccurrences: PropTypes.func.isRequired,
     selectedDatetime: PropTypes.instanceOf(Date).isRequired,
-    addingEventFormData: eventShape,
-    isEditingExistingEvent: PropTypes.bool.isRequired,
   };
 
   componentDidMount() {
@@ -40,47 +37,20 @@ class MonthCalendar extends Component {
   }
 
   render() {
-    const {
-      loggedInUser,
-      selectedDatetime,
-      addingEventFormData,
-      isEditingExistingEvent,
-    } = this.props;
+    const { loggedInUser, selectedDatetime } = this.props;
     const timezone = getTimezoneFromUser(loggedInUser);
     const selectedMoment = moment(selectedDatetime).tz(timezone);
     const monthStart = selectedMoment.clone().startOf('month');
     const monthEnd = selectedMoment.clone().endOf('month');
     const numWeeks = monthEnd.diff(monthStart, 'weeks') + 1;
-    let addingEventOccurrence;
-    let addingEventMoment;
-    if (addingEventFormData && !isEditingExistingEvent) {
-      const occurrence = makeNewEventOccurrenceDoc({
-        event: addingEventFormData,
-      });
-      addingEventOccurrence = {
-        event: addingEventFormData,
-        occurrence,
-        isBeingAdded: true,
-      };
-      const { datetime } = occurrence;
-      addingEventMoment = moment(datetime).tz(timezone);
-    }
     const weeks = _.times(numWeeks, week => {
       const weekContainedMoment = monthStart.clone().add(week, 'weeks');
       const containedDatetime = weekContainedMoment.toDate();
-      const isAddingEventToThisRow = weekContainedMoment.isSame(
-        addingEventMoment,
-        'week'
-      );
-      const addingEventOccurrenceArg = isAddingEventToThisRow
-        ? { addingEventOccurrence }
-        : {};
       const rowKey = weekContainedMoment.format('YYYY-MM-DD');
       return (
         <MonthCalendarRow
           containedDatetime={containedDatetime}
           numWeeks={numWeeks}
-          {...addingEventOccurrenceArg}
           key={rowKey}
         />
       );
@@ -94,7 +64,6 @@ MonthCalendar = _.flow([
   withEvents,
   withOccurrences,
   withSelectedDatetime,
-  withAddingEventFormData,
 ])(MonthCalendar);
 
 export default MonthCalendar;
@@ -102,32 +71,19 @@ export default MonthCalendar;
 let MonthCalendarRow = ({
   containedDatetime,
   numWeeks,
-  addingEventOccurrence,
   loggedInUser,
+  nowMinute,
 }) => {
   const timezone = getTimezoneFromUser(loggedInUser);
   const containedMoment = moment(containedDatetime).tz(timezone);
   const weekStart = containedMoment.clone().startOf('week');
-  let addingEventMoment;
-  if (addingEventOccurrence) {
-    const { datetime } = addingEventOccurrence.occurrence;
-    addingEventMoment = moment(datetime).tz(timezone);
-  }
   const days = _.times(7, day => {
     const dayContainedMoment = weekStart.clone().add(day, 'days');
     const dayContainedDatetime = dayContainedMoment.toDate();
-    const isAddingEventToThisCell = dayContainedMoment.isSame(
-      addingEventMoment,
-      'day'
-    );
-    const addingEventOccurrenceArg = isAddingEventToThisCell
-      ? { addingEventOccurrence }
-      : {};
     const cellKey = dayContainedMoment.format('YYYY-MM-DD');
     return (
       <MonthCalendarCell
         containedDatetime={dayContainedDatetime}
-        {...addingEventOccurrenceArg}
         key={cellKey}
       />
     );
@@ -143,24 +99,15 @@ let MonthCalendarRow = ({
 MonthCalendarRow.propTypes = {
   containedDatetime: PropTypes.instanceOf(Date).isRequired,
   numWeeks: PropTypes.oneOf([4, 5, 6]).isRequired,
-  addingEventOccurrence: PropTypes.shape({
-    event: eventShape.isRequired,
-    occurrence: occurrenceShape.isRequired,
-    isBeingAdded: PropTypes.oneOf([true]).isRequired,
-  }),
   loggedInUser: userShape.isRequired,
+  nowMinute: PropTypes.instanceOf(Date).isRequired,
 };
 
-MonthCalendarRow = withUser(MonthCalendarRow);
+MonthCalendarRow = _.flow([withUser, withNowMinute])(MonthCalendarRow);
 
 class MonthCalendarCell extends Component {
   static propTypes = {
     containedDatetime: PropTypes.instanceOf(Date).isRequired,
-    addingEventOccurrence: PropTypes.shape({
-      event: eventShape.isRequired,
-      occurrence: occurrenceShape.isRequired,
-      isBeingAdded: PropTypes.oneOf([true]).isRequired,
-    }),
     loggedInUser: userShape.isRequired,
     events: PropTypes.objectOf(eventShape).isRequired,
     occurrences: PropTypes.objectOf(occurrenceShape).isRequired,
@@ -179,11 +126,11 @@ class MonthCalendarCell extends Component {
   render() {
     const {
       containedDatetime,
-      addingEventOccurrence,
       loggedInUser,
       events,
       occurrences,
       selectedDatetime,
+      addingEventFormData,
       nowMinute,
     } = this.props;
     const { isHovered } = this.state;
@@ -195,13 +142,19 @@ class MonthCalendarCell extends Component {
     const dayEnd = dayEndMoment.toDate();
     const dayScheduledOccurrences = [];
     _.each(_.values(events), event => {
-      const eventOccurrences = getScheduledOccurrences({
+      let eventOccurrences = getScheduledOccurrences({
         event,
         timezone,
         start: dayStart,
         end: dayEnd,
         now: nowMinute,
       });
+      if (addingEventFormData) {
+        eventOccurrences = _.reject(
+          eventOccurrences,
+          ({ event }) => event._id === addingEventFormData._id
+        );
+      }
       dayScheduledOccurrences.push(...eventOccurrences);
     });
     const dayPastOccurrences = [];
@@ -212,23 +165,29 @@ class MonthCalendarCell extends Component {
         dayPastOccurrences.push({ event, occurrence });
       }
     });
-    const addingEventOccurrences = [];
-    if (addingEventOccurrence) {
-      addingEventOccurrences.push(addingEventOccurrence);
+    const dayEditingEventOccurrences = [];
+    if (addingEventFormData) {
+      const editingEventOccurrences = getScheduledOccurrences({
+        event: addingEventFormData,
+        timezone,
+        start: dayStart,
+        end: dayEnd,
+        now: nowMinute,
+      });
+      dayEditingEventOccurrences.push(...editingEventOccurrences);
     }
     const allOccurrences = _.concat(
       dayPastOccurrences,
       dayScheduledOccurrences,
-      addingEventOccurrences
+      dayEditingEventOccurrences
     );
     const sortedOccurrences = _.sortBy(allOccurrences, 'occurrence.datetime');
     const occurrenceDisplays = _.map(
       sortedOccurrences,
-      ({ event, occurrence, isBeingAdded }) => (
+      ({ event, occurrence }) => (
         <MonthCalendarOccurrence
           event={event}
           occurrence={occurrence}
-          isBeingAdded={isBeingAdded}
           key={occurrence._id}
         />
       )
@@ -280,18 +239,21 @@ MonthCalendarCell = _.flow([
   withEvents,
   withOccurrences,
   withSelectedDatetime,
+  withAddingEventFormData,
   withNowMinute,
 ])(MonthCalendarCell);
 
 let MonthCalendarOccurrence = ({
   event,
   occurrence,
-  isBeingAdded,
   loggedInUser,
   addingEventFormData,
+  isEditingExistingEvent,
   setAddingEventFormData,
   nowMinute,
 }) => {
+  const isBeingEdited =
+    addingEventFormData && addingEventFormData._id === event._id;
   const timezone = getTimezoneFromUser(loggedInUser);
   const openEditingEventForm = () => {
     const nextScheduledOccurrence = getNextScheduledOccurrence({
@@ -312,11 +274,11 @@ let MonthCalendarOccurrence = ({
     .tz(timezone)
     .format('HH:mm');
   const text =
-    event.title || (isBeingAdded ? '(Adding event…)' : '(Untitled event)');
+    event.title || (isBeingEdited ? '(Adding event…)' : '(Untitled event)');
   const monthCalendarOccurrenceClasses = classNames(
     'month-calendar-occurrence',
     {
-      'month-calendar-occurrence-being-added': isBeingAdded,
+      'month-calendar-occurrence-being-edited': isBeingEdited,
     }
   );
   return (
@@ -333,9 +295,10 @@ let MonthCalendarOccurrence = ({
 MonthCalendarOccurrence.propTypes = {
   event: eventShape.isRequired,
   occurrence: occurrenceShape.isRequired,
-  isBeingAdded: PropTypes.bool,
+  isBeingEdited: PropTypes.bool,
   loggedInUser: userShape.isRequired,
   addingEventFormData: eventShape,
+  isEditingExistingEvent: PropTypes.bool.isRequired,
   setAddingEventFormData: PropTypes.func.isRequired,
   nowMinute: PropTypes.instanceOf(Date).isRequired,
 };

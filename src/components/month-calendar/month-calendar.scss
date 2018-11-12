@@ -62,7 +62,7 @@
 
       &.month-calendar-cell-day-number-today {
         border-radius: 50%;
-        background-color: $blue;
+        background-color: $green;
         color: $white;
         font-weight: bold;
       }
@@ -123,7 +123,7 @@
     margin-bottom: 4px;
   }
 
-  &.month-calendar-occurrence-being-added {
+  &.month-calendar-occurrence-being-edited {
     background-color: $lightYellow;
     box-shadow: 1px 1px 1px $darkYellow;
     color: $darkYellow;

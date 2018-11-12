@@ -211,6 +211,7 @@ class AddEventForm extends Component {
       <div className="add-event-form">
         <div className="add-event-form-top">
           <div className="add-event-form-header">
+            <div className="add-event-form-dot" />
             {isEditingExistingEvent ? 'Editing event…' : 'Adding event…'}
           </div>
           <div
