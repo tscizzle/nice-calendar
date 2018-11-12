@@ -15,8 +15,53 @@
     display: flex;
     align-items: center;
 
+    .topbar-calendar-control {
+      display: flex;
+      align-items: center;
+    }
+
+    .topbar-calendar-control > * {
+      margin: 0px 10px;
+    }
+
     .topbar-selected-month {
-      margin-left: 20px;
+      display: flex;
+      flex-direction: row-reverse;
+      min-width: 150px;
+      margin: 0px 20px;
+    }
+  }
+}
+
+.datetime-pager {
+  display: flex;
+  align-items: center;
+  color: $white;
+  font-size: 1.3em;
+
+  .datetime-pager-button {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 1.5em;
+    width: 1.5em;
+    border-radius: 50%;
+    cursor: pointer;
+
+    &:hover {
+      background-color: $gray;
+    }
+
+    &:active {
+      background-color: $lightGray;
+    }
+
+    .previous-page-icon {
+      margin-right: 2px;
+    }
+
+    .next-page-icon {
+      margin-left: 2px;
     }
   }
 }

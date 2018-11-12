@@ -17,6 +17,7 @@ import {
   makeNewEventDoc,
   makeNewEventOccurrenceDoc,
   getScheduledOccurrences,
+  getNextScheduledOccurrence,
 } from 'models/event';
 import { occurrenceShape } from 'models/occurrence';
 
@@ -29,6 +30,7 @@ class MonthCalendar extends Component {
     fetchOccurrences: PropTypes.func.isRequired,
     selectedDatetime: PropTypes.instanceOf(Date).isRequired,
     addingEventFormData: eventShape,
+    isEditingExistingEvent: PropTypes.bool.isRequired,
   };
 
   componentDidMount() {
@@ -38,7 +40,12 @@ class MonthCalendar extends Component {
   }
 
   render() {
-    const { loggedInUser, selectedDatetime, addingEventFormData } = this.props;
+    const {
+      loggedInUser,
+      selectedDatetime,
+      addingEventFormData,
+      isEditingExistingEvent,
+    } = this.props;
     const timezone = getTimezoneFromUser(loggedInUser);
     const selectedMoment = moment(selectedDatetime).tz(timezone);
     const monthStart = selectedMoment.clone().startOf('month');
@@ -46,7 +53,7 @@ class MonthCalendar extends Component {
     const numWeeks = monthEnd.diff(monthStart, 'weeks') + 1;
     let addingEventOccurrence;
     let addingEventMoment;
-    if (addingEventFormData) {
+    if (addingEventFormData && !isEditingExistingEvent) {
       const occurrence = makeNewEventOccurrenceDoc({
         event: addingEventFormData,
       });
@@ -59,21 +66,22 @@ class MonthCalendar extends Component {
       addingEventMoment = moment(datetime).tz(timezone);
     }
     const weeks = _.times(numWeeks, week => {
-      const containedMoment = monthStart.clone().add(week, 'weeks');
-      const containedDatetime = containedMoment.toDate();
-      const isAddingEventToThisRow = containedMoment.isSame(
+      const weekContainedMoment = monthStart.clone().add(week, 'weeks');
+      const containedDatetime = weekContainedMoment.toDate();
+      const isAddingEventToThisRow = weekContainedMoment.isSame(
         addingEventMoment,
         'week'
       );
       const addingEventOccurrenceArg = isAddingEventToThisRow
         ? { addingEventOccurrence }
         : {};
+      const rowKey = weekContainedMoment.format('YYYY-MM-DD');
       return (
         <MonthCalendarRow
           containedDatetime={containedDatetime}
           numWeeks={numWeeks}
           {...addingEventOccurrenceArg}
-          key={week}
+          key={rowKey}
         />
       );
     });
@@ -115,11 +123,12 @@ let MonthCalendarRow = ({
     const addingEventOccurrenceArg = isAddingEventToThisCell
       ? { addingEventOccurrence }
       : {};
+    const cellKey = dayContainedMoment.format('YYYY-MM-DD');
     return (
       <MonthCalendarCell
         containedDatetime={dayContainedDatetime}
         {...addingEventOccurrenceArg}
-        key={day}
+        key={cellKey}
       />
     );
   });
@@ -279,9 +288,27 @@ let MonthCalendarOccurrence = ({
   occurrence,
   isBeingAdded,
   loggedInUser,
+  addingEventFormData,
+  setAddingEventFormData,
+  nowMinute,
 }) => {
   const timezone = getTimezoneFromUser(loggedInUser);
-  const occurrenceTime = moment(occurrence.datetime)
+  const openEditingEventForm = () => {
+    const nextScheduledOccurrence = getNextScheduledOccurrence({
+      event,
+      timezone,
+      now: nowMinute,
+    });
+    const newStartDatetime = nextScheduledOccurrence
+      ? nextScheduledOccurrence.occurrence.datetime
+      : event.startDatetime;
+    const newEvent = {
+      ...event,
+      startDatetime: newStartDatetime,
+    };
+    setAddingEventFormData({ event: newEvent });
+  };
+  const occurrenceTimeString = moment(occurrence.datetime)
     .tz(timezone)
     .format('HH:mm');
   const text =
@@ -293,7 +320,11 @@ let MonthCalendarOccurrence = ({
     }
   );
   return (
-    <div className={monthCalendarOccurrenceClasses} title={occurrenceTime}>
+    <div
+      className={monthCalendarOccurrenceClasses}
+      title={occurrenceTimeString}
+      onClick={openEditingEventForm}
+    >
       <div className="month-calendar-occurrence-inner">{text}</div>
     </div>
   );
@@ -304,14 +335,22 @@ MonthCalendarOccurrence.propTypes = {
   occurrence: occurrenceShape.isRequired,
   isBeingAdded: PropTypes.bool,
   loggedInUser: userShape.isRequired,
+  addingEventFormData: eventShape,
+  setAddingEventFormData: PropTypes.func.isRequired,
+  nowMinute: PropTypes.instanceOf(Date).isRequired,
 };
 
-MonthCalendarOccurrence = withUser(MonthCalendarOccurrence);
+MonthCalendarOccurrence = _.flow([
+  withUser,
+  withAddingEventFormData,
+  withNowMinute,
+])(MonthCalendarOccurrence);
 
 let MonthCalendarCellAddEventButton = ({
   containedDatetime,
   loggedInUser,
   addingEventFormData,
+  isEditingExistingEvent,
   setAddingEventFormData,
   nowMinute,
 }) => {
@@ -338,7 +377,7 @@ let MonthCalendarCellAddEventButton = ({
       startDatetime = startMoment.toDate();
     }
     const suppliedEvent = {
-      ...addingEventFormData,
+      ...(isEditingExistingEvent ? {} : addingEventFormData),
       startDatetime,
     };
     const event = makeNewEventDoc({ user: loggedInUser, suppliedEvent });
@@ -358,6 +397,7 @@ MonthCalendarCellAddEventButton.propTypes = {
   containedDatetime: PropTypes.instanceOf(Date).isRequired,
   loggedInUser: userShape.isRequired,
   addingEventFormData: eventShape,
+  isEditingExistingEvent: PropTypes.bool.isRequired,
   setAddingEventFormData: PropTypes.func.isRequired,
   nowMinute: PropTypes.instanceOf(Date).isRequired,
 };

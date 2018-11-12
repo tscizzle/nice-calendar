@@ -11,8 +11,8 @@
   border: none;
   border-radius: 3px;
   box-shadow: 1px 1px 1px $gray;
-  background-color: $lighter;
-  color: $dark;
+  background-color: $lightest;
+  color: $darker;
   font-size: 15px;
   outline: none;
 
@@ -20,11 +20,11 @@
     cursor: pointer;
 
     &:hover {
-      opacity: 0.9;
+      background-color: $lighter;
     }
 
     &:active {
-      opacity: 0.8;
+      background-color: $light;
     }
   }
 
@@ -54,9 +54,25 @@
 .primary-button {
   background-color: $blue;
   color: $lightest;
+
+  &:hover:not(:disabled) {
+    background-color: $hoverBlue;
+  }
+
+  &:active:not(:disabled) {
+    background-color: $activeBlue;
+  }
 }
 
 .secondary-button {
   background-color: $green;
   color: $lightest;
+
+  &:hover:not(:disabled) {
+    background-color: $hoverGreen;
+  }
+
+  &:active:not(:disabled) {
+    background-color: $activeGreen;
+  }
 }

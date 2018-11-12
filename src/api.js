@@ -21,10 +21,11 @@ export const getEvents = ({ userId }) => {
   });
 };
 
-export const addEvent = ({ event }) => {
+export const upsertEvent = ({ event }) => {
   return new Promise(function(resolve, reject) {
     const events = _.find(DATABASE, { collection: 'events' });
-    const eventDocs = events.documents;
+    let eventDocs = events.documents;
+    eventDocs = _.reject(eventDocs, { _id: event._id });
     eventDocs.push(event);
     resolve();
   });

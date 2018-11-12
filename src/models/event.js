@@ -78,8 +78,9 @@ const getRecurringEventOccurrences = ({ event, timezone, end }) => {
     if (eventMoment.isAfter(endMoment)) {
       return [];
     }
-    const numRepeats = _.floor(endMoment.diff(eventMoment, everyUnit) / everyX);
-    const scheduledOccurrences = _.times(numRepeats + 1, repeat => {
+    const numRepeats =
+      _.floor(endMoment.diff(eventMoment, everyUnit) / everyX) + 1;
+    const scheduledOccurrences = _.times(numRepeats, repeat => {
       const occurrenceMoment = eventMoment
         .clone()
         .add(repeat * everyX, everyUnit);
@@ -114,4 +115,33 @@ export const getScheduledOccurrences = ({
       boundedStart <= occurrence.datetime && occurrence.datetime <= end
   );
   return eventOccurrencesInWindow;
+};
+
+export const getNextScheduledOccurrence = ({ event, timezone, now }) => {
+  if (event.recurringSchedule) {
+    const { everyX, everyUnit } = event.recurringSchedule;
+    const eventDatetime = getSingleEventOccurrence({ event, timezone })
+      .occurrence.datetime;
+    const eventMoment = moment(eventDatetime).tz(timezone);
+    const nowMoment = moment(now).tz(timezone);
+    const numRepeats =
+      _.floor(nowMoment.diff(eventMoment, everyUnit) / everyX) + 1;
+    const occurrenceMoment = eventMoment
+      .clone()
+      .add(numRepeats * everyX, everyUnit);
+    const occurrenceDatetime = occurrenceMoment.toDate();
+    const occurrence = {
+      _id: `${event._id}-${occurrenceMoment.format()}`,
+      userId: event.userId,
+      eventId: event._id,
+      datetime: occurrenceDatetime,
+      checkedOff: false,
+    };
+    return { event, occurrence };
+  } else {
+    const scheduledOccurrence = getSingleEventOccurrence({ event, timezone });
+    if (scheduledOccurrence.occurrence.datetime >= now) {
+      return scheduledOccurrence;
+    }
+  }
 };

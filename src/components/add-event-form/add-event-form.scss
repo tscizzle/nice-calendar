@@ -2,36 +2,42 @@
 
 .add-event-form {
   padding: 10px;
-}
 
-.add-event-form-top {
-  display: flex;
-  flex-direction: row-reverse;
-}
+  .add-event-form-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
 
-.add-event-form-close-button {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 2em;
-  height: 2em;
-  border-radius: 1em;
-  color: $dark;
-  cursor: pointer;
+    .add-event-form-header {
+      color: $dark;
+      font-weight: bold;
+    }
 
-  &:hover {
-    background-color: $light;
+    .add-event-form-close-button {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 2em;
+      height: 2em;
+      border-radius: 1em;
+      color: $dark;
+      cursor: pointer;
+
+      &:hover {
+        background-color: $light;
+      }
+
+      &:active {
+        background-color: $lightGray;
+      }
+    }
   }
 
-  &:active {
-    background-color: $lightGray;
+  .add-event-form-content {
+    margin-top: 30px;
+
+    .add-event-form-date-select {
+      margin-right: 8px;
+    }
   }
-}
-
-.add-event-form-content {
-  margin: 10px 0;
-}
-
-.add-event-form-date-select {
-  margin-right: 8px;
 }

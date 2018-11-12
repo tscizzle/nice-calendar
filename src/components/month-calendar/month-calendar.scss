@@ -57,8 +57,8 @@
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 1.5em;
-      width: 1.5em;
+      height: 1.8em;
+      width: 1.8em;
 
       &.month-calendar-cell-day-number-today {
         border-radius: 50%;
@@ -117,6 +117,7 @@
   background-color: $lightBlue;
   box-shadow: 1px 1px 1px $blue;
   color: $darkBlue;
+  cursor: pointer;
 
   &:not(:last-child) {
     margin-bottom: 4px;

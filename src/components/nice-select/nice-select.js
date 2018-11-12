@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import classNames from 'classnames';
+import { FaCaretDown } from 'react-icons/fa';
 import enhanceWithClickOutside from 'react-click-outside';
 
 import 'stylesheets/components/nice-select/nice-select.css';
@@ -99,6 +100,7 @@ class NiceSelect extends Component {
           {...otherProps}
         >
           {selectedLabel}
+          {!isBare && <FaCaretDown className="nice-select-icon" />}
         </div>
         {isOpen && (
           <div className="nice-select-options-container">{selectOptions}</div>
