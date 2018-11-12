@@ -66,7 +66,7 @@ class NiceInput extends Component {
       />
     );
     return label ? (
-      <label for={elId} className={containerClasses}>
+      <label htmlFor={elId} className={containerClasses}>
         {inputComponent} {label}
       </label>
     ) : (

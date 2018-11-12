@@ -4,23 +4,23 @@ import _ from 'lodash';
 import classNames from 'classnames';
 
 import withSelectedZoom from 'state-management/state-connectors/with-selected-zoom';
-import withAddingEventFormData from 'state-management/state-connectors/with-adding-event-form-data';
+import withEditingEventFormData from 'state-management/state-connectors/with-editing-event-form-data';
 
 import DayCalendar from 'components/day-calendar/day-calendar';
 import WeekCalendar from 'components/week-calendar/week-calendar';
 import MonthCalendar from 'components/month-calendar/month-calendar';
-import AddEventForm from 'components/add-event-form/add-event-form';
+import EditEventForm from 'components/edit-event-form/edit-event-form';
 
 import 'stylesheets/components/calendar-view/calendar-view.css';
 
-let CalendarView = ({ selectedZoom, addingEventFormData }) => {
+let CalendarView = ({ selectedZoom, editingEventFormData }) => {
   const calendarComponent = {
     day: DayCalendar,
     week: WeekCalendar,
     month: MonthCalendar,
   }[selectedZoom];
   const calendar = React.createElement(calendarComponent);
-  const isLeftSidebarOpened = Boolean(addingEventFormData);
+  const isLeftSidebarOpened = Boolean(editingEventFormData);
   const calendarContainerClasses = classNames('calendar-container', {
     'left-sidebar-opened': isLeftSidebarOpened,
   });
@@ -31,7 +31,7 @@ let CalendarView = ({ selectedZoom, addingEventFormData }) => {
   return (
     <div className="calendar-view-container">
       <div className={calendarViewLeftSidebarClasses}>
-        {addingEventFormData && <AddEventForm />}
+        {editingEventFormData && <EditEventForm />}
       </div>
       <div className={calendarContainerClasses}>{calendar}</div>
     </div>
@@ -40,10 +40,10 @@ let CalendarView = ({ selectedZoom, addingEventFormData }) => {
 
 CalendarView.propTypes = {
   selectedZoom: PropTypes.oneOf(['day', 'week', 'month']).isRequired,
-  addingEventFormData: PropTypes.object,
+  editingEventFormData: PropTypes.object,
 };
 
-CalendarView = _.flow([withSelectedZoom, withAddingEventFormData])(
+CalendarView = _.flow([withSelectedZoom, withEditingEventFormData])(
   CalendarView
 );
 

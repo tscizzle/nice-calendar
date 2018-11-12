@@ -76,3 +76,27 @@
     background-color: $activeGreen;
   }
 }
+
+.circle-button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 2em;
+  height: 2em;
+  border-radius: 1em;
+  background-color: transparent;
+  color: $dark;
+  cursor: pointer;
+
+  &:hover {
+    background-color: $light;
+  }
+
+  &:active {
+    background-color: $lightGray;
+  }
+
+  &.small-circle-button {
+    font-size: 0.85em;
+  }
+}

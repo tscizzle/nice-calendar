@@ -9,7 +9,7 @@ import {
   FETCH_OCCURRENCES_FAILURE,
   SET_SELECTED_DATETIME,
   SET_SELECTED_ZOOM,
-  SET_ADDING_EVENT,
+  SET_EDITING_EVENT,
   UPDATE_NOW_MINUTE,
 } from 'state-management/actions';
 
@@ -19,7 +19,7 @@ const initialState = {
   occurrences: {},
   selectedDatetime: moment().toDate(),
   selectedZoom: 'month',
-  addingEventFormData: null,
+  editingEventFormData: null,
   nowMinute: moment()
     .startOf('minute')
     .toDate(),
@@ -58,8 +58,8 @@ const mainReducer = (state = initialState, action) => {
     case SET_SELECTED_ZOOM:
       newState = { ...state, selectedZoom: action.zoom };
       break;
-    case SET_ADDING_EVENT:
-      newState = { ...state, addingEventFormData: action.event };
+    case SET_EDITING_EVENT:
+      newState = { ...state, editingEventFormData: action.event };
       break;
     case UPDATE_NOW_MINUTE:
       newState = { ...state, nowMinute: action.datetime };

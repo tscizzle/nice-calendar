@@ -4,17 +4,17 @@ import _ from 'lodash';
 import moment from 'moment-timezone';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { upsertEvent } from 'api';
+import { upsertEvent, deleteEvent } from 'api';
 import withUser from 'state-management/state-connectors/with-user';
 import withEvents from 'state-management/state-connectors/with-events';
 import withSelectedDatetime from 'state-management/state-connectors/with-selected-datetime';
 import withSelectedZoom from 'state-management/state-connectors/with-selected-zoom';
-import withAddingEventFormData from 'state-management/state-connectors/with-adding-event-form-data';
+import withEditingEventFormData from 'state-management/state-connectors/with-editing-event-form-data';
 import withNowMinute from 'state-management/state-connectors/with-now-minute';
 import { userShape, getTimezoneFromUser } from 'models/user';
 import { eventShape } from 'models/event';
 
-import NiceButton from 'components/nice-button/nice-button';
+import NiceButton, { CircleButton } from 'components/nice-button/nice-button';
 import NiceInput from 'components/nice-input/nice-input';
 import NiceSelect from 'components/nice-select/nice-select';
 import {
@@ -23,18 +23,18 @@ import {
   NiceFormErrorMsg,
 } from 'components/nice-form/nice-form';
 
-import 'stylesheets/components/add-event-form/add-event-form.css';
+import 'stylesheets/components/edit-event-form/edit-event-form.css';
 
-class AddEventForm extends Component {
+class EditEventForm extends Component {
   static propTypes = {
     loggedInUser: userShape.isRequired,
     events: PropTypes.objectOf(eventShape).isRequired,
     fetchEvents: PropTypes.func.isRequired,
     selectedDatetime: PropTypes.instanceOf(Date).isRequired,
     selectedZoom: PropTypes.oneOf(['day', 'week', 'month']).isRequired,
-    addingEventFormData: PropTypes.object.isRequired,
+    editingEventFormData: PropTypes.object.isRequired,
     isEditingExistingEvent: PropTypes.bool.isRequired,
-    setAddingEventFormData: PropTypes.func.isRequired,
+    setEditingEventFormData: PropTypes.func.isRequired,
     nowMinute: PropTypes.instanceOf(Date).isRequired,
   };
 
@@ -49,10 +49,10 @@ class AddEventForm extends Component {
       loggedInUser,
       selectedDatetime,
       selectedZoom,
-      addingEventFormData,
+      editingEventFormData,
       nowMinute,
     } = this.props;
-    const { startDatetime } = addingEventFormData;
+    const { startDatetime } = editingEventFormData;
     const timezone = getTimezoneFromUser(loggedInUser);
     const nowMinuteMoment = moment(nowMinute).tz(timezone);
     const selectedMoment = moment(selectedDatetime).tz(timezone);
@@ -74,18 +74,18 @@ class AddEventForm extends Component {
         options.push({ value, label, labelWhenSelected });
       }
     });
-    const addingEventMoment = moment(startDatetime).tz(timezone);
-    const addingEventOption = {
-      value: addingEventMoment.format(valueFormat),
-      label: addingEventMoment.format(labelFormat),
-      labelWhenSelected: addingEventMoment.format(labelWhenSelectedFormat),
+    const editingEventMoment = moment(startDatetime).tz(timezone);
+    const editingEventOption = {
+      value: editingEventMoment.format(valueFormat),
+      label: editingEventMoment.format(labelFormat),
+      labelWhenSelected: editingEventMoment.format(labelWhenSelectedFormat),
     };
-    const isAddingBeforeSelection = selectionStart.isAfter(addingEventMoment);
-    const isAddingAfterSelection = selectionEnd.isBefore(addingEventMoment);
-    if (isAddingBeforeSelection) {
-      options.unshift(addingEventOption);
-    } else if (isAddingAfterSelection) {
-      options.push(addingEventOption);
+    const isEditingBeforeSelection = selectionStart.isAfter(editingEventMoment);
+    const isEditingAfterSelection = selectionEnd.isBefore(editingEventMoment);
+    if (isEditingBeforeSelection) {
+      options.unshift(editingEventOption);
+    } else if (isEditingAfterSelection) {
+      options.push(editingEventOption);
     }
     return options;
   };
@@ -96,30 +96,27 @@ class AddEventForm extends Component {
     { value: 'month', label: 'months' },
   ];
 
-  closeAddingEventForm = () => {
-    const { setAddingEventFormData } = this.props;
-    setAddingEventFormData({ event: null });
+  closeEditingEventForm = () => {
+    const { setEditingEventFormData } = this.props;
+    setEditingEventFormData({ event: null });
   };
 
   setTitle = evt => {
-    const { addingEventFormData, setAddingEventFormData } = this.props;
+    const { editingEventFormData, setEditingEventFormData } = this.props;
     const newTitle = evt.target.value;
-    const newEvent = {
-      ...addingEventFormData,
-      title: newTitle,
-    };
-    setAddingEventFormData({ event: newEvent });
+    const newEvent = { ...editingEventFormData, title: newTitle };
+    setEditingEventFormData({ event: newEvent });
   };
 
   setStartDate = ({ value }) => {
     const {
       loggedInUser,
-      addingEventFormData,
-      setAddingEventFormData,
+      editingEventFormData,
+      setEditingEventFormData,
     } = this.props;
     const timezone = getTimezoneFromUser(loggedInUser);
     const newDayMoment = moment.tz(value, timezone);
-    const { startDatetime } = addingEventFormData;
+    const { startDatetime } = editingEventFormData;
     const startMoment = moment(startDatetime).tz(timezone);
     const newStartDatetime = newDayMoment
       .clone()
@@ -129,43 +126,40 @@ class AddEventForm extends Component {
       })
       .toDate();
     const newEvent = {
-      ...addingEventFormData,
+      ...editingEventFormData,
       startDatetime: newStartDatetime,
     };
-    setAddingEventFormData({ event: newEvent });
+    setEditingEventFormData({ event: newEvent });
   };
 
   getSetStartTimeFunc = unit => {
     const setStartTime = evt => {
       const {
         loggedInUser,
-        addingEventFormData,
-        setAddingEventFormData,
+        editingEventFormData,
+        setEditingEventFormData,
       } = this.props;
       const value = parseInt(evt.target.value, 10);
       const timezone = getTimezoneFromUser(loggedInUser);
-      const { startDatetime } = addingEventFormData;
+      const { startDatetime } = editingEventFormData;
       const startMoment = moment(startDatetime).tz(timezone);
       const newStartDatetime = startMoment
         .clone()
         .set({ [unit]: value })
         .toDate();
       const newEvent = {
-        ...addingEventFormData,
+        ...editingEventFormData,
         startDatetime: newStartDatetime,
       };
-      setAddingEventFormData({ event: newEvent });
+      setEditingEventFormData({ event: newEvent });
     };
     return setStartTime;
   };
 
   setIsRecurring = evt => {
-    const { addingEventFormData, setAddingEventFormData } = this.props;
+    const { editingEventFormData, setEditingEventFormData } = this.props;
     const newIsRecurring = evt.target.checked;
-    const newEvent = {
-      ...addingEventFormData,
-      isRecurring: newIsRecurring,
-    };
+    const newEvent = { ...editingEventFormData, isRecurring: newIsRecurring };
     if (newEvent.isRecurring && !newEvent.recurringSchedule) {
       newEvent.recurringSchedule = {
         repetitionType: 'everyXUnits',
@@ -173,36 +167,30 @@ class AddEventForm extends Component {
         everyUnit: 'week',
       };
     }
-    setAddingEventFormData({ event: newEvent });
+    setEditingEventFormData({ event: newEvent });
   };
 
   setEveryX = evt => {
-    const { addingEventFormData, setAddingEventFormData } = this.props;
+    const { editingEventFormData, setEditingEventFormData } = this.props;
     const newEveryX = evt.target.value;
-    const { recurringSchedule } = addingEventFormData;
-    const newRecurringSchedule = {
-      ...recurringSchedule,
-      everyX: newEveryX,
-    };
+    const { recurringSchedule } = editingEventFormData;
+    const newRecurringSchedule = { ...recurringSchedule, everyX: newEveryX };
     const newEvent = {
-      ...addingEventFormData,
+      ...editingEventFormData,
       recurringSchedule: newRecurringSchedule,
     };
-    setAddingEventFormData({ event: newEvent });
+    setEditingEventFormData({ event: newEvent });
   };
 
   setEveryUnit = ({ value }) => {
-    const { addingEventFormData, setAddingEventFormData } = this.props;
-    const { recurringSchedule } = addingEventFormData;
-    const newRecurringSchedule = {
-      ...recurringSchedule,
-      everyUnit: value,
-    };
+    const { editingEventFormData, setEditingEventFormData } = this.props;
+    const { recurringSchedule } = editingEventFormData;
+    const newRecurringSchedule = { ...recurringSchedule, everyUnit: value };
     const newEvent = {
-      ...addingEventFormData,
+      ...editingEventFormData,
       recurringSchedule: newRecurringSchedule,
     };
-    setAddingEventFormData({ event: newEvent });
+    setEditingEventFormData({ event: newEvent });
   };
 
   validateEventDoc = eventDoc => {
@@ -229,24 +217,38 @@ class AddEventForm extends Component {
     const {
       loggedInUser,
       fetchEvents,
-      addingEventFormData,
-      setAddingEventFormData,
+      editingEventFormData,
+      setEditingEventFormData,
     } = this.props;
     this.setState({ hasAttemptedSave: true }, () => {
-      const validationErrorMsg = this.validateEventDoc(addingEventFormData);
+      const validationErrorMsg = this.validateEventDoc(editingEventFormData);
       if (!validationErrorMsg) {
-        upsertEvent({ event: addingEventFormData }).then(() => {
-          setAddingEventFormData({ event: null });
+        upsertEvent({ event: editingEventFormData }).then(() => {
+          setEditingEventFormData({ event: null });
           fetchEvents({ user: loggedInUser });
         });
       }
     });
   };
 
+  deleteEvent = () => {
+    const {
+      loggedInUser,
+      fetchEvents,
+      editingEventFormData,
+      setEditingEventFormData,
+    } = this.props;
+    const eventId = editingEventFormData._id;
+    deleteEvent({ eventId }).then(() => {
+      setEditingEventFormData({ event: null });
+      fetchEvents({ user: loggedInUser });
+    });
+  };
+
   render() {
     const {
       loggedInUser,
-      addingEventFormData,
+      editingEventFormData,
       isEditingExistingEvent,
     } = this.props;
     const { hasAttemptedSave } = this.state;
@@ -255,7 +257,7 @@ class AddEventForm extends Component {
       startDatetime,
       isRecurring,
       recurringSchedule = {},
-    } = addingEventFormData;
+    } = editingEventFormData;
     const timezone = getTimezoneFromUser(loggedInUser);
     const startMoment = moment(startDatetime).tz(timezone);
     const startDateValue = startMoment.format(this.dayValueFormat);
@@ -263,23 +265,20 @@ class AddEventForm extends Component {
     const startMinuteValue = startMoment.format('mm');
     const everyX = recurringSchedule ? recurringSchedule.everyX : 1;
     const everyUnit = recurringSchedule ? recurringSchedule.everyUnit : 'week';
-    const validationErrorMsg = this.validateEventDoc(addingEventFormData);
+    const validationErrorMsg = this.validateEventDoc(editingEventFormData);
     const isError = hasAttemptedSave && Boolean(validationErrorMsg);
     return (
-      <div className="add-event-form">
-        <div className="add-event-form-top">
-          <div className="add-event-form-header">
-            <div className="add-event-form-dot" />
+      <div className="edit-event-form">
+        <div className="edit-event-form-top">
+          <div className="edit-event-form-header">
+            <div className="edit-event-form-dot" />
             {isEditingExistingEvent ? 'Editing event…' : 'Adding event…'}
           </div>
-          <div
-            className="add-event-form-close-button"
-            onClick={this.closeAddingEventForm}
-          >
+          <CircleButton onClick={this.closeEditingEventForm}>
             <FontAwesomeIcon icon="times" />
-          </div>
+          </CircleButton>
         </div>
-        <div className="add-event-form-content">
+        <div className="edit-event-form-content">
           <NiceFormRow>
             <NiceInput
               value={title}
@@ -293,7 +292,7 @@ class AddEventForm extends Component {
           </NiceFormRow>
           <NiceFormRow>
             <NiceSelect
-              containerClassName="add-event-form-date-select"
+              containerClassName="edit-event-form-date-select"
               options={this.dayOptions()}
               onChange={this.setStartDate}
               selectedValue={startDateValue}
@@ -353,6 +352,13 @@ class AddEventForm extends Component {
             >
               {isEditingExistingEvent ? 'Update' : 'Save'}
             </NiceButton>
+            <CircleButton
+              className="edit-event-form-action-button"
+              isSmall={true}
+              onClick={this.deleteEvent}
+            >
+              <FontAwesomeIcon icon="trash" />
+            </CircleButton>
           </NiceFormSubmitRow>
           {isError && <NiceFormErrorMsg errorMsg={validationErrorMsg} />}
         </div>
@@ -361,13 +367,13 @@ class AddEventForm extends Component {
   }
 }
 
-AddEventForm = _.flow([
+EditEventForm = _.flow([
   withUser,
   withEvents,
   withSelectedDatetime,
   withSelectedZoom,
-  withAddingEventFormData,
+  withEditingEventFormData,
   withNowMinute,
-])(AddEventForm);
+])(EditEventForm);
 
-export default AddEventForm;
+export default EditEventForm;

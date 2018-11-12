@@ -4,14 +4,7 @@ import { createStore, applyMiddleware, compose } from 'redux';
 import reduxThunk from 'redux-thunk';
 import reduxMulti from 'redux-multi';
 import { library } from '@fortawesome/fontawesome-svg-core';
-import {
-  faPlus,
-  faTimes,
-  faCaretDown,
-  faAngleLeft,
-  faAngleRight,
-  faClock,
-} from '@fortawesome/free-solid-svg-icons';
+import { fas } from '@fortawesome/free-solid-svg-icons';
 
 import mainReducer from 'state-management/reducers';
 
@@ -28,7 +21,7 @@ const store = createStore(mainReducer, enhancer);
 
 // fontawesome
 
-library.add(faPlus, faTimes, faCaretDown, faAngleLeft, faAngleRight, faClock);
+library.add(fas);
 
 // mount the site on the DOM
 

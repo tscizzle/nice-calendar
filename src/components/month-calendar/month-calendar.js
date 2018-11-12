@@ -9,7 +9,7 @@ import withUser from 'state-management/state-connectors/with-user';
 import withEvents from 'state-management/state-connectors/with-events';
 import withOccurrences from 'state-management/state-connectors/with-occurrences';
 import withSelectedDatetime from 'state-management/state-connectors/with-selected-datetime';
-import withAddingEventFormData from 'state-management/state-connectors/with-adding-event-form-data';
+import withEditingEventFormData from 'state-management/state-connectors/with-editing-event-form-data';
 import withNowMinute from 'state-management/state-connectors/with-now-minute';
 import { userShape, getTimezoneFromUser } from 'models/user';
 import {
@@ -19,6 +19,7 @@ import {
   getNextScheduledOccurrence,
 } from 'models/event';
 import { occurrenceShape } from 'models/occurrence';
+import { CircleButton } from 'components/nice-button/nice-button';
 
 import 'stylesheets/components/month-calendar/month-calendar.css';
 
@@ -110,6 +111,7 @@ class MonthCalendarCell extends Component {
     containedDatetime: PropTypes.instanceOf(Date).isRequired,
     loggedInUser: userShape.isRequired,
     events: PropTypes.objectOf(eventShape).isRequired,
+    allEvents: PropTypes.objectOf(eventShape).isRequired,
     occurrences: PropTypes.objectOf(occurrenceShape).isRequired,
     selectedDatetime: PropTypes.instanceOf(Date).isRequired,
     nowMinute: PropTypes.instanceOf(Date).isRequired,
@@ -128,9 +130,10 @@ class MonthCalendarCell extends Component {
       containedDatetime,
       loggedInUser,
       events,
+      allEvents,
       occurrences,
       selectedDatetime,
-      addingEventFormData,
+      editingEventFormData,
       nowMinute,
     } = this.props;
     const { isHovered } = this.state;
@@ -149,10 +152,10 @@ class MonthCalendarCell extends Component {
         end: dayEnd,
         now: nowMinute,
       });
-      if (addingEventFormData) {
+      if (editingEventFormData) {
         eventOccurrences = _.reject(
           eventOccurrences,
-          ({ event }) => event._id === addingEventFormData._id
+          ({ event }) => event._id === editingEventFormData._id
         );
       }
       dayScheduledOccurrences.push(...eventOccurrences);
@@ -161,14 +164,14 @@ class MonthCalendarCell extends Component {
     _.each(_.values(occurrences), occurrence => {
       const { eventId, datetime } = occurrence;
       if (dayStart <= datetime && datetime <= dayEnd) {
-        const event = events[eventId];
+        const event = allEvents[eventId];
         dayPastOccurrences.push({ event, occurrence, hasOccurred: true });
       }
     });
     const dayEditingEventOccurrences = [];
-    if (addingEventFormData) {
+    if (editingEventFormData) {
       const editingEventOccurrences = getScheduledOccurrences({
-        event: addingEventFormData,
+        event: editingEventFormData,
         timezone,
         start: dayStart,
         end: dayEnd,
@@ -225,7 +228,7 @@ class MonthCalendarCell extends Component {
         <div className="month-calendar-cell-bottom">
           {isHovered &&
             !isDayPast && (
-              <MonthCalendarCellAddEventButton
+              <MonthCalendarCellEditEventButton
                 containedDatetime={containedDatetime}
               />
             )}
@@ -240,7 +243,7 @@ MonthCalendarCell = _.flow([
   withEvents,
   withOccurrences,
   withSelectedDatetime,
-  withAddingEventFormData,
+  withEditingEventFormData,
   withNowMinute,
 ])(MonthCalendarCell);
 
@@ -249,13 +252,13 @@ let MonthCalendarOccurrence = ({
   occurrence,
   hasOccurred,
   loggedInUser,
-  addingEventFormData,
+  editingEventFormData,
   isEditingExistingEvent,
-  setAddingEventFormData,
+  setEditingEventFormData,
   nowMinute,
 }) => {
   const isBeingEdited =
-    addingEventFormData && addingEventFormData._id === event._id;
+    editingEventFormData && editingEventFormData._id === event._id;
   const timezone = getTimezoneFromUser(loggedInUser);
   const openEditingEventForm = () => {
     const nextScheduledOccurrence = getNextScheduledOccurrence({
@@ -270,7 +273,7 @@ let MonthCalendarOccurrence = ({
       ...event,
       startDatetime: newStartDatetime,
     };
-    setAddingEventFormData({ event: newEvent });
+    setEditingEventFormData({ event: newEvent });
   };
   const occurrenceTimeString = moment(occurrence.datetime)
     .tz(timezone)
@@ -309,27 +312,27 @@ MonthCalendarOccurrence.propTypes = {
   occurrence: occurrenceShape.isRequired,
   hasOccurred: PropTypes.bool,
   loggedInUser: userShape.isRequired,
-  addingEventFormData: eventShape,
+  editingEventFormData: eventShape,
   isEditingExistingEvent: PropTypes.bool.isRequired,
-  setAddingEventFormData: PropTypes.func.isRequired,
+  setEditingEventFormData: PropTypes.func.isRequired,
   nowMinute: PropTypes.instanceOf(Date).isRequired,
 };
 
 MonthCalendarOccurrence = _.flow([
   withUser,
-  withAddingEventFormData,
+  withEditingEventFormData,
   withNowMinute,
 ])(MonthCalendarOccurrence);
 
-let MonthCalendarCellAddEventButton = ({
+let MonthCalendarCellEditEventButton = ({
   containedDatetime,
   loggedInUser,
-  addingEventFormData,
+  editingEventFormData,
   isEditingExistingEvent,
-  setAddingEventFormData,
+  setEditingEventFormData,
   nowMinute,
 }) => {
-  const openAddingEventForm = () => {
+  const openEditingEventForm = () => {
     const timezone = getTimezoneFromUser(loggedInUser);
     const containedMoment = moment(containedDatetime).tz(timezone);
     const nowMinuteMoment = moment(nowMinute).tz(timezone);
@@ -352,33 +355,30 @@ let MonthCalendarCellAddEventButton = ({
       startDatetime = startMoment.toDate();
     }
     const suppliedEvent = {
-      ...(isEditingExistingEvent ? {} : addingEventFormData),
+      ...(isEditingExistingEvent ? {} : editingEventFormData),
       startDatetime,
     };
     const event = makeNewEventDoc({ user: loggedInUser, suppliedEvent });
-    setAddingEventFormData({ event });
+    setEditingEventFormData({ event });
   };
   return (
-    <div
-      className="month-calendar-cell-add-event-button"
-      onClick={openAddingEventForm}
-    >
+    <CircleButton onClick={openEditingEventForm}>
       <FontAwesomeIcon icon="plus" />
-    </div>
+    </CircleButton>
   );
 };
 
-MonthCalendarCellAddEventButton.propTypes = {
+MonthCalendarCellEditEventButton.propTypes = {
   containedDatetime: PropTypes.instanceOf(Date).isRequired,
   loggedInUser: userShape.isRequired,
-  addingEventFormData: eventShape,
+  editingEventFormData: eventShape,
   isEditingExistingEvent: PropTypes.bool.isRequired,
-  setAddingEventFormData: PropTypes.func.isRequired,
+  setEditingEventFormData: PropTypes.func.isRequired,
   nowMinute: PropTypes.instanceOf(Date).isRequired,
 };
 
-MonthCalendarCellAddEventButton = _.flow([
+MonthCalendarCellEditEventButton = _.flow([
   withUser,
-  withAddingEventFormData,
+  withEditingEventFormData,
   withNowMinute,
-])(MonthCalendarCellAddEventButton);
+])(MonthCalendarCellEditEventButton);

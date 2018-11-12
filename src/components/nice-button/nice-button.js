@@ -53,3 +53,25 @@ NiceButton.propTypes = {
 };
 
 export default NiceButton;
+
+export const CircleButton = ({
+  className,
+  isSmall,
+  children,
+  ...otherProps
+}) => {
+  const circleButtonClasses = classNames('circle-button', {
+    [className]: Boolean(className),
+    'small-circle-button': isSmall,
+  });
+  return (
+    <div className={circleButtonClasses} {...otherProps}>
+      {children}
+    </div>
+  );
+};
+
+CircleButton.propTypes = {
+  className: PropTypes.string,
+  isSmall: PropTypes.bool,
+};

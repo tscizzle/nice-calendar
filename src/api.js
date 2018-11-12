@@ -26,8 +26,24 @@ export const upsertEvent = ({ event }) => {
     const events = _.find(DATABASE, { collection: 'events' });
     const eventDocs = events.documents;
     const newEventDocs = _.reject(eventDocs, { _id: event._id });
-    newEventDocs.push(event);
+    const newEvent = { ...event, isDeleted: false };
+    newEventDocs.push(newEvent);
     events.documents = newEventDocs;
+    resolve();
+  });
+};
+
+export const deleteEvent = ({ eventId }) => {
+  return new Promise(function(resolve, reject) {
+    const events = _.find(DATABASE, { collection: 'events' });
+    const eventDocs = events.documents;
+    const event = _.find(eventDocs, { _id: eventId });
+    if (event) {
+      const newEvent = { ...event, isDeleted: true };
+      const newEventDocs = _.reject(eventDocs, { _id: eventId });
+      newEventDocs.push(newEvent);
+      events.documents = newEventDocs;
+    }
     resolve();
   });
 };

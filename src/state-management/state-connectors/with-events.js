@@ -1,11 +1,13 @@
 import { connect } from 'react-redux';
+import _ from 'lodash';
 
 import { fetchEvents } from 'state-management/actions';
 import { preserveOwnProps } from 'state-management/helpers';
 
 const withEvents = WrappedComponent => {
   const mapStateToProps = state => ({
-    events: state.events,
+    events: _.pickBy(state.events, ({ isDeleted }) => !isDeleted),
+    allEvents: state.events,
   });
   const mapDispatchToProps = dispatch => ({
     fetchEvents: ({ user }) =>

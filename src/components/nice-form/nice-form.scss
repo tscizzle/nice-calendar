@@ -7,7 +7,9 @@
 .nice-form-submit-row {
   display: flex;
   flex-direction: row-reverse;
-  margin-top: 20px;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 30px;
 }
 
 .nice-form-error-msg {

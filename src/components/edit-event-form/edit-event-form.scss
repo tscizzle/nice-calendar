@@ -1,0 +1,35 @@
+@import '../../index';
+
+.edit-event-form {
+  padding: 10px;
+
+  .edit-event-form-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .edit-event-form-dot {
+      margin-right: 10px;
+      height: 1.3em;
+      width: 1.3em;
+      box-shadow: 1px 1px 1px $darkYellow;
+      border-radius: 50%;
+      background-color: $yellow;
+    }
+
+    .edit-event-form-header {
+      display: flex;
+      align-items: center;
+      color: $dark;
+      font-weight: bold;
+    }
+  }
+
+  .edit-event-form-content {
+    margin-top: 30px;
+
+    .edit-event-form-date-select {
+      margin-right: 8px;
+    }
+  }
+}

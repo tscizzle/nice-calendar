@@ -86,26 +86,6 @@
     flex-direction: row-reverse;
     height: 2em;
     font-size: 0.8em;
-
-    .month-calendar-cell-add-event-button {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      width: 2em;
-      height: 2em;
-      border-radius: 1em;
-      background-color: $white;
-      color: $dark;
-      cursor: pointer;
-
-      &:hover {
-        background-color: $light;
-      }
-
-      &:active {
-        background-color: $lightGray;
-      }
-    }
   }
 }
 
