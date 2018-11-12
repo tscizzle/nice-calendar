@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import moment from 'moment';
-import { FaAngleLeft, FaAngleRight } from 'react-icons/fa';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import withUser from 'state-management/state-connectors/with-user';
 import withSelectedDatetime from 'state-management/state-connectors/with-selected-datetime';
@@ -120,10 +120,10 @@ let DatetimePager = ({
   return (
     <div className="datetime-pager">
       <div className="datetime-pager-button" onClick={goToPreviousPage}>
-        <FaAngleLeft className="previous-page-icon" />
+        <FontAwesomeIcon icon="angle-left" className="previous-page-icon" />
       </div>
       <div className="datetime-pager-button" onClick={goToNextPage}>
-        <FaAngleRight className="next-page-icon" />
+        <FontAwesomeIcon icon="angle-right" className="next-page-icon" />
       </div>
     </div>
   );

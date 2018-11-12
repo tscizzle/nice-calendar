@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import classNames from 'classnames';
-import { FaPlus, FaClock } from 'react-icons/fa';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import withUser from 'state-management/state-connectors/with-user';
 import withEvents from 'state-management/state-connectors/with-events';
@@ -291,7 +291,13 @@ let MonthCalendarOccurrence = ({
       onClick={openEditingEventForm}
     >
       <div className="month-calendar-occurrence-inner">
-        {event.isRecurring && <FaClock />}
+        {event.isRecurring && (
+          <FontAwesomeIcon
+            icon="clock"
+            size="sm"
+            className="recurring-occurrence-icon"
+          />
+        )}
         {text}
       </div>
     </div>
@@ -357,7 +363,7 @@ let MonthCalendarCellAddEventButton = ({
       className="month-calendar-cell-add-event-button"
       onClick={openAddingEventForm}
     >
-      <FaPlus />
+      <FontAwesomeIcon icon="plus" />
     </div>
   );
 };

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import moment from 'moment-timezone';
-import { FaTimes } from 'react-icons/fa';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import { upsertEvent } from 'api';
 import withUser from 'state-management/state-connectors/with-user';
@@ -276,7 +276,7 @@ class AddEventForm extends Component {
             className="add-event-form-close-button"
             onClick={this.closeAddingEventForm}
           >
-            <FaTimes />
+            <FontAwesomeIcon icon="times" />
           </div>
         </div>
         <div className="add-event-form-content">

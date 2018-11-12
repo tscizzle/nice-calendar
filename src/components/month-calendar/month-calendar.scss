@@ -135,8 +135,14 @@
   }
 
   .month-calendar-occurrence-inner {
+    display: flex;
+    align-items: center;
     width: 100%;
     white-space: nowrap;
     overflow-x: hidden;
+
+    .recurring-occurrence-icon {
+      margin-right: 3px;
+    }
   }
 }
