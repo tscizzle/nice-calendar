@@ -7,6 +7,7 @@
 $darker: #333336;
 $dark: #555558;
 
+$darkerGray: #777790;
 $darkGray: #9999aa;
 $gray: #aaaaad;
 $lightGray: #cccccf;
@@ -110,7 +111,7 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   color: $white;
-  background-color: $darkGray;
+  background-color: $darkerGray;
 }
 
 * {

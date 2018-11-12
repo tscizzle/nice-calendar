@@ -122,10 +122,16 @@
     margin-bottom: 4px;
   }
 
-  &.month-calendar-occurrence-being-edited {
+  &.being-edited {
     background-color: $lightYellow;
     box-shadow: 1px 1px 1px $darkYellow;
     color: $darkYellow;
+  }
+
+  &.has-occurred {
+    background-color: $lighter;
+    box-shadow: 1px 1px 1px $darkGray;
+    color: $dark;
   }
 
   .month-calendar-occurrence-inner {

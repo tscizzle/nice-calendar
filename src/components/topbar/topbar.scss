@@ -49,11 +49,11 @@
     cursor: pointer;
 
     &:hover {
-      background-color: $gray;
+      background-color: $darkGray;
     }
 
     &:active {
-      background-color: $lightGray;
+      background-color: $gray;
     }
 
     .previous-page-icon {

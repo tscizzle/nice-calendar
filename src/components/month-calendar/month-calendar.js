@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import classNames from 'classnames';
-import { FaPlus } from 'react-icons/fa';
+import { FaPlus, FaClock } from 'react-icons/fa';
 
 import withUser from 'state-management/state-connectors/with-user';
 import withEvents from 'state-management/state-connectors/with-events';
@@ -162,7 +162,7 @@ class MonthCalendarCell extends Component {
       const { eventId, datetime } = occurrence;
       if (dayStart <= datetime && datetime <= dayEnd) {
         const event = events[eventId];
-        dayPastOccurrences.push({ event, occurrence });
+        dayPastOccurrences.push({ event, occurrence, hasOccurred: true });
       }
     });
     const dayEditingEventOccurrences = [];
@@ -184,10 +184,11 @@ class MonthCalendarCell extends Component {
     const sortedOccurrences = _.sortBy(allOccurrences, 'occurrence.datetime');
     const occurrenceDisplays = _.map(
       sortedOccurrences,
-      ({ event, occurrence }) => (
+      ({ event, occurrence, hasOccurred }) => (
         <MonthCalendarOccurrence
           event={event}
           occurrence={occurrence}
+          hasOccurred={hasOccurred}
           key={occurrence._id}
         />
       )
@@ -246,6 +247,7 @@ MonthCalendarCell = _.flow([
 let MonthCalendarOccurrence = ({
   event,
   occurrence,
+  hasOccurred,
   loggedInUser,
   addingEventFormData,
   isEditingExistingEvent,
@@ -278,7 +280,8 @@ let MonthCalendarOccurrence = ({
   const monthCalendarOccurrenceClasses = classNames(
     'month-calendar-occurrence',
     {
-      'month-calendar-occurrence-being-edited': isBeingEdited,
+      'being-edited': isBeingEdited,
+      'has-occurred': hasOccurred,
     }
   );
   return (
@@ -287,7 +290,10 @@ let MonthCalendarOccurrence = ({
       title={occurrenceTimeString}
       onClick={openEditingEventForm}
     >
-      <div className="month-calendar-occurrence-inner">{text}</div>
+      <div className="month-calendar-occurrence-inner">
+        {event.isRecurring && <FaClock />}
+        {text}
+      </div>
     </div>
   );
 };
@@ -295,7 +301,7 @@ let MonthCalendarOccurrence = ({
 MonthCalendarOccurrence.propTypes = {
   event: eventShape.isRequired,
   occurrence: occurrenceShape.isRequired,
-  isBeingEdited: PropTypes.bool,
+  hasOccurred: PropTypes.bool,
   loggedInUser: userShape.isRequired,
   addingEventFormData: eventShape,
   isEditingExistingEvent: PropTypes.bool.isRequired,
