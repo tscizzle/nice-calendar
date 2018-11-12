@@ -112,8 +112,10 @@ export const getNextScheduledOccurrence = ({ event, timezone, now }) => {
       .occurrence.datetime;
     const eventMoment = moment(eventDatetime).tz(timezone);
     const nowMoment = moment(now).tz(timezone);
-    const numRepeats =
-      _.floor(nowMoment.diff(eventMoment, everyUnit) / everyX) + 1;
+    const numRepeats = _.max([
+      _.ceil(nowMoment.diff(eventMoment, everyUnit) / everyX),
+      0,
+    ]);
     const occurrenceMoment = eventMoment
       .clone()
       .add(numRepeats * everyX, everyUnit);

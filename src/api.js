@@ -24,9 +24,10 @@ export const getEvents = ({ userId }) => {
 export const upsertEvent = ({ event }) => {
   return new Promise(function(resolve, reject) {
     const events = _.find(DATABASE, { collection: 'events' });
-    let eventDocs = events.documents;
-    eventDocs = _.reject(eventDocs, { _id: event._id });
-    eventDocs.push(event);
+    const eventDocs = events.documents;
+    const newEventDocs = _.reject(eventDocs, { _id: event._id });
+    newEventDocs.push(event);
+    events.documents = newEventDocs;
     resolve();
   });
 };
