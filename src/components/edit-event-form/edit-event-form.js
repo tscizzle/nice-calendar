@@ -11,7 +11,7 @@ import withSelectedDatetime from 'state-management/state-connectors/with-selecte
 import withSelectedZoom from 'state-management/state-connectors/with-selected-zoom';
 import withEditingEventFormData from 'state-management/state-connectors/with-editing-event-form-data';
 import withNowMinute from 'state-management/state-connectors/with-now-minute';
-import { userShape, getTimezoneFromUser } from 'models/user';
+import { userShape } from 'models/user';
 import { eventShape } from 'models/event';
 
 import NiceButton, { CircleButton } from 'components/nice-button/nice-button';
@@ -28,6 +28,7 @@ import 'stylesheets/components/edit-event-form/edit-event-form.css';
 class EditEventForm extends Component {
   static propTypes = {
     loggedInUser: userShape.isRequired,
+    timezone: PropTypes.string.isRequired,
     events: PropTypes.objectOf(eventShape).isRequired,
     fetchEvents: PropTypes.func.isRequired,
     selectedDatetime: PropTypes.instanceOf(Date).isRequired,

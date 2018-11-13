@@ -7,13 +7,14 @@ import withUser from 'state-management/state-connectors/with-user';
 import withEvents from 'state-management/state-connectors/with-events';
 import withOccurrences from 'state-management/state-connectors/with-occurrences';
 import withSelectedDatetime from 'state-management/state-connectors/with-selected-datetime';
-import { userShape, getTimezoneFromUser } from 'models/user';
+import { userShape } from 'models/user';
 import { eventShape } from 'models/event';
 import { occurrenceShape } from 'models/occurrence';
 
 class DayCalendar extends Component {
   static propTypes = {
     loggedInUser: userShape.isRequired,
+    timezone: PropTypes.string.isRequired,
     events: PropTypes.objectOf(eventShape).isRequired,
     fetchEvents: PropTypes.func.isRequired,
     occurrences: PropTypes.objectOf(occurrenceShape).isRequired,
@@ -28,7 +29,7 @@ class DayCalendar extends Component {
   }
 
   render() {
-    const { selectedDatetime, timezone } = this.props;
+    const { timezone, selectedDatetime } = this.props;
     const selectedMoment = moment(selectedDatetime).tz(timezone);
     const start = selectedMoment.clone().startOf('day');
     const end = selectedMoment.clone().endOf('day');

@@ -8,7 +8,6 @@ import withUser from 'state-management/state-connectors/with-user';
 import withSelectedDatetime from 'state-management/state-connectors/with-selected-datetime';
 import withSelectedZoom from 'state-management/state-connectors/with-selected-zoom';
 import withNowMinute from 'state-management/state-connectors/with-now-minute';
-import { userShape, getTimezoneFromUser } from 'models/user';
 import NiceButton from 'components/nice-button/nice-button';
 import NiceSelect from 'components/nice-select/nice-select';
 import logo from 'components/app/images/calendar.svg';
@@ -35,7 +34,7 @@ let Topbar = ({ timezone, selectedDatetime }) => {
 };
 
 Topbar.propTypes = {
-  loggedInUser: userShape,
+  timezone: PropTypes.string,
   selectedDatetime: PropTypes.instanceOf(Date).isRequired,
 };
 
@@ -65,7 +64,7 @@ let TodayShortcut = ({
 };
 
 TodayShortcut.propTypes = {
-  loggedInUser: userShape,
+  timezone: PropTypes.string,
   selectedDatetime: PropTypes.instanceOf(Date).isRequired,
   setSelectedDatetime: PropTypes.func.isRequired,
   nowMinute: PropTypes.instanceOf(Date).isRequired,
@@ -127,7 +126,7 @@ let DatetimePager = ({
 };
 
 DatetimePager.propTypes = {
-  loggedInUser: userShape,
+  timezone: PropTypes.string,
   selectedDatetime: PropTypes.instanceOf(Date).isRequired,
   setSelectedDatetime: PropTypes.func.isRequired,
   selectedZoom: PropTypes.oneOf(['day', 'week', 'month']).isRequired,

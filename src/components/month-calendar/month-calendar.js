@@ -12,7 +12,7 @@ import withOccurrences from 'state-management/state-connectors/with-occurrences'
 import withSelectedDatetime from 'state-management/state-connectors/with-selected-datetime';
 import withEditingEventFormData from 'state-management/state-connectors/with-editing-event-form-data';
 import withNowMinute from 'state-management/state-connectors/with-now-minute';
-import { userShape, getTimezoneFromUser } from 'models/user';
+import { userShape } from 'models/user';
 import {
   eventShape,
   makeNewEventDoc,
@@ -27,6 +27,7 @@ import 'stylesheets/components/month-calendar/month-calendar.css';
 class MonthCalendar extends Component {
   static propTypes = {
     loggedInUser: userShape.isRequired,
+    timezone: PropTypes.string.isRequired,
     fetchEvents: PropTypes.func.isRequired,
     fetchOccurrences: PropTypes.func.isRequired,
     selectedDatetime: PropTypes.instanceOf(Date).isRequired,
@@ -99,7 +100,7 @@ let MonthCalendarRow = ({
 MonthCalendarRow.propTypes = {
   containedDatetime: PropTypes.instanceOf(Date).isRequired,
   numWeeks: PropTypes.oneOf([4, 5, 6]).isRequired,
-  loggedInUser: userShape.isRequired,
+  timezone: PropTypes.string.isRequired,
   nowMinute: PropTypes.instanceOf(Date).isRequired,
 };
 
@@ -108,7 +109,7 @@ MonthCalendarRow = _.flow([withUser, withNowMinute])(MonthCalendarRow);
 class MonthCalendarCell extends Component {
   static propTypes = {
     containedDatetime: PropTypes.instanceOf(Date).isRequired,
-    loggedInUser: userShape.isRequired,
+    timezone: PropTypes.string.isRequired,
     events: PropTypes.objectOf(eventShape).isRequired,
     allEvents: PropTypes.objectOf(eventShape).isRequired,
     occurrences: PropTypes.objectOf(occurrenceShape).isRequired,
@@ -251,6 +252,7 @@ class MonthCalendarOccurrence extends Component {
     occurrence: occurrenceShape.isRequired,
     hasOccurred: PropTypes.bool,
     loggedInUser: userShape.isRequired,
+    timezone: PropTypes.string.isRequired,
     fetchOccurrences: PropTypes.func.isRequired,
     editingEventFormData: eventShape,
     setEditingEventFormData: PropTypes.func.isRequired,
@@ -438,6 +440,7 @@ let MonthCalendarCellEditEventButton = ({
 MonthCalendarCellEditEventButton.propTypes = {
   containedDatetime: PropTypes.instanceOf(Date).isRequired,
   loggedInUser: userShape.isRequired,
+  timezone: PropTypes.string.isRequired,
   editingEventFormData: eventShape,
   isEditingExistingEvent: PropTypes.bool.isRequired,
   setEditingEventFormData: PropTypes.func.isRequired,

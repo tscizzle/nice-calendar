@@ -11,7 +11,7 @@ import withEvents from 'state-management/state-connectors/with-events';
 import withOccurrences from 'state-management/state-connectors/with-occurrences';
 import withEditingEventFormData from 'state-management/state-connectors/with-editing-event-form-data';
 import withNowMinute from 'state-management/state-connectors/with-now-minute';
-import { userShape, getTimezoneFromUser } from 'models/user';
+import { userShape } from 'models/user';
 import { eventShape, getNextScheduledOccurrence } from 'models/event';
 import { occurrenceShape, getLatestOccurrences } from 'models/occurrence';
 import { CircleButton } from 'components/nice-button/nice-button';
@@ -122,6 +122,7 @@ let EventOccurrencesSummary = ({
 
 EventOccurrencesSummary.propTypes = {
   loggedInUser: userShape.isRequired,
+  timezone: PropTypes.string.isRequired,
   events: PropTypes.objectOf(eventShape).isRequired,
   occurrences: PropTypes.objectOf(occurrenceShape).isRequired,
   fetchOccurrences: PropTypes.func.isRequired,
