@@ -14,8 +14,15 @@ import logo from 'components/app/images/calendar.svg';
 
 import 'stylesheets/components/topbar/topbar.css';
 
-let Topbar = ({ timezone, selectedDatetime }) => {
+let Topbar = ({ timezone, selectedDatetime, selectedZoom }) => {
   const selectedMoment = moment(selectedDatetime).tz(timezone);
+  const windowStart = selectedMoment.clone().startOf(selectedZoom);
+  const windowEnd = selectedMoment.clone().endOf(selectedZoom);
+  const monthDisplay = windowEnd.isSame(windowStart, 'month')
+    ? selectedMoment.format('MMMM YYYY')
+    : `${windowStart.format('MMM')} - ${windowEnd.format(
+        'MMM'
+      )} ${windowEnd.format('YYYY')}`;
   return (
     <div className="topbar">
       <img className="topbar-logo" src={logo} alt="" />
@@ -25,9 +32,7 @@ let Topbar = ({ timezone, selectedDatetime }) => {
           <ZoomSelector />
           <DatetimePager />
         </div>
-        <div className="topbar-selected-month">
-          {selectedMoment.format('MMMM YYYY')}
-        </div>
+        <div className="topbar-selected-month">{monthDisplay}</div>
       </div>
     </div>
   );
@@ -36,9 +41,10 @@ let Topbar = ({ timezone, selectedDatetime }) => {
 Topbar.propTypes = {
   timezone: PropTypes.string,
   selectedDatetime: PropTypes.instanceOf(Date).isRequired,
+  selectedZoom: PropTypes.oneOf(['day', 'week', 'month']).isRequired,
 };
 
-Topbar = _.flow([withUser, withSelectedDatetime])(Topbar);
+Topbar = _.flow([withUser, withSelectedDatetime, withSelectedZoom])(Topbar);
 
 export default Topbar;
 

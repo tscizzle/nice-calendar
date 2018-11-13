@@ -10,7 +10,7 @@
   width: 100%;
 
   &:not(:last-child) {
-    border-bottom: solid $light 1px;
+    border-bottom: solid 1px $light;
   }
 
   &.num-weeks-4 {
@@ -32,16 +32,9 @@
   justify-content: space-between;
   width: calc(100% / 7);
   padding: 4px 8px 8px;
+  border-left: solid 1px $light;
   font-size: 0.8em;
   overflow-y: hidden;
-
-  &:first-child {
-    border-left: solid $light 1px;
-  }
-
-  &:not(:last-child) {
-    border-right: solid $light 1px;
-  }
 
   &.month-calendar-cell-not-selected-month {
     background-color: $lightest;
@@ -78,12 +71,12 @@
     display: flex;
     flex-direction: column;
     width: 100%;
-    margin: 6px 0;
+    margin: 6px 0px;
   }
 
   .month-calendar-cell-bottom {
     display: flex;
-    flex-direction: row-reverse;
+    justify-content: flex-end;
     height: 2em;
     font-size: 0.8em;
   }

@@ -1,0 +1,74 @@
+@import '../../vars';
+
+$timeColumnWidth: 80px;
+$weekCalendarColumnTopHeight: 2.5em;
+$weekCalendarCellTopBorder: 1px;
+
+.week-calendar-container {
+  display: flex;
+  height: 100%;
+  width: 100%;
+}
+
+.week-calendar-column {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: calc(100% / 7);
+  border-left: solid 1px $light;
+  font-size: 0.8em;
+
+  .week-calendar-column-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: $weekCalendarColumnTopHeight;
+    padding: 0px 4px;
+
+    .week-calendar-column-day-number {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 1.8em;
+      width: 1.8em;
+
+      &.week-calendar-column-day-number-today {
+        border-radius: 50%;
+        background-color: $dark;
+        color: $white;
+      }
+    }
+
+    .week-calendar-column-day-name {
+      font-weight: bold;
+      color: $gray;
+    }
+  }
+
+  .week-calendar-column-content {
+    height: calc(100% - #{$weekCalendarColumnTopHeight});
+    width: 100%;
+  }
+}
+
+.week-calendar-cell {
+  width: 100%;
+  border-top: solid 1px $light;
+
+  &:first-child {
+    height: calc(100% / 4);
+  }
+
+  &:not(:first-child) {
+    height: calc(100% * 3 / 8);
+  }
+
+  .week-calendar-cell-top {
+    padding: 4px 8px;
+    color: $darkGray;
+  }
+
+  .week-calendar-cell-content {
+    margin: 6px 0px;
+  }
+}

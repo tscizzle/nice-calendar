@@ -18,7 +18,7 @@ const initialState = {
   events: {},
   occurrences: {},
   selectedDatetime: moment().toDate(),
-  selectedZoom: 'month',
+  selectedZoom: 'week',
   editingEventFormData: null,
   nowMinute: moment()
     .startOf('minute')

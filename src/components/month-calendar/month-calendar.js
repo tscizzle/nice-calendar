@@ -261,13 +261,11 @@ class MonthCalendarOccurrence extends Component {
 
   state = {
     isHovered: false,
-    // isHovered: true,
   };
 
   setIsHovered = () => this.setState({ isHovered: true });
 
   setIsNotHovered = () => this.setState({ isHovered: false });
-  // setIsNotHovered = () => this.setState({ isHovered: true });
 
   openEditingEventForm = () => {
     const { event, timezone, setEditingEventFormData, nowMinute } = this.props;
