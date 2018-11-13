@@ -295,11 +295,14 @@ class MonthCalendarOccurrence extends Component {
     });
   };
 
-  checkOffOccurrence = evt => {
+  toggleCheckOffOccurrence = evt => {
     evt.stopPropagation();
     const { occurrence, loggedInUser, fetchOccurrences } = this.props;
-    const checkedOffOccurrence = { ...occurrence, checkedOff: true };
-    upsertOccurrence({ occurrence: checkedOffOccurrence }).then(() => {
+    const newOccurrence = {
+      ...occurrence,
+      checkedOff: !occurrence.checkedOff,
+    };
+    upsertOccurrence({ occurrence: newOccurrence }).then(() => {
       fetchOccurrences({ user: loggedInUser });
     });
   };
@@ -317,6 +320,7 @@ class MonthCalendarOccurrence extends Component {
       editingEventFormData && editingEventFormData._id === event._id;
     const text =
       event.title || (isBeingEdited ? '(Adding event…)' : '(Untitled event)');
+    const toggleCheckOffIcon = occurrence.checkedOff ? 'times' : 'check';
     const timeString = moment(occurrence.datetime)
       .tz(timezone)
       .format('HH:mm');
@@ -356,14 +360,12 @@ class MonthCalendarOccurrence extends Component {
                 size="sm"
                 onClick={this.deleteOccurrence}
               />
-              {!occurrence.checkedOff && (
-                <FontAwesomeIcon
-                  icon="check"
-                  className="month-calendar-occurrence-action-button"
-                  size="sm"
-                  onClick={this.checkOffOccurrence}
-                />
-              )}
+              <FontAwesomeIcon
+                icon={toggleCheckOffIcon}
+                className="month-calendar-occurrence-action-button"
+                size="sm"
+                onClick={this.toggleCheckOffOccurrence}
+              />
             </div>
           ) : (
             <div />

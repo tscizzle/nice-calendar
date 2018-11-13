@@ -33,14 +33,17 @@ let EventOccurrencesSummary = ({
   const latestOccurrence = latestOccurrenceByEvent[eventId];
   let latestOccurrenceMoment,
     isCheckedOff,
-    checkOffOccurrence,
+    toggleCheckOffOccurrence,
     deleteLatestOccurrence;
   if (latestOccurrence) {
     latestOccurrenceMoment = moment(latestOccurrence.datetime).tz(timezone);
     isCheckedOff = latestOccurrence.checkedOff;
-    checkOffOccurrence = () => {
-      const checkedOffOccurrence = { ...latestOccurrence, checkedOff: true };
-      upsertOccurrence({ occurrence: checkedOffOccurrence }).then(() => {
+    toggleCheckOffOccurrence = () => {
+      const newOccurrence = {
+        ...latestOccurrence,
+        checkedOff: !isCheckedOff,
+      };
+      upsertOccurrence({ occurrence: newOccurrence }).then(() => {
         setEditingEventFormData({ event: null });
         fetchOccurrences({ user: loggedInUser });
       });
@@ -65,6 +68,7 @@ let EventOccurrencesSummary = ({
   }
   const occurrenceDatetimeFormat = 'MMM DD, YYYY HH:mm';
   const latestOccurrenceButtonColor = isCheckedOff ? 'green' : 'red';
+  const latestOccurrenceCheckIcon = isCheckedOff ? 'times' : 'check';
   const latestOccurrenceClasses = classNames(
     'event-occurrence',
     'latest-occurrence',
@@ -91,15 +95,13 @@ let EventOccurrencesSummary = ({
               >
                 <FontAwesomeIcon icon="trash" />
               </CircleButton>
-              {!isCheckedOff && (
-                <CircleButton
-                  color={latestOccurrenceButtonColor}
-                  isSmall={true}
-                  onClick={checkOffOccurrence}
-                >
-                  <FontAwesomeIcon icon="check" />
-                </CircleButton>
-              )}
+              <CircleButton
+                color={latestOccurrenceButtonColor}
+                isSmall={true}
+                onClick={toggleCheckOffOccurrence}
+              >
+                <FontAwesomeIcon icon={latestOccurrenceCheckIcon} />
+              </CircleButton>
             </div>
           </div>
         ) : (
