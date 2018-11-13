@@ -57,3 +57,30 @@ export const getOccurrences = ({ userId }) => {
     resolve({ occurrences: occurrenceMap });
   });
 };
+
+export const upsertOccurrence = ({ occurrence }) => {
+  return new Promise(function(resolve, reject) {
+    const occurrences = _.find(DATABASE, { collection: 'occurrences' });
+    const occurrenceDocs = occurrences.documents;
+    const newOccurrenceDocs = _.reject(occurrenceDocs, { _id: occurrence._id });
+    const newOccurrence = { ...occurrence, isDeleted: false };
+    newOccurrenceDocs.push(newOccurrence);
+    occurrences.documents = newOccurrenceDocs;
+    resolve();
+  });
+};
+
+export const deleteOccurrence = ({ occurrenceId }) => {
+  return new Promise(function(resolve, reject) {
+    const occurrences = _.find(DATABASE, { collection: 'occurrences' });
+    const occurrenceDocs = occurrences.documents;
+    const occurrence = _.find(occurrenceDocs, { _id: occurrenceId });
+    if (occurrence) {
+      const newOccurrence = { ...occurrence, isDeleted: true };
+      const newOccurrenceDocs = _.reject(occurrenceDocs, { _id: occurrenceId });
+      newOccurrenceDocs.push(newOccurrence);
+      occurrences.documents = newOccurrenceDocs;
+    }
+    resolve();
+  });
+};

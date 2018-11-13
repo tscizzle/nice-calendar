@@ -245,6 +245,16 @@ class EditEventForm extends Component {
     });
   };
 
+  escFunction = evt => evt.keyCode === 27 && this.closeEditingEventForm();
+
+  componentDidMount() {
+    document.addEventListener('keydown', this.escFunction, false);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.escFunction, false);
+  }
+
   render() {
     const {
       loggedInUser,
@@ -271,7 +281,6 @@ class EditEventForm extends Component {
       <div className="edit-event-form">
         <div className="edit-event-form-top">
           <div className="edit-event-form-header">
-            <div className="edit-event-form-dot" />
             {isEditingExistingEvent ? 'Editing event…' : 'Adding event…'}
           </div>
           <CircleButton onClick={this.closeEditingEventForm}>
@@ -359,8 +368,8 @@ class EditEventForm extends Component {
             >
               <FontAwesomeIcon icon="trash" />
             </CircleButton>
+            {isError && <NiceFormErrorMsg errorMsg={validationErrorMsg} />}
           </NiceFormSubmitRow>
-          {isError && <NiceFormErrorMsg errorMsg={validationErrorMsg} />}
         </div>
       </div>
     );

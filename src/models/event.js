@@ -48,7 +48,7 @@ const getSingleEventOccurrence = ({ event, timezone }) => {
   const eventMoment = moment(event.startDatetime).tz(timezone);
   const eventDatetime = eventMoment.toDate();
   const occurrence = {
-    _id: `${event._id}-${eventMoment.format()}`,
+    _id: `${event._id}-${eventMoment.toISOString()}`,
     userId: event.userId,
     eventId: event._id,
     datetime: eventDatetime,
@@ -76,7 +76,7 @@ const getRecurringEventOccurrences = ({ event, timezone, end }) => {
         .add(repeat * everyX, everyUnit);
       const occurrenceDatetime = occurrenceMoment.toDate();
       const occurrence = {
-        _id: `${event._id}-${occurrenceMoment.format()}`,
+        _id: `${event._id}-${occurrenceMoment.toISOString()}`,
         userId: event.userId,
         eventId: event._id,
         datetime: occurrenceDatetime,
@@ -131,7 +131,7 @@ export const getNextScheduledOccurrence = ({ event, timezone, now }) => {
       .add(numRepeats * everyX, everyUnit);
     const occurrenceDatetime = occurrenceMoment.toDate();
     const occurrence = {
-      _id: `${event._id}-${occurrenceMoment.format()}`,
+      _id: `${event._id}-${occurrenceMoment.toISOString()}`,
       userId: event.userId,
       eventId: event._id,
       datetime: occurrenceDatetime,

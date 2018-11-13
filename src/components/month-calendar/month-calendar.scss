@@ -91,9 +91,10 @@
 
 .month-calendar-occurrence {
   width: 100%;
-  padding: 2px 6px;
+  padding: 0px 4px;
   border-radius: 2px;
   background-color: $lightBlue;
+  border: solid 2px $lightBlue;
   box-shadow: 1px 1px 1px $blue;
   color: $darkBlue;
   cursor: pointer;
@@ -102,15 +103,24 @@
     margin-bottom: 4px;
   }
 
-  &.being-edited {
-    background-color: $lightYellow;
-    box-shadow: 1px 1px 1px $darkYellow;
-    color: $darkYellow;
+  &.has-occurred {
+    background-color: $lightRed;
+    border-color: $lightRed;
+    box-shadow: 1px 1px 1px $red;
+    color: $darkRed;
   }
 
-  &.has-occurred {
+  &.checked-off {
+    background-color: $lightGreen;
+    border-color: $lightGreen;
+    box-shadow: 1px 1px 1px $green;
+    color: $darkGreen;
+  }
+
+  &.being-edited {
     background-color: $lighter;
-    box-shadow: 1px 1px 1px $darkGray;
+    border-color: $darkGray;
+    box-shadow: 1px 1px 3px $darkGray;
     color: $dark;
   }
 

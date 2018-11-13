@@ -96,6 +96,54 @@
     background-color: $lightGray;
   }
 
+  &.red-circle {
+    color: $darkRed;
+
+    &:hover {
+      background-color: $hoverRed;
+    }
+
+    &:active {
+      background-color: $activeRed;
+    }
+  }
+
+  &.blue-circle {
+    color: $darkBlue;
+
+    &:hover {
+      background-color: $hoverBlue;
+    }
+
+    &:active {
+      background-color: $activeBlue;
+    }
+  }
+
+  &.green-circle {
+    color: $darkGreen;
+
+    &:hover {
+      background-color: $hoverGreen;
+    }
+
+    &:active {
+      background-color: $activeGreen;
+    }
+  }
+
+  &.yellow-circle {
+    color: $darkYellow;
+
+    &:hover {
+      background-color: $hoverYellow;
+    }
+
+    &:active {
+      background-color: $activeYellow;
+    }
+  }
+
   &.small-circle-button {
     font-size: 0.85em;
   }

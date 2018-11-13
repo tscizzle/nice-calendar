@@ -4,27 +4,34 @@
   display: flex;
   height: 100%;
   width: 100%;
-}
 
-.calendar-container {
-  @include transition(width $layoutTransitionDuration);
-  width: 100%;
+  .calendar-view-left-sidebar {
+    @include transition(
+      width $layoutTransitionDuration,
+      opacity 0.1s $layoutTransitionDuration
+    );
+    width: 0;
+    opacity: 0;
 
-  &.left-sidebar-opened {
-    width: calc(100% - #{$calendarViewLeftSidebarWidth});
+    &.opened {
+      width: $calendarViewLeftSidebarWidth;
+      opacity: 1;
+    }
+
+    .divider {
+      height: 1px;
+      width: calc(100% - 20px);
+      margin-left: 10px;
+      background-color: $lightGray;
+    }
   }
-}
 
-.calendar-view-left-sidebar {
-  @include transition(
-    width $layoutTransitionDuration,
-    opacity 0.1s $layoutTransitionDuration
-  );
-  width: 0;
-  opacity: 0;
+  .calendar-container {
+    @include transition(width $layoutTransitionDuration);
+    width: 100%;
 
-  &.opened {
-    width: $calendarViewLeftSidebarWidth;
-    opacity: 1;
+    &.left-sidebar-opened {
+      width: calc(100% - #{$calendarViewLeftSidebarWidth});
+    }
   }
 }

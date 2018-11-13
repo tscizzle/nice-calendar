@@ -5,6 +5,7 @@
 }
 
 .nice-form-submit-row {
+  position: relative;
   display: flex;
   flex-direction: row-reverse;
   justify-content: space-between;
@@ -13,9 +14,11 @@
 }
 
 .nice-form-error-msg {
+  position: absolute;
+  top: -1.8em;
+  right: 0px;
   display: flex;
   flex-direction: row-reverse;
-  margin: 8px 0;
   color: $red;
   font-size: 0.8em;
 }

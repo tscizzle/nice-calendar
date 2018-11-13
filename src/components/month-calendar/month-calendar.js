@@ -285,6 +285,7 @@ let MonthCalendarOccurrence = ({
     {
       'being-edited': isBeingEdited,
       'has-occurred': hasOccurred,
+      'checked-off': occurrence.checkedOff,
     }
   );
   return (
@@ -294,13 +295,14 @@ let MonthCalendarOccurrence = ({
       onClick={openEditingEventForm}
     >
       <div className="month-calendar-occurrence-inner">
-        {event.isRecurring && (
-          <FontAwesomeIcon
-            icon="clock"
-            size="sm"
-            className="recurring-occurrence-icon"
-          />
-        )}
+        {!hasOccurred &&
+          event.isRecurring && (
+            <FontAwesomeIcon
+              icon="clock"
+              size="sm"
+              className="recurring-occurrence-icon"
+            />
+          )}
         {text}
       </div>
     </div>

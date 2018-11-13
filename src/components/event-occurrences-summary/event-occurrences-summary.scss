@@ -1,0 +1,60 @@
+@import '../../index';
+
+.event-occurrences-summary {
+  margin: 10px;
+
+  .event-occurrences-summary-header {
+    display: flex;
+    align-items: center;
+    color: $dark;
+  }
+
+  .event-occurrences-summary-content {
+    margin: 10px 0px;
+    font-size: 0.85em;
+  }
+
+  .event-occurrence {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    height: 2.5em;
+    padding: 4px 10px;
+    border-radius: 2px;
+
+    &.latest-occurrence {
+      background-color: $lightRed;
+      box-shadow: 1px 1px 1px $red;
+      color: $darkRed;
+
+      &.checked-off {
+        background-color: $lightGreen;
+        box-shadow: 1px 1px 1px $green;
+        color: $darkGreen;
+      }
+    }
+
+    &.next-occurrence {
+      background-color: $lightBlue;
+      box-shadow: 1px 1px 1px $blue;
+      color: $darkBlue;
+    }
+
+    .event-occurrence-actions {
+      display: flex;
+      align-items: center;
+
+      > *:not(:last-child) {
+        margin-right: 2px;
+      }
+    }
+  }
+
+  .no-occurrences {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: $darkGray;
+    font-weight: bold;
+  }
+}

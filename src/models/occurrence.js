@@ -13,9 +13,8 @@ export const occurrenceShape = PropTypes.shape({
 
 /* Methods */
 
-export const getLatestPendingOccurrences = ({ occurrences }) => {
-  const pendingOccurrences = _.reject(occurrences, 'checkedOff');
-  const pendingOccurrencesByEvent = _.groupBy(pendingOccurrences, 'eventId');
+export const getLatestOccurrences = ({ occurrences }) => {
+  const pendingOccurrencesByEvent = _.groupBy(_.values(occurrences), 'eventId');
   const latestOccurrences = _.map(
     _.values(pendingOccurrencesByEvent),
     eventOccurrences => _.maxBy(eventOccurrences, 'datetime')
