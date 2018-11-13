@@ -46,14 +46,13 @@ class EditEventForm extends Component {
 
   dayOptions = () => {
     const {
-      loggedInUser,
+      timezone,
       selectedDatetime,
       selectedZoom,
       editingEventFormData,
       nowMinute,
     } = this.props;
     const { startDatetime } = editingEventFormData;
-    const timezone = getTimezoneFromUser(loggedInUser);
     const nowMinuteMoment = moment(nowMinute).tz(timezone);
     const selectedMoment = moment(selectedDatetime).tz(timezone);
     const selectionStart = selectedMoment.clone().startOf(selectedZoom);
@@ -110,11 +109,10 @@ class EditEventForm extends Component {
 
   setStartDate = ({ value }) => {
     const {
-      loggedInUser,
+      timezone,
       editingEventFormData,
       setEditingEventFormData,
     } = this.props;
-    const timezone = getTimezoneFromUser(loggedInUser);
     const newDayMoment = moment.tz(value, timezone);
     const { startDatetime } = editingEventFormData;
     const startMoment = moment(startDatetime).tz(timezone);
@@ -135,12 +133,11 @@ class EditEventForm extends Component {
   getSetStartTimeFunc = unit => {
     const setStartTime = evt => {
       const {
-        loggedInUser,
+        timezone,
         editingEventFormData,
         setEditingEventFormData,
       } = this.props;
       const value = parseInt(evt.target.value, 10);
-      const timezone = getTimezoneFromUser(loggedInUser);
       const { startDatetime } = editingEventFormData;
       const startMoment = moment(startDatetime).tz(timezone);
       const newStartDatetime = startMoment
@@ -194,14 +191,13 @@ class EditEventForm extends Component {
   };
 
   validateEventDoc = eventDoc => {
-    const { loggedInUser, nowMinute } = this.props;
+    const { timezone, nowMinute } = this.props;
     const { title, startDatetime } = eventDoc;
     // validate there is a title
     if (!title) {
       return 'Give your Event a title.';
     }
     // validate the event datetime is in the future
-    const timezone = getTimezoneFromUser(loggedInUser);
     const startMoment = moment(startDatetime).tz(timezone);
     const nowMinuteMoment = moment(nowMinute).tz(timezone);
     const earliestAllowedMoment = nowMinuteMoment.clone().add(1, 'minutes');
@@ -257,7 +253,7 @@ class EditEventForm extends Component {
 
   render() {
     const {
-      loggedInUser,
+      timezone,
       editingEventFormData,
       isEditingExistingEvent,
     } = this.props;
@@ -268,7 +264,6 @@ class EditEventForm extends Component {
       isRecurring,
       recurringSchedule = {},
     } = editingEventFormData;
-    const timezone = getTimezoneFromUser(loggedInUser);
     const startMoment = moment(startDatetime).tz(timezone);
     const startDateValue = startMoment.format(this.dayValueFormat);
     const startHourValue = startMoment.format('HH');

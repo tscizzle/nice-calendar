@@ -20,6 +20,7 @@ import 'stylesheets/components/event-occurrences-summary/event-occurrences-summa
 
 let EventOccurrencesSummary = ({
   loggedInUser,
+  timezone,
   events,
   occurrences,
   fetchOccurrences,
@@ -27,7 +28,6 @@ let EventOccurrencesSummary = ({
   setEditingEventFormData,
   nowMinute,
 }) => {
-  const timezone = getTimezoneFromUser(loggedInUser);
   const eventId = editingEventFormData._id;
   const latestOccurrenceByEvent = getLatestOccurrences({ occurrences });
   const latestOccurrence = latestOccurrenceByEvent[eventId];

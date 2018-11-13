@@ -1,4 +1,4 @@
-@import '../../index';
+@import '../../vars';
 
 .month-calendar-container {
   height: 100%;
@@ -90,6 +90,8 @@
 }
 
 .month-calendar-occurrence {
+  position: relative;
+  display: flex;
   width: 100%;
   padding: 0px 4px;
   border-radius: 2px;
@@ -97,6 +99,8 @@
   border: solid 2px $lightBlue;
   box-shadow: 1px 1px 1px $blue;
   color: $darkBlue;
+  white-space: nowrap;
+  overflow-x: hidden;
   cursor: pointer;
 
   &:not(:last-child) {
@@ -118,18 +122,55 @@
   }
 
   &.being-edited {
-    background-color: $lighter;
-    border-color: $darkGray;
-    box-shadow: 1px 1px 3px $darkGray;
-    color: $dark;
+    font-weight: bold;
   }
 
-  .month-calendar-occurrence-inner {
+  .month-calendar-occurrence-details {
+    @include transition(
+      width $layoutTransitionDuration,
+      left $layoutTransitionDuration
+    );
+    width: 0;
+    position: relative;
+    left: -200%;
     display: flex;
+    justify-content: space-between;
     align-items: center;
-    width: 100%;
-    white-space: nowrap;
-    overflow-x: hidden;
+
+    &.is-hovered {
+      width: 100%;
+      left: 0;
+    }
+
+    .month-calendar-occurrence-actions {
+      display: flex;
+      align-items: center;
+
+      .month-calendar-occurrence-action-button {
+        &:not(:first-child) {
+          margin-left: 10px;
+        }
+
+        &:hover {
+          opacity: 0.5;
+        }
+      }
+    }
+  }
+
+  .month-calendar-occurrence-preview {
+    @include transition(
+      width $layoutTransitionDuration,
+      left $layoutTransitionDuration
+    );
+    width: 200%;
+    position: relative;
+    left: 0;
+
+    &.is-hovered {
+      width: 0;
+      left: 200%;
+    }
 
     .recurring-occurrence-icon {
       margin-right: 3px;

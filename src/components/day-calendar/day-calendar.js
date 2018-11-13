@@ -28,8 +28,7 @@ class DayCalendar extends Component {
   }
 
   render() {
-    const { selectedDatetime, loggedInUser } = this.props;
-    const timezone = getTimezoneFromUser(loggedInUser);
+    const { selectedDatetime, timezone } = this.props;
     const selectedMoment = moment(selectedDatetime).tz(timezone);
     const start = selectedMoment.clone().startOf('day');
     const end = selectedMoment.clone().endOf('day');

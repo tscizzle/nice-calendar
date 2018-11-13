@@ -15,8 +15,7 @@ import logo from 'components/app/images/calendar.svg';
 
 import 'stylesheets/components/topbar/topbar.css';
 
-let Topbar = ({ loggedInUser, selectedDatetime }) => {
-  const timezone = getTimezoneFromUser(loggedInUser);
+let Topbar = ({ timezone, selectedDatetime }) => {
   const selectedMoment = moment(selectedDatetime).tz(timezone);
   return (
     <div className="topbar">
@@ -45,13 +44,12 @@ Topbar = _.flow([withUser, withSelectedDatetime])(Topbar);
 export default Topbar;
 
 let TodayShortcut = ({
-  loggedInUser,
+  timezone,
   selectedDatetime,
   setSelectedDatetime,
   nowMinute,
 }) => {
   const selectToday = () => setSelectedDatetime({ datetime: nowMinute });
-  const timezone = getTimezoneFromUser(loggedInUser);
   const selectedMoment = moment(selectedDatetime).tz(timezone);
   const nowMoment = moment(nowMinute).tz(timezone);
   const isTodaySelected = selectedMoment.isSame(nowMoment, 'day');
@@ -101,12 +99,11 @@ ZoomSelector.propTypes = {
 ZoomSelector = withSelectedZoom(ZoomSelector);
 
 let DatetimePager = ({
-  loggedInUser,
+  timezone,
   selectedDatetime,
   setSelectedDatetime,
   selectedZoom,
 }) => {
-  const timezone = getTimezoneFromUser(loggedInUser);
   const selectedMoment = moment(selectedDatetime).tz(timezone);
   const getPageFunc = ({ direction }) => () => {
     const datetime = selectedMoment

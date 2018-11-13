@@ -5,6 +5,7 @@ import moment from 'moment-timezone';
 import classNames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import { upsertOccurrence, deleteOccurrence } from 'api';
 import withUser from 'state-management/state-connectors/with-user';
 import withEvents from 'state-management/state-connectors/with-events';
 import withOccurrences from 'state-management/state-connectors/with-occurrences';
@@ -38,8 +39,7 @@ class MonthCalendar extends Component {
   }
 
   render() {
-    const { loggedInUser, selectedDatetime } = this.props;
-    const timezone = getTimezoneFromUser(loggedInUser);
+    const { timezone, selectedDatetime } = this.props;
     const selectedMoment = moment(selectedDatetime).tz(timezone);
     const monthStart = selectedMoment.clone().startOf('month');
     const monthEnd = selectedMoment.clone().endOf('month');
@@ -72,10 +72,9 @@ export default MonthCalendar;
 let MonthCalendarRow = ({
   containedDatetime,
   numWeeks,
-  loggedInUser,
+  timezone,
   nowMinute,
 }) => {
-  const timezone = getTimezoneFromUser(loggedInUser);
   const containedMoment = moment(containedDatetime).tz(timezone);
   const weekStart = containedMoment.clone().startOf('week');
   const days = _.times(7, day => {
@@ -128,7 +127,7 @@ class MonthCalendarCell extends Component {
   render() {
     const {
       containedDatetime,
-      loggedInUser,
+      timezone,
       events,
       allEvents,
       occurrences,
@@ -137,7 +136,6 @@ class MonthCalendarCell extends Component {
       nowMinute,
     } = this.props;
     const { isHovered } = this.state;
-    const timezone = getTimezoneFromUser(loggedInUser);
     const containedMoment = moment(containedDatetime).tz(timezone);
     const dayStartMoment = containedMoment.clone().startOf('day');
     const dayStart = dayStartMoment.toDate();
@@ -247,20 +245,30 @@ MonthCalendarCell = _.flow([
   withNowMinute,
 ])(MonthCalendarCell);
 
-let MonthCalendarOccurrence = ({
-  event,
-  occurrence,
-  hasOccurred,
-  loggedInUser,
-  editingEventFormData,
-  isEditingExistingEvent,
-  setEditingEventFormData,
-  nowMinute,
-}) => {
-  const isBeingEdited =
-    editingEventFormData && editingEventFormData._id === event._id;
-  const timezone = getTimezoneFromUser(loggedInUser);
-  const openEditingEventForm = () => {
+class MonthCalendarOccurrence extends Component {
+  static propTypes = {
+    event: eventShape.isRequired,
+    occurrence: occurrenceShape.isRequired,
+    hasOccurred: PropTypes.bool,
+    loggedInUser: userShape.isRequired,
+    fetchOccurrences: PropTypes.func.isRequired,
+    editingEventFormData: eventShape,
+    setEditingEventFormData: PropTypes.func.isRequired,
+    nowMinute: PropTypes.instanceOf(Date).isRequired,
+  };
+
+  state = {
+    isHovered: false,
+    // isHovered: true,
+  };
+
+  setIsHovered = () => this.setState({ isHovered: true });
+
+  setIsNotHovered = () => this.setState({ isHovered: false });
+  // setIsNotHovered = () => this.setState({ isHovered: true });
+
+  openEditingEventForm = () => {
+    const { event, timezone, setEditingEventFormData, nowMinute } = this.props;
     const nextScheduledOccurrence = getNextScheduledOccurrence({
       event,
       timezone,
@@ -275,53 +283,110 @@ let MonthCalendarOccurrence = ({
     };
     setEditingEventFormData({ event: newEvent });
   };
-  const occurrenceTimeString = moment(occurrence.datetime)
-    .tz(timezone)
-    .format('HH:mm');
-  const text =
-    event.title || (isBeingEdited ? '(Adding event…)' : '(Untitled event)');
-  const monthCalendarOccurrenceClasses = classNames(
-    'month-calendar-occurrence',
-    {
-      'being-edited': isBeingEdited,
-      'has-occurred': hasOccurred,
-      'checked-off': occurrence.checkedOff,
-    }
-  );
-  return (
-    <div
-      className={monthCalendarOccurrenceClasses}
-      title={occurrenceTimeString}
-      onClick={openEditingEventForm}
-    >
-      <div className="month-calendar-occurrence-inner">
-        {!hasOccurred &&
-          event.isRecurring && (
-            <FontAwesomeIcon
-              icon="clock"
-              size="sm"
-              className="recurring-occurrence-icon"
-            />
-          )}
-        {text}
-      </div>
-    </div>
-  );
-};
 
-MonthCalendarOccurrence.propTypes = {
-  event: eventShape.isRequired,
-  occurrence: occurrenceShape.isRequired,
-  hasOccurred: PropTypes.bool,
-  loggedInUser: userShape.isRequired,
-  editingEventFormData: eventShape,
-  isEditingExistingEvent: PropTypes.bool.isRequired,
-  setEditingEventFormData: PropTypes.func.isRequired,
-  nowMinute: PropTypes.instanceOf(Date).isRequired,
-};
+  deleteOccurrence = evt => {
+    evt.stopPropagation();
+    const { occurrence, loggedInUser, fetchOccurrences } = this.props;
+    const occurrenceId = occurrence._id;
+    deleteOccurrence({ occurrenceId }).then(() => {
+      fetchOccurrences({ user: loggedInUser });
+    });
+  };
+
+  checkOffOccurrence = evt => {
+    evt.stopPropagation();
+    const { occurrence, loggedInUser, fetchOccurrences } = this.props;
+    const checkedOffOccurrence = { ...occurrence, checkedOff: true };
+    upsertOccurrence({ occurrence: checkedOffOccurrence }).then(() => {
+      fetchOccurrences({ user: loggedInUser });
+    });
+  };
+
+  render() {
+    const {
+      event,
+      occurrence,
+      hasOccurred,
+      timezone,
+      editingEventFormData,
+    } = this.props;
+    const { isHovered } = this.state;
+    const isBeingEdited =
+      editingEventFormData && editingEventFormData._id === event._id;
+    const text =
+      event.title || (isBeingEdited ? '(Adding event…)' : '(Untitled event)');
+    const timeString = moment(occurrence.datetime)
+      .tz(timezone)
+      .format('HH:mm');
+    const monthCalendarOccurrenceClasses = classNames(
+      'month-calendar-occurrence',
+      {
+        'being-edited': isBeingEdited,
+        'has-occurred': hasOccurred,
+        'checked-off': occurrence.checkedOff,
+      }
+    );
+    const monthCalendarOccurrenceDetailsClasses = classNames(
+      'month-calendar-occurrence-details',
+      {
+        'is-hovered': isHovered,
+      }
+    );
+    const monthCalendarOccurrencePreviewClasses = classNames(
+      'month-calendar-occurrence-preview',
+      {
+        'is-hovered': isHovered,
+      }
+    );
+    return (
+      <div
+        className={monthCalendarOccurrenceClasses}
+        onClick={this.openEditingEventForm}
+        onMouseEnter={this.setIsHovered}
+        onMouseLeave={this.setIsNotHovered}
+      >
+        <div className={monthCalendarOccurrenceDetailsClasses}>
+          {hasOccurred ? (
+            <div className="month-calendar-occurrence-actions">
+              <FontAwesomeIcon
+                icon="trash"
+                className="month-calendar-occurrence-action-button"
+                size="sm"
+                onClick={this.deleteOccurrence}
+              />
+              {!occurrence.checkedOff && (
+                <FontAwesomeIcon
+                  icon="check"
+                  className="month-calendar-occurrence-action-button"
+                  size="sm"
+                  onClick={this.checkOffOccurrence}
+                />
+              )}
+            </div>
+          ) : (
+            <div />
+          )}
+          {timeString}
+        </div>
+        <div className={monthCalendarOccurrencePreviewClasses}>
+          {!hasOccurred &&
+            event.isRecurring && (
+              <FontAwesomeIcon
+                icon="clock"
+                size="sm"
+                className="recurring-occurrence-icon"
+              />
+            )}
+          {text}
+        </div>
+      </div>
+    );
+  }
+}
 
 MonthCalendarOccurrence = _.flow([
   withUser,
+  withOccurrences,
   withEditingEventFormData,
   withNowMinute,
 ])(MonthCalendarOccurrence);
@@ -329,13 +394,13 @@ MonthCalendarOccurrence = _.flow([
 let MonthCalendarCellEditEventButton = ({
   containedDatetime,
   loggedInUser,
+  timezone,
   editingEventFormData,
   isEditingExistingEvent,
   setEditingEventFormData,
   nowMinute,
 }) => {
   const openEditingEventForm = () => {
-    const timezone = getTimezoneFromUser(loggedInUser);
     const containedMoment = moment(containedDatetime).tz(timezone);
     const nowMinuteMoment = moment(nowMinute).tz(timezone);
     const endOfTodayMoment = nowMinuteMoment.clone().endOf('day');

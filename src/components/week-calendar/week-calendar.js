@@ -28,8 +28,7 @@ class WeekCalendar extends Component {
   }
 
   render() {
-    const { selectedDatetime, loggedInUser } = this.props;
-    const timezone = getTimezoneFromUser(loggedInUser);
+    const { selectedDatetime, timezone } = this.props;
     const selectedMoment = moment(selectedDatetime).tz(timezone);
     const start = selectedMoment.clone().startOf('week');
     const end = selectedMoment.clone().endOf('week');
