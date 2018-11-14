@@ -21,6 +21,7 @@ class CalendarOccurrence extends Component {
     event: eventShape.isRequired,
     occurrence: occurrenceShape.isRequired,
     hasOccurred: PropTypes.bool,
+    isFlowHorizontal: PropTypes.bool,
     loggedInUser: userShape.isRequired,
     timezone: PropTypes.string.isRequired,
     fetchOccurrences: PropTypes.func.isRequired,
@@ -80,6 +81,7 @@ class CalendarOccurrence extends Component {
       event,
       occurrence,
       hasOccurred,
+      isFlowHorizontal,
       timezone,
       editingEventFormData,
     } = this.props;
@@ -93,19 +95,22 @@ class CalendarOccurrence extends Component {
       .tz(timezone)
       .format('HH:mm');
     const calendarOccurrenceClasses = classNames('calendar-occurrence', {
-      'being-edited': isBeingEdited,
-      'has-occurred': hasOccurred,
       'checked-off': occurrence.checkedOff,
+      'has-occurred': hasOccurred,
+      'flow-horizontal': isFlowHorizontal,
+      'being-edited': isBeingEdited,
     });
     const calendarOccurrenceDetailsClasses = classNames(
       'calendar-occurrence-details',
       {
+        'flow-horizontal': isFlowHorizontal,
         'is-hovered': isHovered,
       }
     );
     const calendarOccurrencePreviewClasses = classNames(
       'calendar-occurrence-preview',
       {
+        'flow-horizontal': isFlowHorizontal,
         'is-hovered': isHovered,
       }
     );

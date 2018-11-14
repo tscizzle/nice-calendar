@@ -78,9 +78,9 @@ let MonthCalendarRow = ({
       <CalendarCell
         startDatetime={dayStartDatetime}
         endDatetime={dayEndDatetime}
-        cellWidth="calc(100% / 7)"
         topLeftFormat="D"
         topRightFormat="ddd"
+        className="month-calendar-cell"
         key={day}
       />
     );

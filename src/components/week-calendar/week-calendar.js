@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import moment from 'moment-timezone';
+import classNames from 'classnames';
 
 import withUser from 'state-management/state-connectors/with-user';
 import withEvents from 'state-management/state-connectors/with-events';
@@ -75,14 +76,15 @@ let WeekCalendarColumn = ({ containedDatetime, timezone }) => {
       .endOf('hour');
     const startDatetime = startMoment.toDate();
     const endDatetime = endMoment.toDate();
-    const cellHeight =
-      startHour === 0 ? 'calc(100% / 5)' : 'calc(100% * 2 / 5)';
+    const weekCalendarCellClasses = classNames('week-calendar-cell', {
+      'week-calendar-cell-early': startHour === 0,
+    });
     return (
       <CalendarCell
         startDatetime={startDatetime}
         endDatetime={endDatetime}
-        cellHeight={cellHeight}
         topLeftFormat="HH:mm"
+        className={weekCalendarCellClasses}
         key={startHour}
       />
     );

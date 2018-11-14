@@ -29,10 +29,9 @@ class CalendarCell extends Component {
   static propTypes = {
     startDatetime: PropTypes.instanceOf(Date).isRequired,
     endDatetime: PropTypes.instanceOf(Date).isRequired,
-    cellHeight: PropTypes.string,
-    cellWidth: PropTypes.string,
     topLeftFormat: PropTypes.string,
     topRightFormat: PropTypes.string,
+    isFlowHorizontal: PropTypes.bool,
     className: PropTypes.string,
     timezone: PropTypes.string.isRequired,
     events: PropTypes.objectOf(eventShape).isRequired,
@@ -55,10 +54,9 @@ class CalendarCell extends Component {
     const {
       startDatetime,
       endDatetime,
-      cellHeight,
-      cellWidth,
       topLeftFormat,
       topRightFormat,
+      isFlowHorizontal,
       className,
       timezone,
       events,
@@ -119,34 +117,40 @@ class CalendarCell extends Component {
           event={event}
           occurrence={occurrence}
           hasOccurred={hasOccurred}
+          isFlowHorizontal={isFlowHorizontal}
           key={occurrence._id}
         />
       )
     );
+    const isNowCell = startDatetime <= nowMinute && nowMinute <= endDatetime;
     const startMoment = moment(startDatetime).tz(timezone);
+    const selectedMoment = moment(selectedDatetime).tz(timezone);
+    const isInSelectedZoom = startMoment.isSame(selectedMoment, selectedZoom);
     const endMoment = moment(endDatetime).tz(timezone);
     const nowMinuteMoment = moment(nowMinute).tz(timezone);
     const isInPast = endMoment.isBefore(nowMinuteMoment);
-    const selectedMoment = moment(selectedDatetime).tz(timezone);
-    const isInSelectedZoom = startMoment.isSame(selectedMoment, selectedZoom);
     const calendarCellClasses = classNames('calendar-cell', {
       'calendar-cell-not-selected-zoom': !isInSelectedZoom,
       'calendar-cell-in-the-past': isInPast,
+      'flow-horizontal': isFlowHorizontal,
       [className]: Boolean(className),
     });
-    const isNowCell = startDatetime <= nowMinute && nowMinute <= endDatetime;
-    const cellStyle = {
-      ...(cellHeight ? { height: cellHeight } : {}),
-      ...(cellWidth ? { width: cellWidth } : {}),
-    };
+    const calendarCellHeaderClasses = classNames('calendar-cell-header', {
+      'flow-horizontal': isFlowHorizontal,
+    });
+    const calendarCellContentClasses = classNames('calendar-cell-content', {
+      'flow-horizontal': isFlowHorizontal,
+    });
+    const calendarCellFooterClasses = classNames('calendar-cell-footer', {
+      'flow-horizontal': isFlowHorizontal,
+    });
     return (
       <div
         className={calendarCellClasses}
         onMouseEnter={this.setIsHovered}
         onMouseLeave={this.setIsNotHovered}
-        style={cellStyle}
       >
-        <div className="calendar-cell-top">
+        <div className={calendarCellHeaderClasses}>
           <div className="calendar-cell-number">
             {topLeftFormat && startMoment.format(topLeftFormat)}
             {isNowCell && <div className="calendar-cell-number-now-dot" />}
@@ -155,8 +159,8 @@ class CalendarCell extends Component {
             {topRightFormat && startMoment.format(topRightFormat)}
           </div>
         </div>
-        <div className="calendar-cell-content">{occurrenceDisplays}</div>
-        <div className="calendar-cell-bottom">
+        <div className={calendarCellContentClasses}>{occurrenceDisplays}</div>
+        <div className={calendarCellFooterClasses}>
           {isHovered &&
             !isInPast && (
               <CalendarCellEditEventButton

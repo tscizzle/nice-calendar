@@ -34,5 +34,13 @@ $weekCalendarColumnTopHeight: 35px;
     flex-direction: column;
     height: calc(100% - #{$weekCalendarColumnTopHeight});
     width: 100%;
+
+    .week-calendar-cell {
+      height: calc(100% * 2 / 5);
+
+      &.week-calendar-cell-morning {
+        height: calc(100% / 5);
+      }
+    }
   }
 }

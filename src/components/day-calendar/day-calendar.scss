@@ -1,7 +1,6 @@
 @import '../../vars';
 
 $dayCalendarTopHeight: 35px;
-$hourMarkerColumnWidth: 80px;
 
 .day-calendar-container {
   display: flex;
@@ -12,6 +11,7 @@ $hourMarkerColumnWidth: 80px;
   .day-calendar-top {
     height: $dayCalendarTopHeight;
     width: 100%;
+    border-left: solid 1px $light;
   }
 
   .day-calendar-content {
@@ -22,19 +22,11 @@ $hourMarkerColumnWidth: 80px;
 
 .day-calendar-row {
   display: flex;
-  height: calc(100% / 12);
+  height: calc(100% / 8);
   width: 100%;
-  border-left: solid 1px $light;
-
-  .day-calendar-time-marker {
-    height: 100%;
-    width: $hourMarkerColumnWidth;
-    color: $darkerGray;
-    font-size: 0.75em;
-  }
 
   .day-calendar-cell {
     height: 100%;
-    width: calc(100% - #{$hourMarkerColumnWidth});
+    width: 100%;
   }
 }

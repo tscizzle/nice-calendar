@@ -3,7 +3,6 @@
 .calendar-occurrence {
   position: relative;
   display: flex;
-  width: 100%;
   padding: 0px 4px;
   border-radius: 2px;
   background-color: $lightBlue;
@@ -16,6 +15,16 @@
 
   &:not(:last-child) {
     margin-bottom: 4px;
+  }
+
+  &:not(.flow-horizontal) {
+    width: 100%;
+  }
+
+  &.flow-horizontal {
+    height: 2em;
+    width: 200px;
+    margin-left: 8px;
   }
 
   &.has-occurred {
@@ -37,20 +46,31 @@
   }
 
   .calendar-occurrence-details {
-    @include transition(
-      width $layoutTransitionDuration,
-      left $layoutTransitionDuration
-    );
-    width: 0;
-    position: relative;
-    left: -200%;
     display: flex;
     justify-content: space-between;
     align-items: center;
 
-    &.is-hovered {
-      width: 100%;
-      left: 0;
+    &:not(.flow-horizontal) {
+      @include transition(
+        width $layoutTransitionDuration,
+        left $layoutTransitionDuration
+      );
+      width: 0;
+      position: relative;
+      left: -200%;
+
+      &.is-hovered {
+        width: 100%;
+        left: 0;
+      }
+    }
+
+    &.flow-horizontal {
+      flex-direction: row-reverse;
+
+      .calendar-occurrence-actions {
+        margin-left: 10px;
+      }
     }
 
     .calendar-occurrence-actions {
@@ -70,17 +90,26 @@
   }
 
   .calendar-occurrence-preview {
-    @include transition(
-      width $layoutTransitionDuration,
-      left $layoutTransitionDuration
-    );
-    width: 200%;
-    position: relative;
-    left: 0;
+    display: flex;
+    align-items: center;
 
-    &.is-hovered {
-      width: 0;
-      left: 200%;
+    &:not(.flow-horizontal) {
+      @include transition(
+        width $layoutTransitionDuration,
+        left $layoutTransitionDuration
+      );
+      width: 200%;
+      position: relative;
+      left: 0;
+
+      &.is-hovered {
+        width: 0;
+        left: 200%;
+      }
+    }
+
+    &.flow-horizontal {
+      margin-left: 10px;
     }
 
     .recurring-occurrence-icon {

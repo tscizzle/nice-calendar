@@ -2,13 +2,16 @@
 
 .calendar-cell {
   display: flex;
-  flex-direction: column;
   justify-content: space-between;
   padding: 4px 8px 8px;
   border-top: solid 1px $light;
   border-left: solid 1px $light;
   font-size: 0.8em;
   overflow-y: hidden;
+
+  &:not(.flow-horizontal) {
+    flex-direction: column;
+  }
 
   &.calendar-cell-in-the-past {
     background-color: $lightest;
@@ -18,11 +21,21 @@
     background-color: $lighter;
   }
 
-  .calendar-cell-top {
+  .calendar-cell-header {
     display: flex;
     justify-content: space-between;
-    align-items: center;
-    width: 100%;
+
+    &:not(.flow-horizontal) {
+      align-items: center;
+      width: 100%;
+    }
+
+    &.flow-horizontal {
+      flex-direction: column;
+      align-items: flex-start;
+      width: initial;
+      min-width: 75px;
+    }
 
     .calendar-cell-number {
       display: flex;
@@ -50,15 +63,29 @@
   .calendar-cell-content {
     flex-grow: 1;
     display: flex;
-    flex-direction: column;
-    width: 100%;
-    margin: 6px 0px;
+
+    &:not(.flow-horizontal) {
+      flex-direction: column;
+      width: 100%;
+      margin: 6px 0px;
+    }
+
+    &.flow-horizontal {
+      flex-wrap: wrap;
+      margin: 0px 6px;
+    }
   }
 
-  .calendar-cell-bottom {
+  .calendar-cell-footer {
     display: flex;
     justify-content: flex-end;
     height: 2em;
     font-size: 0.8em;
+
+    &.flow-horizontal {
+      flex-direction: column;
+      height: initial;
+      width: 2em;
+    }
   }
 }
