@@ -33,6 +33,7 @@ class CalendarCell extends Component {
     cellWidth: PropTypes.string,
     topLeftFormat: PropTypes.string,
     topRightFormat: PropTypes.string,
+    className: PropTypes.string,
     timezone: PropTypes.string.isRequired,
     events: PropTypes.objectOf(eventShape).isRequired,
     allEvents: PropTypes.objectOf(eventShape).isRequired,
@@ -58,6 +59,7 @@ class CalendarCell extends Component {
       cellWidth,
       topLeftFormat,
       topRightFormat,
+      className,
       timezone,
       events,
       allEvents,
@@ -124,11 +126,13 @@ class CalendarCell extends Component {
     const startMoment = moment(startDatetime).tz(timezone);
     const endMoment = moment(endDatetime).tz(timezone);
     const nowMinuteMoment = moment(nowMinute).tz(timezone);
-    const isDayPast = endMoment.isBefore(nowMinuteMoment);
+    const isInPast = endMoment.isBefore(nowMinuteMoment);
     const selectedMoment = moment(selectedDatetime).tz(timezone);
     const isInSelectedZoom = startMoment.isSame(selectedMoment, selectedZoom);
     const calendarCellClasses = classNames('calendar-cell', {
       'calendar-cell-not-selected-zoom': !isInSelectedZoom,
+      'calendar-cell-in-the-past': isInPast,
+      [className]: Boolean(className),
     });
     const isNowCell = startDatetime <= nowMinute && nowMinute <= endDatetime;
     const cellStyle = {
@@ -154,7 +158,7 @@ class CalendarCell extends Component {
         <div className="calendar-cell-content">{occurrenceDisplays}</div>
         <div className="calendar-cell-bottom">
           {isHovered &&
-            !isDayPast && (
+            !isInPast && (
               <CalendarCellEditEventButton
                 startDatetime={startDatetime}
                 endDatetime={endDatetime}

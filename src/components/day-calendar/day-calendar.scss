@@ -1,49 +1,40 @@
 @import '../../vars';
 
-$timeColumnWidth: 80px;
-$dayCalendarColumnTopHeight: 2.5em;
-$dayCalendarColumnTopBorder: 1px;
+$dayCalendarTopHeight: 35px;
+$hourMarkerColumnWidth: 80px;
 
 .day-calendar-container {
   display: flex;
+  flex-direction: column;
   height: 100%;
   width: 100%;
 
-  .day-calendar-time-column {
-    height: 100%;
-    width: $timeColumnWidth;
-    padding-top: calc(
-      #{$dayCalendarColumnTopHeight} + #{$dayCalendarColumnTopBorder}
-    );
-    border-left: solid 1px $light;
-    color: $darkerGray;
-    font-size: 0.75em;
+  .day-calendar-top {
+    height: $dayCalendarTopHeight;
+    width: 100%;
+  }
 
-    .day-calendar-time-cell {
-      display: flex;
-      justify-content: flex-end;
-      height: calc(100% / 24);
-      width: 100%;
-      padding: 2px 4px;
-      border-top: solid 1px $light;
-    }
+  .day-calendar-content {
+    height: calc(100% - #{$dayCalendarTopHeight});
+    width: 100%;
   }
 }
 
-.day-calendar-cell {
+.day-calendar-row {
   display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  width: calc(100% - #{$timeColumnWidth});
+  height: calc(100% / 12);
+  width: 100%;
   border-left: solid 1px $light;
-  font-size: 0.8em;
 
-  .day-calendar-cell-top {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    height: $dayCalendarColumnTopHeight;
-    padding: 0px 4px;
-    border-bottom: solid 1px $light;
+  .day-calendar-time-marker {
+    height: 100%;
+    width: $hourMarkerColumnWidth;
+    color: $darkerGray;
+    font-size: 0.75em;
+  }
+
+  .day-calendar-cell {
+    height: 100%;
+    width: calc(100% - #{$hourMarkerColumnWidth});
   }
 }

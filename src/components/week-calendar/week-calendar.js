@@ -15,12 +15,6 @@ import CalendarCell from 'components/calendar-cell/calendar-cell';
 
 import 'stylesheets/components/week-calendar/week-calendar.css';
 
-const DAY_CHUNK_WINDOWS = [
-  { start: 0, end: 6 },
-  { start: 7, end: 15 },
-  { start: 16, end: 23 },
-];
-
 class WeekCalendar extends Component {
   static propTypes = {
     loggedInUser: userShape.isRequired,
@@ -45,11 +39,10 @@ class WeekCalendar extends Component {
     const days = _.times(7, day => {
       const dayContainedMoment = weekStart.clone().add(day, 'days');
       const dayContainedDatetime = dayContainedMoment.toDate();
-      const cellKey = dayContainedMoment.format('YYYY-MM-DD');
       return (
         <WeekCalendarColumn
           containedDatetime={dayContainedDatetime}
-          key={cellKey}
+          key={day}
         />
       );
     });
@@ -69,23 +62,28 @@ export default WeekCalendar;
 let WeekCalendarColumn = ({ containedDatetime, timezone }) => {
   const containedMoment = moment(containedDatetime).tz(timezone);
   const dayStart = containedMoment.clone().startOf('day');
-  const dayChunks = _.map(DAY_CHUNK_WINDOWS, ({ start, end }) => {
-    const startMoment = dayStart.clone().add(start, 'hours');
+  const DAY_CHUNK_WINDOWS = [
+    { startHour: 0, endHour: 6 },
+    { startHour: 7, endHour: 15 },
+    { startHour: 16, endHour: 23 },
+  ];
+  const dayChunks = _.map(DAY_CHUNK_WINDOWS, ({ startHour, endHour }) => {
+    const startMoment = dayStart.clone().add(startHour, 'hours');
     const endMoment = dayStart
       .clone()
-      .add(end, 'hours')
+      .add(endHour, 'hours')
       .endOf('hour');
     const startDatetime = startMoment.toDate();
     const endDatetime = endMoment.toDate();
-    const cellHeight = start === 0 ? 'calc(100% / 4)' : 'calc(100% * 3 / 8)';
-    const startTimeString = startMoment.format('HH');
+    const cellHeight =
+      startHour === 0 ? 'calc(100% / 5)' : 'calc(100% * 2 / 5)';
     return (
       <CalendarCell
         startDatetime={startDatetime}
         endDatetime={endDatetime}
         cellHeight={cellHeight}
         topLeftFormat="HH:mm"
-        key={startTimeString}
+        key={startHour}
       />
     );
   });

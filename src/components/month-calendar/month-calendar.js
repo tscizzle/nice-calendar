@@ -39,12 +39,11 @@ class MonthCalendar extends Component {
     const weeks = _.times(numWeeks, week => {
       const weekContainedMoment = monthStart.clone().add(week, 'weeks');
       const containedDatetime = weekContainedMoment.toDate();
-      const rowKey = weekContainedMoment.format('YYYY-MM-DD');
       return (
         <MonthCalendarRow
           containedDatetime={containedDatetime}
           numWeeks={numWeeks}
-          key={rowKey}
+          key={week}
         />
       );
     });
@@ -75,7 +74,6 @@ let MonthCalendarRow = ({
     const dayEndMoment = dayContainedMoment.clone().endOf('day');
     const dayStartDatetime = dayStartMoment.toDate();
     const dayEndDatetime = dayEndMoment.toDate();
-    const cellKey = dayContainedMoment.format('YYYY-MM-DD');
     return (
       <CalendarCell
         startDatetime={dayStartDatetime}
@@ -83,7 +81,7 @@ let MonthCalendarRow = ({
         cellWidth="calc(100% / 7)"
         topLeftFormat="D"
         topRightFormat="ddd"
-        key={cellKey}
+        key={day}
       />
     );
   });

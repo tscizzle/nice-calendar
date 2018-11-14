@@ -10,8 +10,12 @@
   font-size: 0.8em;
   overflow-y: hidden;
 
-  &.calendar-cell-not-selected-zoom {
+  &.calendar-cell-in-the-past {
     background-color: $lightest;
+  }
+
+  &.calendar-cell-not-selected-zoom {
+    background-color: $lighter;
   }
 
   .calendar-cell-top {
