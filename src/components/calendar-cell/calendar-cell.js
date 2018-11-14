@@ -131,12 +131,6 @@ class CalendarCell extends Component {
       'calendar-cell-not-selected-zoom': !isInSelectedZoom,
     });
     const isNowCell = startDatetime <= nowMinute && nowMinute <= endDatetime;
-    const calendarCellDayNumberClasses = classNames(
-      'calendar-cell-day-number',
-      {
-        'calendar-cell-day-number-now': isNowCell,
-      }
-    );
     const cellStyle = {
       ...(cellHeight ? { height: cellHeight } : {}),
       ...(cellWidth ? { width: cellWidth } : {}),
@@ -149,8 +143,9 @@ class CalendarCell extends Component {
         style={cellStyle}
       >
         <div className="calendar-cell-top">
-          <div className={calendarCellDayNumberClasses}>
+          <div className="calendar-cell-number">
             {topLeftFormat && startMoment.format(topLeftFormat)}
+            {isNowCell && <div className="calendar-cell-number-now-dot" />}
           </div>
           <div className="calendar-cell-day-name">
             {topRightFormat && startMoment.format(topRightFormat)}

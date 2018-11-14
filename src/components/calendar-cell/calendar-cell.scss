@@ -20,17 +20,19 @@
     align-items: center;
     width: 100%;
 
-    .calendar-cell-day-number {
+    .calendar-cell-number {
       display: flex;
       justify-content: center;
       align-items: center;
-      height: 1.8em;
-      min-width: 1.8em;
       padding: 2px;
-      border-radius: 2px;
 
-      &.calendar-cell-day-number-now {
-        background-color: $dark;
+      .calendar-cell-number-now-dot {
+        height: 1.3em;
+        width: 1.3em;
+        margin-left: 10px;
+        border-radius: 50%;
+        box-shadow: 1px 1px 3px $dark;
+        background-color: $darkerGray;
         color: $white;
       }
     }

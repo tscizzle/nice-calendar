@@ -59,7 +59,14 @@ const mainReducer = (state = initialState, action) => {
       newState = { ...state, selectedZoom: action.zoom };
       break;
     case SET_EDITING_EVENT:
-      newState = { ...state, editingEventFormData: action.event };
+      const newSelectedDatetime = action.event
+        ? action.event.datetime
+        : state.selectedDatetime;
+      newState = {
+        ...state,
+        selectedDatetime: newSelectedDatetime,
+        editingEventFormData: action.event,
+      };
       break;
     case UPDATE_NOW_MINUTE:
       newState = { ...state, nowMinute: action.datetime };

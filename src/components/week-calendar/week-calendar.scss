@@ -20,23 +20,8 @@ $weekCalendarColumnTopHeight: 35px;
     justify-content: space-between;
     align-items: center;
     height: $weekCalendarColumnTopHeight;
-    padding: 0px 4px;
+    padding: 0px 20px;
     border-left: solid 1px $light;
-    font-size: 0.8em;
-
-    .week-calendar-column-day-number {
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 1.8em;
-      min-width: 1.8em;
-      border-radius: 2px;
-
-      &.week-calendar-column-day-number-today {
-        background-color: $dark;
-        color: $white;
-      }
-    }
 
     .week-calendar-column-day-name {
       font-weight: bold;
