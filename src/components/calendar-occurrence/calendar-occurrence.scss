@@ -1,0 +1,90 @@
+@import '../../vars';
+
+.calendar-occurrence {
+  position: relative;
+  display: flex;
+  width: 100%;
+  padding: 0px 4px;
+  border-radius: 2px;
+  background-color: $lightBlue;
+  border: solid 2px $lightBlue;
+  box-shadow: 1px 1px 1px $blue;
+  color: $darkBlue;
+  white-space: nowrap;
+  overflow-x: hidden;
+  cursor: pointer;
+
+  &:not(:last-child) {
+    margin-bottom: 4px;
+  }
+
+  &.has-occurred {
+    background-color: $lightRed;
+    border-color: $lightRed;
+    box-shadow: 1px 1px 1px $red;
+    color: $darkRed;
+  }
+
+  &.checked-off {
+    background-color: $lightGreen;
+    border-color: $lightGreen;
+    box-shadow: 1px 1px 1px $green;
+    color: $darkGreen;
+  }
+
+  &.being-edited {
+    font-weight: bold;
+  }
+
+  .calendar-occurrence-details {
+    @include transition(
+      width $layoutTransitionDuration,
+      left $layoutTransitionDuration
+    );
+    width: 0;
+    position: relative;
+    left: -200%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    &.is-hovered {
+      width: 100%;
+      left: 0;
+    }
+
+    .calendar-occurrence-actions {
+      display: flex;
+      align-items: center;
+
+      .calendar-occurrence-action-button {
+        &:not(:first-child) {
+          margin-left: 10px;
+        }
+
+        &:hover {
+          opacity: 0.5;
+        }
+      }
+    }
+  }
+
+  .calendar-occurrence-preview {
+    @include transition(
+      width $layoutTransitionDuration,
+      left $layoutTransitionDuration
+    );
+    width: 200%;
+    position: relative;
+    left: 0;
+
+    &.is-hovered {
+      width: 0;
+      left: 200%;
+    }
+
+    .recurring-occurrence-icon {
+      margin-right: 3px;
+    }
+  }
+}

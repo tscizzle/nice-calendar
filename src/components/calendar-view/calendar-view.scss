@@ -1,5 +1,7 @@
 @import '../../vars';
 
+$calendarViewLeftSidebarWidth: 275px;
+
 .calendar-view-container {
   display: flex;
   height: 100%;
@@ -12,6 +14,7 @@
     );
     width: 0;
     opacity: 0;
+    overflow-y: scroll;
 
     &.opened {
       width: $calendarViewLeftSidebarWidth;
