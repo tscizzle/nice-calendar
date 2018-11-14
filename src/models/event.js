@@ -16,7 +16,7 @@ export const eventShape = PropTypes.shape({
   _id: PropTypes.string.isRequired,
   userId: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  startDatetime: PropTypes.instanceOf(Date).isRequired,
+  datetime: PropTypes.instanceOf(Date).isRequired,
   isRecurring: PropTypes.bool.isRequired,
   recurringSchedule: recurringScheduleShape, // required if isRecurring: true
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
@@ -27,7 +27,7 @@ export const eventShape = PropTypes.shape({
 export const makeNewEventDoc = ({ user, suppliedEvent }) => {
   const _id = randomID();
   const userId = user._id;
-  const startDatetime = moment()
+  const datetime = moment()
     .add(2, 'hours')
     .startOf('hour')
     .toDate();
@@ -35,7 +35,7 @@ export const makeNewEventDoc = ({ user, suppliedEvent }) => {
     _id,
     userId,
     title: '',
-    startDatetime,
+    datetime,
     isRecurring: false,
     recurringSchedule: null,
     tags: [],
@@ -45,7 +45,7 @@ export const makeNewEventDoc = ({ user, suppliedEvent }) => {
 };
 
 const getSingleEventOccurrence = ({ event, timezone }) => {
-  const eventMoment = moment(event.startDatetime).tz(timezone);
+  const eventMoment = moment(event.datetime).tz(timezone);
   const eventDatetime = eventMoment.toDate();
   const occurrence = {
     _id: `${event._id}-${eventMoment.toISOString()}`,

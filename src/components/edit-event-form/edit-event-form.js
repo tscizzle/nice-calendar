@@ -53,7 +53,7 @@ class EditEventForm extends Component {
       editingEventFormData,
       nowMinute,
     } = this.props;
-    const { startDatetime } = editingEventFormData;
+    const { datetime } = editingEventFormData;
     const nowMinuteMoment = moment(nowMinute).tz(timezone);
     const selectedMoment = moment(selectedDatetime).tz(timezone);
     const selectionStart = selectedMoment.clone().startOf(selectedZoom);
@@ -74,7 +74,7 @@ class EditEventForm extends Component {
         options.push({ value, label, labelWhenSelected });
       }
     });
-    const editingEventMoment = moment(startDatetime).tz(timezone);
+    const editingEventMoment = moment(datetime).tz(timezone);
     const editingEventOption = {
       value: editingEventMoment.format(valueFormat),
       label: editingEventMoment.format(labelFormat),
@@ -108,50 +108,50 @@ class EditEventForm extends Component {
     setEditingEventFormData({ event: newEvent });
   };
 
-  setStartDate = ({ value }) => {
+  setEventDate = ({ value }) => {
     const {
       timezone,
       editingEventFormData,
       setEditingEventFormData,
     } = this.props;
     const newDayMoment = moment.tz(value, timezone);
-    const { startDatetime } = editingEventFormData;
-    const startMoment = moment(startDatetime).tz(timezone);
-    const newStartDatetime = newDayMoment
+    const { datetime } = editingEventFormData;
+    const eventMoment = moment(datetime).tz(timezone);
+    const newDatetime = newDayMoment
       .clone()
       .set({
-        hour: startMoment.hour(),
-        minute: startMoment.minute(),
+        hour: eventMoment.hour(),
+        minute: eventMoment.minute(),
       })
       .toDate();
     const newEvent = {
       ...editingEventFormData,
-      startDatetime: newStartDatetime,
+      datetime: newDatetime,
     };
     setEditingEventFormData({ event: newEvent });
   };
 
-  getSetStartTimeFunc = unit => {
-    const setStartTime = evt => {
+  getSetEventTimeFunc = unit => {
+    const setEventTime = evt => {
       const {
         timezone,
         editingEventFormData,
         setEditingEventFormData,
       } = this.props;
       const value = parseInt(evt.target.value, 10);
-      const { startDatetime } = editingEventFormData;
-      const startMoment = moment(startDatetime).tz(timezone);
-      const newStartDatetime = startMoment
+      const { datetime } = editingEventFormData;
+      const eventMoment = moment(datetime).tz(timezone);
+      const newDatetime = eventMoment
         .clone()
         .set({ [unit]: value })
         .toDate();
       const newEvent = {
         ...editingEventFormData,
-        startDatetime: newStartDatetime,
+        datetime: newDatetime,
       };
       setEditingEventFormData({ event: newEvent });
     };
-    return setStartTime;
+    return setEventTime;
   };
 
   setIsRecurring = evt => {
@@ -193,16 +193,16 @@ class EditEventForm extends Component {
 
   validateEventDoc = eventDoc => {
     const { timezone, nowMinute } = this.props;
-    const { title, startDatetime } = eventDoc;
+    const { title, datetime } = eventDoc;
     // validate there is a title
     if (!title) {
       return 'Give your Event a title.';
     }
     // validate the event datetime is in the future
-    const startMoment = moment(startDatetime).tz(timezone);
+    const eventMoment = moment(datetime).tz(timezone);
     const nowMinuteMoment = moment(nowMinute).tz(timezone);
     const earliestAllowedMoment = nowMinuteMoment.clone().add(1, 'minutes');
-    const isTooEarly = startMoment.isBefore(earliestAllowedMoment);
+    const isTooEarly = eventMoment.isBefore(earliestAllowedMoment);
     if (isTooEarly) {
       return 'Make your Event later than now.';
     }
@@ -261,14 +261,14 @@ class EditEventForm extends Component {
     const { hasAttemptedSave } = this.state;
     const {
       title,
-      startDatetime,
+      datetime,
       isRecurring,
       recurringSchedule = {},
     } = editingEventFormData;
-    const startMoment = moment(startDatetime).tz(timezone);
-    const startDateValue = startMoment.format(this.dayValueFormat);
-    const startHourValue = startMoment.format('HH');
-    const startMinuteValue = startMoment.format('mm');
+    const eventMoment = moment(datetime).tz(timezone);
+    const eventDateValue = eventMoment.format(this.dayValueFormat);
+    const eventHourValue = eventMoment.format('HH');
+    const eventMinuteValue = eventMoment.format('mm');
     const everyX = recurringSchedule ? recurringSchedule.everyX : 1;
     const everyUnit = recurringSchedule ? recurringSchedule.everyUnit : 'week';
     const validationErrorMsg = this.validateEventDoc(editingEventFormData);
@@ -299,13 +299,13 @@ class EditEventForm extends Component {
             <NiceSelect
               containerClassName="edit-event-form-date-select"
               options={this.dayOptions()}
-              onChange={this.setStartDate}
-              selectedValue={startDateValue}
+              onChange={this.setEventDate}
+              selectedValue={eventDateValue}
               isBare={true}
             />
             <NiceInput
-              value={startHourValue}
-              onChange={this.getSetStartTimeFunc('hour')}
+              value={eventHourValue}
+              onChange={this.getSetEventTimeFunc('hour')}
               isBare={true}
               type="number"
               min={0}
@@ -313,8 +313,8 @@ class EditEventForm extends Component {
             />
             :
             <NiceInput
-              value={startMinuteValue}
-              onChange={this.getSetStartTimeFunc('minute')}
+              value={eventMinuteValue}
+              onChange={this.getSetEventTimeFunc('minute')}
               isBare={true}
               type="number"
               min={0}

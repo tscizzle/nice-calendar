@@ -1,8 +1,6 @@
 @import '../../vars';
 
-$timeColumnWidth: 80px;
-$weekCalendarColumnTopHeight: 2.5em;
-$weekCalendarCellTopBorder: 1px;
+$weekCalendarColumnTopHeight: 35px;
 
 .week-calendar-container {
   display: flex;
@@ -15,8 +13,7 @@ $weekCalendarCellTopBorder: 1px;
   flex-direction: column;
   justify-content: space-between;
   width: calc(100% / 7);
-  border-left: solid 1px $light;
-  font-size: 0.8em;
+  border-left: solid 2px $light;
 
   .week-calendar-column-top {
     display: flex;
@@ -24,16 +21,18 @@ $weekCalendarCellTopBorder: 1px;
     align-items: center;
     height: $weekCalendarColumnTopHeight;
     padding: 0px 4px;
+    border-left: solid 1px $light;
+    font-size: 0.8em;
 
     .week-calendar-column-day-number {
       display: flex;
       justify-content: center;
       align-items: center;
       height: 1.8em;
-      width: 1.8em;
+      min-width: 1.8em;
+      border-radius: 2px;
 
       &.week-calendar-column-day-number-today {
-        border-radius: 50%;
         background-color: $dark;
         color: $white;
       }
@@ -41,34 +40,14 @@ $weekCalendarCellTopBorder: 1px;
 
     .week-calendar-column-day-name {
       font-weight: bold;
-      color: $gray;
+      color: $darkGray;
     }
   }
 
   .week-calendar-column-content {
+    display: flex;
+    flex-direction: column;
     height: calc(100% - #{$weekCalendarColumnTopHeight});
     width: 100%;
-  }
-}
-
-.week-calendar-cell {
-  width: 100%;
-  border-top: solid 1px $light;
-
-  &:first-child {
-    height: calc(100% / 4);
-  }
-
-  &:not(:first-child) {
-    height: calc(100% * 3 / 8);
-  }
-
-  .week-calendar-cell-top {
-    padding: 4px 8px;
-    color: $darkGray;
-  }
-
-  .week-calendar-cell-content {
-    margin: 6px 0px;
   }
 }

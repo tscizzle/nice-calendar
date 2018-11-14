@@ -2,16 +2,16 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import moment from 'moment-timezone';
-import classNames from 'classnames';
 
 import withUser from 'state-management/state-connectors/with-user';
 import withEvents from 'state-management/state-connectors/with-events';
 import withOccurrences from 'state-management/state-connectors/with-occurrences';
 import withSelectedDatetime from 'state-management/state-connectors/with-selected-datetime';
-import withNowMinute from 'state-management/state-connectors/with-now-minute';
 import { userShape } from 'models/user';
 import { eventShape } from 'models/event';
 import { occurrenceShape } from 'models/occurrence';
+
+import CalendarCell from 'components/calendar-cell/calendar-cell';
 
 import 'stylesheets/components/week-calendar/week-calendar.css';
 
@@ -66,10 +66,8 @@ WeekCalendar = _.flow([
 
 export default WeekCalendar;
 
-let WeekCalendarColumn = ({ containedDatetime, timezone, nowMinute }) => {
+let WeekCalendarColumn = ({ containedDatetime, timezone }) => {
   const containedMoment = moment(containedDatetime).tz(timezone);
-  const nowMinuteMoment = moment(nowMinute).tz(timezone);
-  const isTodayCell = containedMoment.isSame(nowMinuteMoment, 'day');
   const dayStart = containedMoment.clone().startOf('day');
   const dayChunks = _.map(DAY_CHUNK_WINDOWS, ({ start, end }) => {
     const startMoment = dayStart.clone().add(start, 'hours');
@@ -79,25 +77,22 @@ let WeekCalendarColumn = ({ containedDatetime, timezone, nowMinute }) => {
       .endOf('hour');
     const startDatetime = startMoment.toDate();
     const endDatetime = endMoment.toDate();
+    const cellHeight = start === 0 ? 'calc(100% / 4)' : 'calc(100% * 3 / 8)';
     const startTimeString = startMoment.format('HH');
     return (
-      <WeekCalendarCell
+      <CalendarCell
         startDatetime={startDatetime}
         endDatetime={endDatetime}
+        cellHeight={cellHeight}
+        topLeftFormat="HH:mm"
         key={startTimeString}
       />
     );
   });
-  const monthCalendarCellDayNumberClasses = classNames(
-    'week-calendar-column-day-number',
-    {
-      'week-calendar-column-day-number-today': isTodayCell,
-    }
-  );
   return (
     <div className="week-calendar-column">
       <div className="week-calendar-column-top">
-        <div className={monthCalendarCellDayNumberClasses}>
+        <div className="week-calendar-column-day-number">
           {containedMoment.format('D')}
         </div>
         <div className="week-calendar-column-day-name">
@@ -112,28 +107,6 @@ let WeekCalendarColumn = ({ containedDatetime, timezone, nowMinute }) => {
 WeekCalendarColumn.propTypes = {
   containedDatetime: PropTypes.instanceOf(Date).isRequired,
   timezone: PropTypes.string.isRequired,
-  nowMinute: PropTypes.instanceOf(Date).isRequired,
 };
 
-WeekCalendarColumn = _.flow([withUser, withNowMinute])(WeekCalendarColumn);
-
-let WeekCalendarCell = ({ startDatetime, endDatetime, timezone }) => {
-  const startMoment = moment(startDatetime).tz(timezone);
-  const endMoment = moment(endDatetime).tz(timezone);
-  const startHourDisplay = startMoment.format('HH:mm');
-  const chunkOccurrences = [];
-  return (
-    <div className="week-calendar-cell">
-      <div className="week-calendar-cell-top">{startHourDisplay}</div>
-      <div className="week-calendar-cell-content">{chunkOccurrences}</div>
-    </div>
-  );
-};
-
-WeekCalendarCell.propTypes = {
-  startDatetime: PropTypes.instanceOf(Date).isRequired,
-  endDatetime: PropTypes.instanceOf(Date).isRequired,
-  timezone: PropTypes.string.isRequired,
-};
-
-WeekCalendarCell = withUser(WeekCalendarCell);
+WeekCalendarColumn = withUser(WeekCalendarColumn);
