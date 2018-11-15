@@ -154,7 +154,6 @@ class CalendarCell extends Component {
         <div className={calendarCellHeaderClasses}>
           <div className="calendar-cell-number">
             {topLeftFormat && startMoment.format(topLeftFormat)}
-            {isNowCell && <div className="calendar-cell-number-now-dot" />}
           </div>
           <div className="calendar-cell-day-name">
             {topRightFormat && startMoment.format(topRightFormat)}

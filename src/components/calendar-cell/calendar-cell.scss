@@ -47,15 +47,6 @@
       justify-content: center;
       align-items: center;
       padding: 2px;
-
-      .calendar-cell-number-now-dot {
-        // height: 1.3em;
-        // width: 1.3em;
-        margin-left: 10px;
-        border-radius: 50%;
-        box-shadow: 1px 1px 3px $dark;
-        background-color: $darkYellow;
-      }
     }
 
     .calendar-cell-day-name {
