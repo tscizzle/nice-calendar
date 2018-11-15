@@ -1,0 +1,8 @@
+@import '../../vars';
+
+.divider {
+  height: 1px;
+  width: calc(100% - 20px);
+  margin-left: 10px;
+  background-color: $lightGray;
+}

@@ -20,13 +20,6 @@ $calendarViewLeftSidebarWidth: 275px;
       width: $calendarViewLeftSidebarWidth;
       opacity: 1;
     }
-
-    .divider {
-      height: 1px;
-      width: calc(100% - 20px);
-      margin-left: 10px;
-      background-color: $lightGray;
-    }
   }
 
   .calendar-container {
