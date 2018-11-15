@@ -21,6 +21,7 @@ class NiceSelect extends Component {
         ]),
       })
     ).isRequired,
+    onChange: PropTypes.func.isRequired,
     selectedValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     isBare: PropTypes.bool,
   };
@@ -129,7 +130,7 @@ const NiceSelectOption = ({
   };
   const display = !_.isUndefined(label) ? label : value;
   const niceSelectOptionClasses = classNames('nice-select-option', {
-    'nice-select-option-selected': isSelected,
+    'is-selected': isSelected,
   });
   return (
     <div className={niceSelectOptionClasses} onClick={selectValue}>
@@ -141,7 +142,65 @@ const NiceSelectOption = ({
 NiceSelectOption.propTypes = {
   value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
   label: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-  onChange: PropTypes.func,
+  onChange: PropTypes.func.isRequired,
   toggleIsOpen: PropTypes.func.isRequired,
+  isSelected: PropTypes.bool.isRequired,
+};
+
+export class NiceSelectButtons extends Component {
+  static propTypes = {
+    options: PropTypes.arrayOf(
+      PropTypes.shape({
+        value: PropTypes.oneOfType([PropTypes.string, PropTypes.number])
+          .isRequired,
+        label: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+      })
+    ).isRequired,
+    onChange: PropTypes.func.isRequired,
+    selectedValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  };
+
+  render() {
+    const { options, onChange, selectedValue } = this.props;
+    const optionButtons = _.map(options, ({ value, label }) => {
+      const isSelected = value === selectedValue;
+      return (
+        <NiceSelectOptionButton
+          value={value}
+          label={label}
+          onChange={onChange}
+          isSelected={isSelected}
+          key={value}
+        />
+      );
+    });
+    return <div className="nice-select-buttons-container">{optionButtons}</div>;
+  }
+}
+
+const NiceSelectOptionButton = ({ value, label, onChange, isSelected }) => {
+  const selectValue = () => onChange({ value });
+  const display = !_.isUndefined(label) ? label : value;
+  const niceSelectOptionButtonClasses = classNames(
+    'nice-select-buttons-option',
+    {
+      'is-selected': isSelected,
+    }
+  );
+  return (
+    <div
+      className={niceSelectOptionButtonClasses}
+      onClick={selectValue}
+      datatext={display}
+    >
+      {display}
+    </div>
+  );
+};
+
+NiceSelectOptionButton.propTypes = {
+  value: PropTypes.oneOfType([PropTypes.string, PropTypes.number]).isRequired,
+  label: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
+  onChange: PropTypes.func,
   isSelected: PropTypes.bool.isRequired,
 };

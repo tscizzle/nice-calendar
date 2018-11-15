@@ -76,8 +76,63 @@
   &:active {
     background-color: $light;
   }
+
+  &.is-selected {
+    font-weight: bold;
+  }
 }
 
-.nice-select-option-selected {
-  font-weight: bold;
+.nice-select-buttons-container {
+  display: inline-flex;
+  text-align: center;
+  border-radius: 3px;
+  box-shadow: 1px 1px 1px $gray;
+  background-color: $white;
+  font-size: 0.85em;
+
+  .nice-select-buttons-option {
+    padding: 6px 8px;
+    background-color: $lightest;
+    color: $darker;
+
+    &:not(:disabled):not(.is-selected) {
+      cursor: pointer;
+
+      &:hover {
+        background-color: $lighter;
+      }
+
+      &:active {
+        background-color: $lightGray;
+      }
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    &:first-child {
+      border-radius: 3px 0px 0px 3px;
+    }
+
+    &:last-child {
+      border-radius: 0px 3px 3px 0px;
+    }
+
+    &::after {
+      display: block;
+      content: attr(datatext);
+      font-weight: bold;
+      height: 0;
+      overflow: hidden;
+      visibility: hidden;
+    }
+
+    &.is-selected {
+      background-color: $light;
+      font-weight: bold;
+      cursor: default;
+    }
+  }
 }

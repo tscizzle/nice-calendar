@@ -9,7 +9,7 @@ import withSelectedDatetime from 'state-management/state-connectors/with-selecte
 import withSelectedZoom from 'state-management/state-connectors/with-selected-zoom';
 import withNowMinute from 'state-management/state-connectors/with-now-minute';
 import NiceButton from 'components/nice-button/nice-button';
-import NiceSelect from 'components/nice-select/nice-select';
+import { NiceSelectButtons } from 'components/nice-select/nice-select';
 import logo from 'components/app/images/calendar.svg';
 
 import 'stylesheets/components/topbar/topbar.css';
@@ -73,7 +73,7 @@ let ZoomSelector = ({ selectedZoom, setSelectedZoom }) => {
   ];
   const handleChange = ({ value }) => setSelectedZoom({ zoom: value });
   return (
-    <NiceSelect
+    <NiceSelectButtons
       options={zoomOptions}
       onChange={handleChange}
       selectedValue={selectedZoom}
