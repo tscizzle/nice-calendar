@@ -144,6 +144,18 @@
     }
   }
 
+  &.dark-circle {
+    color: $white;
+
+    &:hover {
+      background-color: $darkGray;
+    }
+
+    &:active {
+      background-color: $gray;
+    }
+  }
+
   &.small-circle-button {
     font-size: 0.85em;
   }

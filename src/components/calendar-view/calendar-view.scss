@@ -1,13 +1,14 @@
 @import '../../vars';
 
-$calendarViewLeftSidebarWidth: 275px;
+$calendarViewSidebarWidth: 275px;
 
 .calendar-view-container {
   display: flex;
   height: 100%;
   width: 100%;
 
-  .calendar-view-left-sidebar {
+  .calendar-view-left-sidebar,
+  .calendar-view-right-sidebar {
     @include transition(
       width $layoutTransitionDuration,
       opacity 0.1s $layoutTransitionDuration
@@ -17,7 +18,7 @@ $calendarViewLeftSidebarWidth: 275px;
     overflow-y: scroll;
 
     &.opened {
-      width: $calendarViewLeftSidebarWidth;
+      width: $calendarViewSidebarWidth;
       opacity: 1;
     }
   }
@@ -26,8 +27,16 @@ $calendarViewLeftSidebarWidth: 275px;
     @include transition(width $layoutTransitionDuration);
     width: 100%;
 
-    &.left-sidebar-opened {
-      width: calc(100% - #{$calendarViewLeftSidebarWidth});
+    &.left-sidebar-opened:not(.right-sidebar-opened) {
+      width: calc(100% - #{$calendarViewSidebarWidth});
+    }
+
+    &.right-sidebar-opened:not(.left-sidebar-opened) {
+      width: calc(100% - #{$calendarViewSidebarWidth});
+    }
+
+    &.left-sidebar-opened.right-sidebar-opened {
+      width: calc(100% - (2 * #{$calendarViewSidebarWidth}));
     }
   }
 }

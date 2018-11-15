@@ -66,6 +66,7 @@ export const CircleButton = ({
     blue: 'blue-circle',
     green: 'green-circle',
     yellow: 'yellow-circle',
+    dark: 'dark-circle',
     gray: '',
   }[color];
   const circleButtonClasses = classNames('circle-button', {

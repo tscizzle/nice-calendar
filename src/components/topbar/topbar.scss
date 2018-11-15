@@ -11,7 +11,7 @@
     height: 100%;
   }
 
-  .topbar-right {
+  .topbar-middle {
     display: flex;
     align-items: center;
 
@@ -72,5 +72,11 @@
     .next-page-icon {
       margin-left: 2px;
     }
+  }
+}
+
+.occurrence-queue-toggle {
+  &:not(:hover) {
+    color: $white;
   }
 }

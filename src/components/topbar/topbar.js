@@ -7,8 +7,9 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import withUser from 'state-management/state-connectors/with-user';
 import withSelectedDatetime from 'state-management/state-connectors/with-selected-datetime';
 import withSelectedZoom from 'state-management/state-connectors/with-selected-zoom';
+import withShowOccurrenceQueue from 'state-management/state-connectors/with-show-occurrence-queue';
 import withNowMinute from 'state-management/state-connectors/with-now-minute';
-import NiceButton from 'components/nice-button/nice-button';
+import NiceButton, { CircleButton } from 'components/nice-button/nice-button';
 import { NiceSelectButtons } from 'components/nice-select/nice-select';
 import logo from 'components/app/images/calendar.svg';
 
@@ -26,13 +27,16 @@ let Topbar = ({ timezone, selectedDatetime, selectedZoom }) => {
   return (
     <div className="topbar">
       <img className="topbar-logo" src={logo} alt="" />
-      <div className="topbar-right">
+      <div className="topbar-middle">
         <div className="topbar-calendar-control">
           <TodayShortcut />
           <ZoomSelector />
           <DatetimePager />
         </div>
         <div className="topbar-selected-month">{monthDisplay}</div>
+      </div>
+      <div className="topbar-right">
+        <OccurrenceQueueToggle />
       </div>
     </div>
   );
@@ -126,3 +130,23 @@ DatetimePager.propTypes = {
 DatetimePager = _.flow([withUser, withSelectedDatetime, withSelectedZoom])(
   DatetimePager
 );
+
+let OccurrenceQueueToggle = ({
+  showOccurrenceQueue,
+  setShowOccurrenceQueue,
+}) => {
+  const toggleShowOccurrenceQueue = () =>
+    setShowOccurrenceQueue({ show: !showOccurrenceQueue });
+  return (
+    <CircleButton color="dark" onClick={toggleShowOccurrenceQueue}>
+      <FontAwesomeIcon icon="list" />
+    </CircleButton>
+  );
+};
+
+OccurrenceQueueToggle.propTypes = {
+  showOccurrenceQueue: PropTypes.bool.isRequired,
+  setShowOccurrenceQueue: PropTypes.func.isRequired,
+};
+
+OccurrenceQueueToggle = withShowOccurrenceQueue(OccurrenceQueueToggle);

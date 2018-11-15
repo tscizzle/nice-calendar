@@ -19,12 +19,12 @@ const withEditingEventFormData = WrappedComponent => {
       dispatch(setEditingEventFormData({ event })),
   });
   const mergeProps = preserveOwnProps;
-  const ComponentwithEditingEventFormData = connect(
+  const ComponentWithEditingEventFormData = connect(
     mapStateToProps,
     mapDispatchToProps,
     mergeProps
   )(WrappedComponent);
-  return ComponentwithEditingEventFormData;
+  return ComponentWithEditingEventFormData;
 };
 
 export default withEditingEventFormData;

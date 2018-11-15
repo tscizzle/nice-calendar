@@ -1,0 +1,11 @@
+@import '../../vars';
+
+.occurrence-queue {
+  padding: 10px;
+
+  .occurrence-queue-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+}
