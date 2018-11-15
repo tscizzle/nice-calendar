@@ -13,11 +13,16 @@
     flex-direction: column;
   }
 
-  &.calendar-cell-in-the-past {
+  &.is-now-cell {
+    border: solid 2px $yellow;
+    box-shadow: 0px 0px 3px $darkGray;
+  }
+
+  &.is-in-the-past {
     background-color: $lightest;
   }
 
-  &.calendar-cell-not-selected-zoom {
+  &.not-selected-zoom {
     background-color: $lighter;
   }
 
@@ -44,13 +49,12 @@
       padding: 2px;
 
       .calendar-cell-number-now-dot {
-        height: 1.3em;
-        width: 1.3em;
+        // height: 1.3em;
+        // width: 1.3em;
         margin-left: 10px;
         border-radius: 50%;
         box-shadow: 1px 1px 3px $dark;
-        background-color: $darkerGray;
-        color: $white;
+        background-color: $darkYellow;
       }
     }
 

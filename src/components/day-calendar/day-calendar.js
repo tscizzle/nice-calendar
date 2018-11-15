@@ -65,7 +65,12 @@ class DayCalendar extends Component {
     return (
       <div className="day-calendar-container">
         <div className="day-calendar-top">
-          {selectedMoment.format('YYYY-MM-DD')}
+          <div className="day-calendar-day-number">
+            {selectedMoment.format('MMM D')}
+          </div>
+          <div className="day-calendar-day-name">
+            {selectedMoment.format('ddd')}
+          </div>
         </div>
         <div className="day-calendar-content">{hours}</div>
       </div>

@@ -6,7 +6,7 @@ const DATABASE = [
         _id: 'u_0',
         email: 'u_0@nicecalendar.com',
         username: 'username_0',
-        timezone: 'America/Los_Angeles',
+        timezone: 'America/New_York',
       },
     ],
   },

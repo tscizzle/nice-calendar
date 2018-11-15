@@ -48,37 +48,22 @@ Topbar = _.flow([withUser, withSelectedDatetime, withSelectedZoom])(Topbar);
 
 export default Topbar;
 
-let TodayShortcut = ({
-  timezone,
-  selectedDatetime,
-  setSelectedDatetime,
-  nowMinute,
-}) => {
+let TodayShortcut = ({ setSelectedDatetime, nowMinute }) => {
   const selectToday = () => setSelectedDatetime({ datetime: nowMinute });
-  const selectedMoment = moment(selectedDatetime).tz(timezone);
-  const nowMoment = moment(nowMinute).tz(timezone);
-  const isTodaySelected = selectedMoment.isSame(nowMoment, 'day');
   return (
-    <NiceButton
-      onClick={selectToday}
-      isCompact={true}
-      isDisabled={isTodaySelected}
-    >
+    <NiceButton onClick={selectToday} isCompact={true}>
+      <div className="today-button-dot" />
       Today
     </NiceButton>
   );
 };
 
 TodayShortcut.propTypes = {
-  timezone: PropTypes.string,
-  selectedDatetime: PropTypes.instanceOf(Date).isRequired,
   setSelectedDatetime: PropTypes.func.isRequired,
   nowMinute: PropTypes.instanceOf(Date).isRequired,
 };
 
-TodayShortcut = _.flow([withUser, withSelectedDatetime, withNowMinute])(
-  TodayShortcut
-);
+TodayShortcut = _.flow([withSelectedDatetime, withNowMinute])(TodayShortcut);
 
 let ZoomSelector = ({ selectedZoom, setSelectedZoom }) => {
   const zoomOptions = [

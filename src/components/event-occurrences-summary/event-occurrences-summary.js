@@ -66,7 +66,7 @@ let EventOccurrencesSummary = ({
     const { occurrence: nextOccurrence } = nextSheduledOccurrence;
     nextOccurrenceMoment = moment(nextOccurrence.datetime).tz(timezone);
   }
-  const occurrenceDatetimeFormat = 'MMM DD, YYYY HH:mm';
+  const occurrenceDatetimeFormat = 'MMM D, YYYY HH:mm';
   const latestOccurrenceButtonColor = isCheckedOff ? 'green' : 'red';
   const latestOccurrenceCheckIcon = isCheckedOff ? 'times' : 'check';
   const latestOccurrenceClasses = classNames(

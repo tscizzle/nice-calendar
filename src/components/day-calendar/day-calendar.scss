@@ -9,9 +9,18 @@ $dayCalendarTopHeight: 35px;
   width: 100%;
 
   .day-calendar-top {
+    display: flex;
+    align-items: center;
     height: $dayCalendarTopHeight;
     width: 100%;
+    padding-left: 100px;
     border-left: solid 1px $light;
+
+    .day-calendar-day-name {
+      margin-left: 30px;
+      font-weight: bold;
+      color: $darkGray;
+    }
   }
 
   .day-calendar-content {

@@ -33,6 +33,15 @@
   }
 }
 
+.today-button-dot {
+  height: 1em;
+  width: 1em;
+  margin-right: 6px;
+  border-radius: 50%;
+  box-shadow: 1px 1px 3px $dark;
+  background-color: $yellow;
+}
+
 .datetime-pager {
   display: flex;
   align-items: center;

@@ -130,8 +130,9 @@ class CalendarCell extends Component {
     const nowMinuteMoment = moment(nowMinute).tz(timezone);
     const isInPast = endMoment.isBefore(nowMinuteMoment);
     const calendarCellClasses = classNames('calendar-cell', {
-      'calendar-cell-not-selected-zoom': !isInSelectedZoom,
-      'calendar-cell-in-the-past': isInPast,
+      'is-now-cell': isNowCell,
+      'not-selected-zoom': !isInSelectedZoom,
+      'is-in-the-past': isInPast,
       'flow-horizontal': isFlowHorizontal,
       [className]: Boolean(className),
     });
