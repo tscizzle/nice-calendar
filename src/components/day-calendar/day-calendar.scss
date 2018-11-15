@@ -7,6 +7,7 @@ $dayCalendarTopHeight: 35px;
   flex-direction: column;
   height: 100%;
   width: 100%;
+  border-right: solid 1px $light;
 
   .day-calendar-top {
     display: flex;

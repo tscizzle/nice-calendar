@@ -100,11 +100,11 @@
     color: $darkRed;
 
     &:hover {
-      background-color: $hoverRed;
+      background-color: $activeRed;
     }
 
     &:active {
-      background-color: $activeRed;
+      background-color: $hoverRed;
     }
   }
 
@@ -112,11 +112,11 @@
     color: $darkBlue;
 
     &:hover {
-      background-color: $hoverBlue;
+      background-color: $activeBlue;
     }
 
     &:active {
-      background-color: $activeBlue;
+      background-color: $hoverBlue;
     }
   }
 
@@ -124,11 +124,11 @@
     color: $darkGreen;
 
     &:hover {
-      background-color: $hoverGreen;
+      background-color: $activeGreen;
     }
 
     &:active {
-      background-color: $activeGreen;
+      background-color: $hoverGreen;
     }
   }
 
@@ -136,11 +136,11 @@
     color: $darkYellow;
 
     &:hover {
-      background-color: $hoverYellow;
+      background-color: $activeYellow;
     }
 
     &:active {
-      background-color: $activeYellow;
+      background-color: $hoverYellow;
     }
   }
 
