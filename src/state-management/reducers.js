@@ -28,8 +28,8 @@ const initialState = {
 };
 
 const mainReducer = (state = initialState, action) => {
-  // const verbose = false;
-  const verbose = true;
+  const verbose = false;
+  // const verbose = true;
   if (verbose) {
     console.log(`=== Action: ${action.type} ===`);
     console.log('Action:', action);
