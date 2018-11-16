@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import moment from 'moment';
+import classNames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import withUser from 'state-management/state-connectors/with-user';
@@ -137,8 +138,15 @@ let OccurrenceQueueToggle = ({
 }) => {
   const toggleShowOccurrenceQueue = () =>
     setShowOccurrenceQueue({ show: !showOccurrenceQueue });
+  const occurrenceQueueToggleClasses = classNames('occurrence-queue-toggle', {
+    opened: showOccurrenceQueue,
+  });
   return (
-    <CircleButton color="dark" onClick={toggleShowOccurrenceQueue}>
+    <CircleButton
+      className={occurrenceQueueToggleClasses}
+      color="dark"
+      onClick={toggleShowOccurrenceQueue}
+    >
       <FontAwesomeIcon icon="list" />
     </CircleButton>
   );

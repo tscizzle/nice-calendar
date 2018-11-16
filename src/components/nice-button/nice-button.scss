@@ -38,42 +38,42 @@
       padding: 6px 16px;
     }
   }
-}
 
-.nice-button-inner {
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  padding: 12px 20px;
-}
+  &.primary-button {
+    background-color: $blue;
+    color: $lightest;
 
-.button-loading {
-  margin-left: 15px;
-}
+    &:hover:not(:disabled) {
+      background-color: $hoverBlue;
+    }
 
-.primary-button {
-  background-color: $blue;
-  color: $lightest;
-
-  &:hover:not(:disabled) {
-    background-color: $hoverBlue;
+    &:active:not(:disabled) {
+      background-color: $activeBlue;
+    }
   }
 
-  &:active:not(:disabled) {
-    background-color: $activeBlue;
+  &.secondary-button {
+    background-color: $green;
+    color: $lightest;
+
+    &:hover:not(:disabled) {
+      background-color: $hoverGreen;
+    }
+
+    &:active:not(:disabled) {
+      background-color: $activeGreen;
+    }
   }
-}
 
-.secondary-button {
-  background-color: $green;
-  color: $lightest;
+  .nice-button-inner {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 12px 20px;
 
-  &:hover:not(:disabled) {
-    background-color: $hoverGreen;
-  }
-
-  &:active:not(:disabled) {
-    background-color: $activeGreen;
+    .button-loading {
+      margin-left: 15px;
+    }
   }
 }
 

@@ -76,7 +76,16 @@
 }
 
 .occurrence-queue-toggle {
-  &:not(:hover) {
-    color: $white;
+  &.opened {
+    background-color: $white;
+    color: $dark;
+
+    &:hover {
+      background-color: $light;
+    }
+
+    &:active {
+      background-color: $lightGray;
+    }
   }
 }

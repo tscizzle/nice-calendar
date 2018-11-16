@@ -9,7 +9,6 @@ import api from 'api';
 import withUser from 'state-management/state-connectors/with-user';
 import withEvents from 'state-management/state-connectors/with-events';
 import withOccurrences from 'state-management/state-connectors/with-occurrences';
-import withShowOccurrenceQueue from 'state-management/state-connectors/with-show-occurrence-queue';
 import { userShape } from 'models/user';
 import { eventShape } from 'models/event';
 import { occurrenceShape, getLatestOccurrences } from 'models/occurrence';
@@ -18,13 +17,7 @@ import { CircleButton } from 'components/nice-button/nice-button';
 
 import 'stylesheets/components/occurrence-queue/occurrence-queue.css';
 
-let OccurrenceQueue = ({
-  timezone,
-  allEvents,
-  occurrences,
-  setShowOccurrenceQueue,
-}) => {
-  const closeOccurrenceQueue = () => setShowOccurrenceQueue({ show: false });
+let OccurrenceQueue = ({ timezone, allEvents, occurrences }) => {
   const uncheckedOccurrences = _.pickBy(
     occurrences,
     ({ checkedOff }) => !checkedOff
@@ -50,9 +43,6 @@ let OccurrenceQueue = ({
     <div className="occurrence-queue">
       <div className="occurrence-queue-top">
         <div className="occurrence-queue-header">Unchecked</div>
-        <CircleButton onClick={closeOccurrenceQueue}>
-          <FontAwesomeIcon icon="times" />
-        </CircleButton>
       </div>
       <div className="occurrence-queue-content">{occurrenceQueue}</div>
     </div>
@@ -66,12 +56,9 @@ OccurrenceQueue.propTypes = {
   setShowOccurrenceQueue: PropTypes.func.isRequired,
 };
 
-OccurrenceQueue = _.flow([
-  withUser,
-  withEvents,
-  withOccurrences,
-  withShowOccurrenceQueue,
-])(OccurrenceQueue);
+OccurrenceQueue = _.flow([withUser, withEvents, withOccurrences])(
+  OccurrenceQueue
+);
 
 export default OccurrenceQueue;
 
