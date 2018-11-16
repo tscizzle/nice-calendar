@@ -11,7 +11,7 @@ import withSelectedZoom from 'state-management/state-connectors/with-selected-zo
 import withNowMinute from 'state-management/state-connectors/with-now-minute';
 import NiceButton from 'components/nice-button/nice-button';
 import { NiceSelectButtons } from 'components/nice-select/nice-select';
-import logo from 'components/app/images/calendar.svg';
+import logo from 'assets/images/calendar.svg';
 
 import 'stylesheets/components/topbar/topbar.css';
 

@@ -13,6 +13,7 @@ import {
 } from 'components/nice-form/nice-form';
 import NiceInput from 'components/nice-input/nice-input';
 import NiceButton, { LinkButton } from 'components/nice-button/nice-button';
+import logo from 'assets/images/calendar.svg';
 
 import 'stylesheets/components/auth-view/auth-view.css';
 
@@ -26,7 +27,11 @@ class AuthView extends Component {
     return (
       <div className="auth-view-container">
         <div className="center-form">
+          <div className="auth-form-brand">
+            <img className="auth-form-brand-logo" src={logo} alt="" />
+          </div>
           {currentAuthView === 'login' && <LoginForm />}
+          <div className="copyright-footer">&copy; 2019, Nice Calendar</div>
         </div>
       </div>
     );
@@ -56,6 +61,27 @@ class LoginForm extends Component {
 
   handleChangeConfirmPassword = evt => {
     this.setState({ confirmPassword: evt.target.value });
+  };
+
+  getFormTitle = () => {
+    const { loginOrRegister } = this.state;
+    return {
+      login: 'Login',
+      register: 'Register',
+    }[loginOrRegister];
+  };
+
+  getSwitchFormText = () => {
+    const { loginOrRegister } = this.state;
+    return {
+      login: 'No account? Register here.',
+      register: 'Already registered? Login here.',
+    }[loginOrRegister];
+  };
+
+  getButtonText = () => {
+    const { loginOrRegister } = this.state;
+    return { login: 'Login', register: 'Register' }[loginOrRegister];
   };
 
   validateLoginInputs = ({ email, password }) => {
@@ -99,19 +125,6 @@ class LoginForm extends Component {
     }[loginOrRegister];
   };
 
-  getButtonText = () => {
-    const { loginOrRegister } = this.state;
-    return { login: 'Login', register: 'Register' }[loginOrRegister];
-  };
-
-  getSwitchFormText = () => {
-    const { loginOrRegister } = this.state;
-    return {
-      login: "Don't have an account? Register here.",
-      register: 'Already have an account? Login here.',
-    }[loginOrRegister];
-  };
-
   handleSubmit = () => {
     this.setState({ hasAttemptedSubmit: true }, () => {
       const { fetchUser } = this.props;
@@ -138,7 +151,10 @@ class LoginForm extends Component {
   toggleForm = () => {
     const { loginOrRegister } = this.state;
     const newForm = { login: 'register', register: 'login' }[loginOrRegister];
-    this.setState({ loginOrRegister: newForm });
+    this.setState({
+      loginOrRegister: newForm,
+      hasAttemptedSubmit: false,
+    });
   };
 
   render() {
@@ -150,6 +166,7 @@ class LoginForm extends Component {
       hasAttemptedSubmit,
       errorFromServer,
     } = this.state;
+    const formTitle = this.getFormTitle();
     const switchFormText = this.getSwitchFormText();
     const buttonText = this.getButtonText();
     const validationFunc = this.getValidationFunc();
@@ -163,10 +180,14 @@ class LoginForm extends Component {
     return (
       <div className="auth-form">
         <NiceFormRow>
+          <div className="auth-form-title">{formTitle}</div>
+        </NiceFormRow>
+        <NiceFormRow>
           <NiceInput
             value={email}
             onChange={this.handleChangeEmail}
             placeholder="Email"
+            isFull={true}
           />
         </NiceFormRow>
         <NiceFormRow>
@@ -175,6 +196,7 @@ class LoginForm extends Component {
             onChange={this.handleChangePassword}
             type="password"
             placeholder="Password"
+            isFull={true}
           />
         </NiceFormRow>
         {loginOrRegister === 'register' && (
@@ -184,14 +206,15 @@ class LoginForm extends Component {
               onChange={this.handleChangeConfirmPassword}
               type="password"
               placeholder="Confirm Password"
+              isFull={true}
             />
           </NiceFormRow>
         )}
         <NiceFormSubmitRow>
-          <LinkButton onClick={this.toggleForm}>{switchFormText}</LinkButton>
           <NiceButton isPrimary={true} onClick={this.handleSubmit}>
             {buttonText}
           </NiceButton>
+          <LinkButton onClick={this.toggleForm}>{switchFormText}</LinkButton>
           {isError && <NiceFormErrorMsg errorMsg={errorMsg} />}
         </NiceFormSubmitRow>
       </div>

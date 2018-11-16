@@ -2,16 +2,49 @@
 
 .auth-view-container {
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh;
   width: 100vw;
+
+  .center-form {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 500px;
+    max-height: 90%;
+    width: 400px;
+    max-width: 90%;
+    padding: 25px;
+    border-radius: 5px;
+    box-shadow: 1px 1px 5px $darkGray;
+    background-color: $white;
+
+    .auth-form-brand {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      margin-top: 50px;
+
+      .auth-form-brand-logo {
+        height: 4em;
+      }
+    }
+
+    .copyright-footer {
+      position: absolute;
+      bottom: -4em;
+      left: 1em;
+      font-size: 0.75em;
+      color: $gray;
+    }
+  }
 }
 
-.center-form {
-  height: 500px;
-  max-height: 90%;
-  width: 500px;
-  border-radius: 5px;
-  box-shadow: 1px 1px 5px $darkGray;
+.auth-form {
+  .auth-form-title {
+    font-weight: bold;
+  }
 }
