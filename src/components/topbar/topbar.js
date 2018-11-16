@@ -1,10 +1,12 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import { connect } from 'react-redux';
 import _ from 'lodash';
 import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import api from 'api';
+import { resetAppState } from 'state-management/actions';
 import withUser from 'state-management/state-connectors/with-user';
 import withSelectedDatetime from 'state-management/state-connectors/with-selected-datetime';
 import withSelectedZoom from 'state-management/state-connectors/with-selected-zoom';
@@ -15,7 +17,7 @@ import logo from 'assets/images/calendar.svg';
 
 import 'stylesheets/components/topbar/topbar.css';
 
-let Topbar = ({ fetchUser, timezone, selectedDatetime, selectedZoom }) => {
+let Topbar = ({ timezone, selectedDatetime, selectedZoom }) => {
   const selectedMoment = moment(selectedDatetime).tz(timezone);
   const windowStart = selectedMoment.clone().startOf(selectedZoom);
   const windowEnd = selectedMoment.clone().endOf(selectedZoom);
@@ -36,16 +38,13 @@ let Topbar = ({ fetchUser, timezone, selectedDatetime, selectedZoom }) => {
         <div className="topbar-selected-month">{monthDisplay}</div>
       </div>
       <div className="topbar-right">
-        <NiceButton onClick={() => api.logout().then(() => fetchUser())}>
-          Logout
-        </NiceButton>
+        <LogoutButton />
       </div>
     </div>
   );
 };
 
 Topbar.propTypes = {
-  fetchUser: PropTypes.func.isRequired,
   timezone: PropTypes.string,
   selectedDatetime: PropTypes.instanceOf(Date).isRequired,
   selectedZoom: PropTypes.oneOf(['day', 'week', 'month']).isRequired,
@@ -133,3 +132,19 @@ DatetimePager.propTypes = {
 DatetimePager = _.flow([withUser, withSelectedDatetime, withSelectedZoom])(
   DatetimePager
 );
+
+let LogoutButton = ({ dispatch }) => {
+  return (
+    <NiceButton
+      onClick={() => api.logout().then(() => dispatch(resetAppState()))}
+    >
+      Logout
+    </NiceButton>
+  );
+};
+
+LogoutButton.propTypes = {
+  dispatch: PropTypes.func.isRequired,
+};
+
+LogoutButton = connect()(LogoutButton);

@@ -19,6 +19,8 @@ export const SET_EDITING_EVENT = 'SET_EDITING_EVENT';
 
 export const UPDATE_NOW_MINUTE = 'UPDATE_NOW_MINUTE';
 
+export const RESET_APP_STATE = 'RESET_APP_STATE';
+
 /* Action Creators */
 
 export const fetchUserSuccess = ({ user }) => ({
@@ -123,3 +125,7 @@ export const updateNowMinute = () => {
     datetime,
   };
 };
+
+export const resetAppState = () => ({
+  type: RESET_APP_STATE,
+});

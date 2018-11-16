@@ -11,9 +11,10 @@ import {
   SET_SELECTED_ZOOM,
   SET_EDITING_EVENT,
   UPDATE_NOW_MINUTE,
+  RESET_APP_STATE,
 } from 'state-management/actions';
 
-const initialState = {
+const getInitialState = () => ({
   loggedInUser: null,
   events: {},
   occurrences: {},
@@ -23,9 +24,9 @@ const initialState = {
   nowMinute: moment()
     .startOf('minute')
     .toDate(),
-};
+});
 
-const mainReducer = (state = initialState, action) => {
+const mainReducer = (state = getInitialState(), action) => {
   const verbose = false;
   // const verbose = true;
   if (verbose) {
@@ -71,6 +72,9 @@ const mainReducer = (state = initialState, action) => {
       break;
     case UPDATE_NOW_MINUTE:
       newState = { ...state, nowMinute: action.datetime };
+      break;
+    case RESET_APP_STATE:
+      newState = getInitialState();
       break;
     default:
       newState = state;
