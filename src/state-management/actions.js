@@ -1,6 +1,6 @@
 import moment from 'moment-timezone';
 
-import { getLoggedInUser, getEvents, getOccurrences } from 'api';
+import api from 'api';
 
 /* Action Types */
 
@@ -33,7 +33,8 @@ export const fetchUserFailure = () => ({
 
 export const fetchUser = () => {
   return dispatch => {
-    getLoggedInUser()
+    api
+      .getLoggedInUser()
       .then(({ user }) => {
         if (user) {
           dispatch(fetchUserSuccess({ user }));
@@ -58,7 +59,8 @@ export const fetchEventsFailure = () => ({
 
 export const fetchEvents = ({ userId }) => {
   return dispatch => {
-    getEvents({ userId })
+    api
+      .getEvents({ userId })
       .then(({ events }) => {
         if (events) {
           dispatch(fetchEventsSuccess({ events }));
@@ -83,7 +85,8 @@ export const fetchOccurrencesFailure = () => ({
 
 export const fetchOccurrences = ({ userId }) => {
   return dispatch => {
-    getOccurrences({ userId })
+    api
+      .getOccurrences({ userId })
       .then(({ occurrences }) => {
         if (occurrences) {
           dispatch(fetchOccurrencesSuccess({ occurrences }));

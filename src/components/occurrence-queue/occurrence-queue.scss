@@ -7,5 +7,66 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+
+    .occurrence-queue-header {
+      display: flex;
+      align-items: center;
+      color: $dark;
+      font-weight: bold;
+    }
+  }
+
+  .occurrence-queue-content {
+    margin-top: 20px;
+    font-size: 0.85em;
+
+    .occurrence-queue-occurrence {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 10px;
+      border-radius: 2px;
+
+      &:not(:first-child) {
+        margin-top: 8px;
+      }
+
+      &:not(.checked-off) {
+        background-color: $lightRed;
+        box-shadow: 1px 1px 1px $red;
+        color: $darkRed;
+      }
+
+      &.checked-off {
+        background-color: $lightGreen;
+        box-shadow: 1px 1px 1px $green;
+        color: $darkGreen;
+      }
+
+      .occurrence-queue-occurrence-top {
+        display: flex;
+        width: 100%;
+        font-weight: bold;
+        white-space: nowrap;
+        overflow-x: hidden;
+      }
+
+      .occurrence-queue-occurrence-bottom {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        width: 100%;
+
+        .occurrence-queue-occurrence-datetime {
+          font-size: 0.8em;
+        }
+
+        .occurrence-queue-occurrence-actions {
+          display: flex;
+          align-items: center;
+        }
+      }
+    }
   }
 }

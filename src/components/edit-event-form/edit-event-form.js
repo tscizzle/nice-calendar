@@ -4,7 +4,7 @@ import _ from 'lodash';
 import moment from 'moment-timezone';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { upsertEvent, deleteEvent } from 'api';
+import api from 'api';
 import withUser from 'state-management/state-connectors/with-user';
 import withEvents from 'state-management/state-connectors/with-events';
 import withSelectedDatetime from 'state-management/state-connectors/with-selected-datetime';
@@ -220,7 +220,7 @@ class EditEventForm extends Component {
     this.setState({ hasAttemptedSave: true }, () => {
       const validationErrorMsg = this.validateEventDoc(editingEventFormData);
       if (!validationErrorMsg) {
-        upsertEvent({ event: editingEventFormData }).then(() => {
+        api.upsertEvent({ event: editingEventFormData }).then(() => {
           setEditingEventFormData({ event: null });
           fetchEvents({ user: loggedInUser });
         });
@@ -236,7 +236,7 @@ class EditEventForm extends Component {
       setEditingEventFormData,
     } = this.props;
     const eventId = editingEventFormData._id;
-    deleteEvent({ eventId }).then(() => {
+    api.deleteEvent({ eventId }).then(() => {
       setEditingEventFormData({ event: null });
       fetchEvents({ user: loggedInUser });
     });

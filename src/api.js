@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 import DATABASE from 'test-data';
 
-export const getLoggedInUser = () => {
+const getLoggedInUser = () => {
   return new Promise(function(resolve, reject) {
     const users = _.find(DATABASE, { collection: 'users' });
     const userDocs = users.documents;
@@ -11,7 +11,7 @@ export const getLoggedInUser = () => {
   });
 };
 
-export const getEvents = ({ userId }) => {
+const getEvents = ({ userId }) => {
   return new Promise(function(resolve, reject) {
     const events = _.find(DATABASE, { collection: 'events' });
     const eventDocs = events.documents;
@@ -21,7 +21,7 @@ export const getEvents = ({ userId }) => {
   });
 };
 
-export const upsertEvent = ({ event }) => {
+const upsertEvent = ({ event }) => {
   return new Promise(function(resolve, reject) {
     const events = _.find(DATABASE, { collection: 'events' });
     const eventDocs = events.documents;
@@ -33,7 +33,7 @@ export const upsertEvent = ({ event }) => {
   });
 };
 
-export const deleteEvent = ({ eventId }) => {
+const deleteEvent = ({ eventId }) => {
   return new Promise(function(resolve, reject) {
     const events = _.find(DATABASE, { collection: 'events' });
     const eventDocs = events.documents;
@@ -48,7 +48,7 @@ export const deleteEvent = ({ eventId }) => {
   });
 };
 
-export const getOccurrences = ({ userId }) => {
+const getOccurrences = ({ userId }) => {
   return new Promise(function(resolve, reject) {
     const occurrences = _.find(DATABASE, { collection: 'occurrences' });
     const occurrenceDocs = occurrences.documents;
@@ -58,7 +58,7 @@ export const getOccurrences = ({ userId }) => {
   });
 };
 
-export const upsertOccurrence = ({ occurrence }) => {
+const upsertOccurrence = ({ occurrence }) => {
   return new Promise(function(resolve, reject) {
     const occurrences = _.find(DATABASE, { collection: 'occurrences' });
     const occurrenceDocs = occurrences.documents;
@@ -70,7 +70,7 @@ export const upsertOccurrence = ({ occurrence }) => {
   });
 };
 
-export const deleteOccurrence = ({ occurrenceId }) => {
+const deleteOccurrence = ({ occurrenceId }) => {
   return new Promise(function(resolve, reject) {
     const occurrences = _.find(DATABASE, { collection: 'occurrences' });
     const occurrenceDocs = occurrences.documents;
@@ -83,4 +83,14 @@ export const deleteOccurrence = ({ occurrenceId }) => {
     }
     resolve();
   });
+};
+
+export default {
+  getLoggedInUser,
+  getEvents,
+  upsertEvent,
+  deleteEvent,
+  getOccurrences,
+  upsertOccurrence,
+  deleteOccurrence,
 };

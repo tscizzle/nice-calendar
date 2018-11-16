@@ -5,7 +5,7 @@ import moment from 'moment-timezone';
 import classNames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { upsertOccurrence, deleteOccurrence } from 'api';
+import api from 'api';
 import withUser from 'state-management/state-connectors/with-user';
 import withOccurrences from 'state-management/state-connectors/with-occurrences';
 import withEditingEventFormData from 'state-management/state-connectors/with-editing-event-form-data';
@@ -59,7 +59,7 @@ class CalendarOccurrence extends Component {
     evt.stopPropagation();
     const { occurrence, loggedInUser, fetchOccurrences } = this.props;
     const occurrenceId = occurrence._id;
-    deleteOccurrence({ occurrenceId }).then(() => {
+    api.deleteOccurrence({ occurrenceId }).then(() => {
       fetchOccurrences({ user: loggedInUser });
     });
   };
@@ -71,7 +71,7 @@ class CalendarOccurrence extends Component {
       ...occurrence,
       checkedOff: !occurrence.checkedOff,
     };
-    upsertOccurrence({ occurrence: newOccurrence }).then(() => {
+    api.upsertOccurrence({ occurrence: newOccurrence }).then(() => {
       fetchOccurrences({ user: loggedInUser });
     });
   };

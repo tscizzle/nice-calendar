@@ -5,7 +5,7 @@ import moment from 'moment';
 import classNames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
-import { upsertOccurrence, deleteOccurrence } from 'api';
+import api from 'api';
 import withUser from 'state-management/state-connectors/with-user';
 import withEvents from 'state-management/state-connectors/with-events';
 import withOccurrences from 'state-management/state-connectors/with-occurrences';
@@ -43,14 +43,14 @@ let EventOccurrencesSummary = ({
         ...latestOccurrence,
         checkedOff: !isCheckedOff,
       };
-      upsertOccurrence({ occurrence: newOccurrence }).then(() => {
+      api.upsertOccurrence({ occurrence: newOccurrence }).then(() => {
         setEditingEventFormData({ event: null });
         fetchOccurrences({ user: loggedInUser });
       });
     };
     deleteLatestOccurrence = () => {
       const occurrenceId = latestOccurrence._id;
-      deleteOccurrence({ occurrenceId }).then(() => {
+      api.deleteOccurrence({ occurrenceId }).then(() => {
         setEditingEventFormData({ event: null });
         fetchOccurrences({ user: loggedInUser });
       });
@@ -70,14 +70,14 @@ let EventOccurrencesSummary = ({
   const latestOccurrenceButtonColor = isCheckedOff ? 'green' : 'red';
   const latestOccurrenceCheckIcon = isCheckedOff ? 'times' : 'check';
   const latestOccurrenceClasses = classNames(
-    'event-occurrence',
+    'event-occurrences-summary-occurrence',
     'latest-occurrence',
     {
       'checked-off': isCheckedOff,
     }
   );
   const nextOccurrenceClasses = classNames(
-    'event-occurrence',
+    'event-occurrences-summary-occurrence',
     'next-occurrence'
   );
   return (
@@ -87,7 +87,7 @@ let EventOccurrencesSummary = ({
         {latestOccurrenceMoment ? (
           <div className={latestOccurrenceClasses}>
             {latestOccurrenceMoment.format(occurrenceDatetimeFormat)}
-            <div className="event-occurrence-actions">
+            <div className="event-occurrences-summary-occurrence-actions">
               <CircleButton
                 color={latestOccurrenceButtonColor}
                 isSmall={true}

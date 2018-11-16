@@ -14,7 +14,7 @@
     font-size: 0.85em;
   }
 
-  .event-occurrence {
+  .event-occurrences-summary-occurrence {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -23,9 +23,11 @@
     border-radius: 2px;
 
     &.latest-occurrence {
-      background-color: $lightRed;
-      box-shadow: 1px 1px 1px $red;
-      color: $darkRed;
+      &:not(.checked-off) {
+        background-color: $lightRed;
+        box-shadow: 1px 1px 1px $red;
+        color: $darkRed;
+      }
 
       &.checked-off {
         background-color: $lightGreen;
@@ -40,7 +42,7 @@
       color: $darkBlue;
     }
 
-    .event-occurrence-actions {
+    .event-occurrences-summary-occurrence-actions {
       display: flex;
       align-items: center;
 
