@@ -1,13 +1,77 @@
 import _ from 'lodash';
 
+import { randomID } from 'ui-helpers';
+
 import DATABASE from 'test-data';
 
 const getLoggedInUser = () => {
   return new Promise(function(resolve, reject) {
     const users = _.find(DATABASE, { collection: 'users' });
     const userDocs = users.documents;
-    const user = _.first(userDocs);
-    resolve({ user });
+    const user = _.find(userDocs, { loggedIn: true });
+    const resp = user ? { user } : { message: 'No user is logged in.' };
+    resolve(resp);
+  });
+};
+
+const login = ({ email, password }) => {
+  return logout().then(() => {
+    const users = _.find(DATABASE, { collection: 'users' });
+    const userDocs = users.documents;
+    const user = _.find(userDocs, { username: email, password });
+    let resp;
+    if (user) {
+      user.loggedIn = true;
+      resp = { message: 'Login succeeded.' };
+    } else {
+      resp = { err: 'No user with that username and password.' };
+    }
+    return resp;
+  });
+};
+
+const logout = () => {
+  return new Promise(function(resolve, reject) {
+    const users = _.find(DATABASE, { collection: 'users' });
+    const userDocs = users.documents;
+    _.each(userDocs, doc => delete doc.loggedIn);
+    resolve({ message: 'Logout succeeded.' });
+  });
+};
+
+const register = ({ email, password }) => {
+  return logout().then(() => {
+    const users = _.find(DATABASE, { collection: 'users' });
+    const userDocs = users.documents;
+    const user = _.find(userDocs, { username: email });
+    let resp;
+    if (user) {
+      resp = { err: 'User with that username already exists.' };
+    } else {
+      const newUser = {
+        _id: randomID(),
+        email,
+        username: email,
+        password,
+        timezone: 'America/New_York',
+        loggedIn: true,
+      };
+      userDocs.push(newUser);
+      resp = { message: 'Registration succeeded.' };
+    }
+    return resp;
+  });
+};
+
+const initiateResetPassword = () => {
+  return new Promise(function(resolve, reject) {
+    resolve();
+  });
+};
+
+const resetPassword = ({ token }) => {
+  return new Promise(function(resolve, reject) {
+    resolve();
   });
 };
 
@@ -87,6 +151,11 @@ const deleteOccurrence = ({ occurrenceId }) => {
 
 export default {
   getLoggedInUser,
+  login,
+  logout,
+  register,
+  initiateResetPassword,
+  resetPassword,
   getEvents,
   upsertEvent,
   deleteEvent,

@@ -2,21 +2,20 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import moment from 'moment';
-import classNames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
+import api from 'api';
 import withUser from 'state-management/state-connectors/with-user';
 import withSelectedDatetime from 'state-management/state-connectors/with-selected-datetime';
 import withSelectedZoom from 'state-management/state-connectors/with-selected-zoom';
-import withShowOccurrenceQueue from 'state-management/state-connectors/with-show-occurrence-queue';
 import withNowMinute from 'state-management/state-connectors/with-now-minute';
-import NiceButton, { CircleButton } from 'components/nice-button/nice-button';
+import NiceButton from 'components/nice-button/nice-button';
 import { NiceSelectButtons } from 'components/nice-select/nice-select';
 import logo from 'components/app/images/calendar.svg';
 
 import 'stylesheets/components/topbar/topbar.css';
 
-let Topbar = ({ timezone, selectedDatetime, selectedZoom }) => {
+let Topbar = ({ fetchUser, timezone, selectedDatetime, selectedZoom }) => {
   const selectedMoment = moment(selectedDatetime).tz(timezone);
   const windowStart = selectedMoment.clone().startOf(selectedZoom);
   const windowEnd = selectedMoment.clone().endOf(selectedZoom);
@@ -37,13 +36,16 @@ let Topbar = ({ timezone, selectedDatetime, selectedZoom }) => {
         <div className="topbar-selected-month">{monthDisplay}</div>
       </div>
       <div className="topbar-right">
-        <OccurrenceQueueToggle />
+        <NiceButton onClick={() => api.logout().then(() => fetchUser())}>
+          Logout
+        </NiceButton>
       </div>
     </div>
   );
 };
 
 Topbar.propTypes = {
+  fetchUser: PropTypes.func.isRequired,
   timezone: PropTypes.string,
   selectedDatetime: PropTypes.instanceOf(Date).isRequired,
   selectedZoom: PropTypes.oneOf(['day', 'week', 'month']).isRequired,
@@ -56,7 +58,7 @@ export default Topbar;
 let TodayShortcut = ({ setSelectedDatetime, nowMinute }) => {
   const selectToday = () => setSelectedDatetime({ datetime: nowMinute });
   return (
-    <NiceButton onClick={selectToday} isCompact={true}>
+    <NiceButton onClick={selectToday}>
       <div className="today-button-dot" />
       Today
     </NiceButton>
@@ -131,30 +133,3 @@ DatetimePager.propTypes = {
 DatetimePager = _.flow([withUser, withSelectedDatetime, withSelectedZoom])(
   DatetimePager
 );
-
-let OccurrenceQueueToggle = ({
-  showOccurrenceQueue,
-  setShowOccurrenceQueue,
-}) => {
-  const toggleShowOccurrenceQueue = () =>
-    setShowOccurrenceQueue({ show: !showOccurrenceQueue });
-  const occurrenceQueueToggleClasses = classNames('occurrence-queue-toggle', {
-    opened: showOccurrenceQueue,
-  });
-  return (
-    <CircleButton
-      className={occurrenceQueueToggleClasses}
-      color="dark"
-      onClick={toggleShowOccurrenceQueue}
-    >
-      <FontAwesomeIcon icon="list" />
-    </CircleButton>
-  );
-};
-
-OccurrenceQueueToggle.propTypes = {
-  showOccurrenceQueue: PropTypes.bool.isRequired,
-  setShowOccurrenceQueue: PropTypes.func.isRequired,
-};
-
-OccurrenceQueueToggle = withShowOccurrenceQueue(OccurrenceQueueToggle);

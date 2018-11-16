@@ -10,11 +10,14 @@
   .nice-select {
     display: flex;
     align-items: center;
-    padding: 7px 0px 7px 10px;
-    border-radius: 3px;
-    box-shadow: 1px 1px 1px $gray;
+    padding: 7px 10px;
+    border-bottom: solid 2px transparent;
     background-color: $lightest;
     color: $darker;
+
+    &.nice-select-open {
+      border-color: $blue;
+    }
 
     &:not(:disabled) {
       cursor: pointer;
@@ -31,18 +34,6 @@
     &:disabled {
       opacity: 0.5;
       pointer-events: none;
-    }
-
-    &.bare-select {
-      padding: 7px 10px;
-      border: none;
-      border-bottom: solid 2px transparent;
-      border-radius: 0px;
-      box-shadow: none;
-
-      &.nice-select-open {
-        border-color: $blue;
-      }
     }
 
     .nice-select-icon {

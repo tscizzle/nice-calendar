@@ -39,12 +39,17 @@ let OccurrenceQueue = ({ timezone, allEvents, occurrences }) => {
       key={occurrence._id}
     />
   ));
+  const emptyQueue = (
+    <div className="no-unchecked-occurrences">No Unchecked Occurrences</div>
+  );
   return (
     <div className="occurrence-queue">
       <div className="occurrence-queue-top">
         <div className="occurrence-queue-header">Unchecked</div>
       </div>
-      <div className="occurrence-queue-content">{occurrenceQueue}</div>
+      <div className="occurrence-queue-content">
+        {!_.isEmpty(occurrenceQueue) ? occurrenceQueue : emptyQueue}
+      </div>
     </div>
   );
 };
@@ -53,7 +58,6 @@ OccurrenceQueue.propTypes = {
   timezone: PropTypes.string.isRequired,
   allEvents: PropTypes.objectOf(eventShape).isRequired,
   occurrences: PropTypes.objectOf(occurrenceShape).isRequired,
-  setShowOccurrenceQueue: PropTypes.func.isRequired,
 };
 
 OccurrenceQueue = _.flow([withUser, withEvents, withOccurrences])(

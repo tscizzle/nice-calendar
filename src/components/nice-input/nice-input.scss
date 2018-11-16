@@ -20,13 +20,17 @@
   .nice-input {
     width: 100%;
     padding: 7px 10px;
-    border: solid 1px $light;
-    border-radius: 3px;
-    box-shadow: 1px 1px 1px $gray;
-    background-color: $white;
+    border: none;
+    border-bottom: solid 2px transparent;
+    border-radius: 0px;
+    background-color: $lightest;
     color: $dark;
     font-size: 1em;
     outline: none;
+
+    &:focus {
+      border-color: $blue;
+    }
 
     &[type='number'] {
       padding: 7px 2px 7px 10px;
@@ -34,18 +38,6 @@
 
     &[type='checkbox'] {
       width: 1em;
-    }
-
-    &.bare-input {
-      border: none;
-      border-bottom: solid 2px transparent;
-      border-radius: 0px;
-      box-shadow: none;
-      background-color: $lightest;
-
-      &:focus {
-        border-color: $blue;
-      }
     }
 
     &.bold-input {

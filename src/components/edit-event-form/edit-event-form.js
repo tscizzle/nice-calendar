@@ -194,11 +194,9 @@ class EditEventForm extends Component {
   validateEventDoc = eventDoc => {
     const { timezone, nowMinute } = this.props;
     const { title, datetime } = eventDoc;
-    // validate there is a title
     if (!title) {
       return 'Give your Event a title.';
     }
-    // validate the event datetime is in the future
     const eventMoment = moment(datetime).tz(timezone);
     const nowMinuteMoment = moment(nowMinute).tz(timezone);
     const earliestAllowedMoment = nowMinuteMoment.clone().add(1, 'minutes');
@@ -206,7 +204,6 @@ class EditEventForm extends Component {
     if (isTooEarly) {
       return 'Make your Event later than now.';
     }
-    // if everything is fine, return no message
     return '';
   };
 
@@ -290,7 +287,6 @@ class EditEventForm extends Component {
               onChange={this.setTitle}
               placeholder="Title"
               isFull={true}
-              isBare={true}
               isBold={true}
               focusOnMount={true}
             />
@@ -301,12 +297,10 @@ class EditEventForm extends Component {
               options={this.dayOptions()}
               onChange={this.setEventDate}
               selectedValue={eventDateValue}
-              isBare={true}
             />
             <NiceInput
               value={eventHourValue}
               onChange={this.getSetEventTimeFunc('hour')}
-              isBare={true}
               type="number"
               min={0}
               max={23}
@@ -315,7 +309,6 @@ class EditEventForm extends Component {
             <NiceInput
               value={eventMinuteValue}
               onChange={this.getSetEventTimeFunc('minute')}
-              isBare={true}
               type="number"
               min={0}
               max={59}
@@ -325,7 +318,6 @@ class EditEventForm extends Component {
             <NiceInput
               checked={isRecurring}
               onChange={this.setIsRecurring}
-              isBare={true}
               type="checkbox"
               label="Recurring every…"
             />
@@ -335,7 +327,6 @@ class EditEventForm extends Component {
               <NiceInput
                 value={everyX}
                 onChange={this.setEveryX}
-                isBare={true}
                 type="number"
                 min={1}
                 max={99}
@@ -344,7 +335,6 @@ class EditEventForm extends Component {
                 options={this.everyUnitOptions()}
                 onChange={this.setEveryUnit}
                 selectedValue={everyUnit}
-                isBare={true}
               />
             </NiceFormRow>
           )}
@@ -352,7 +342,6 @@ class EditEventForm extends Component {
             <NiceButton
               onClick={this.saveEvent}
               isPrimary={true}
-              isCompact={true}
               isDisabled={isError}
             >
               {isEditingExistingEvent ? 'Update' : 'Save'}

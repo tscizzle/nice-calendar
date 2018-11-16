@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
 import classNames from 'classnames';
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import enhanceWithClickOutside from 'react-click-outside';
 
 import 'stylesheets/components/nice-select/nice-select.css';
@@ -23,7 +22,6 @@ class NiceSelect extends Component {
     ).isRequired,
     onChange: PropTypes.func.isRequired,
     selectedValue: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
-    isBare: PropTypes.bool,
   };
 
   state = {
@@ -52,7 +50,6 @@ class NiceSelect extends Component {
       options,
       onChange,
       selectedValue,
-      isBare,
       ...otherProps
     } = this.props;
     const { isOpen } = this.state;
@@ -91,7 +88,6 @@ class NiceSelect extends Component {
     });
     const niceSelectClasses = classNames('nice-select', {
       'nice-select-open': isOpen,
-      'bare-select': isBare,
     });
     return (
       <div className={niceSelectContainerClasses}>
@@ -101,9 +97,6 @@ class NiceSelect extends Component {
           {...otherProps}
         >
           {selectedLabel}
-          {!isBare && (
-            <FontAwesomeIcon icon="caret-down" className="nice-select-icon" />
-          )}
         </div>
         {isOpen && (
           <div className="nice-select-options-container">{selectOptions}</div>

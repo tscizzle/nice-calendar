@@ -10,7 +10,6 @@ import {
   SET_SELECTED_DATETIME,
   SET_SELECTED_ZOOM,
   SET_EDITING_EVENT,
-  SET_SHOW_OCCURRENCE_QUEUE,
   UPDATE_NOW_MINUTE,
 } from 'state-management/actions';
 
@@ -21,7 +20,6 @@ const initialState = {
   selectedDatetime: moment().toDate(),
   selectedZoom: 'month',
   editingEventFormData: null,
-  showOccurrenceQueue: true,
   nowMinute: moment()
     .startOf('minute')
     .toDate(),
@@ -70,9 +68,6 @@ const mainReducer = (state = initialState, action) => {
         selectedDatetime: newSelectedDatetime,
         editingEventFormData: action.event,
       };
-      break;
-    case SET_SHOW_OCCURRENCE_QUEUE:
-      newState = { ...state, showOccurrenceQueue: action.show };
       break;
     case UPDATE_NOW_MINUTE:
       newState = { ...state, nowMinute: action.datetime };

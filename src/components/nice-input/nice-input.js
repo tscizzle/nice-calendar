@@ -11,7 +11,6 @@ class NiceInput extends Component {
     containerClassName: PropTypes.string,
     inputClassName: PropTypes.string,
     isFull: PropTypes.bool,
-    isBare: PropTypes.bool,
     isBold: PropTypes.bool,
     focusOnMount: PropTypes.bool,
     id: PropTypes.string,
@@ -35,7 +34,6 @@ class NiceInput extends Component {
       containerClassName,
       inputClassName,
       isFull,
-      isBare,
       isBold,
       focusOnMount,
       id,
@@ -53,7 +51,6 @@ class NiceInput extends Component {
     });
     const inputClasses = classNames('nice-input', {
       [inputClassName]: Boolean(inputClassName),
-      'bare-input': isBare,
       'bold-input': isBold,
     });
     const inputComponent = (

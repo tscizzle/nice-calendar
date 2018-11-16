@@ -36,9 +36,9 @@ class DayCalendar extends Component {
     const { timezone, selectedDatetime } = this.props;
     const selectedMoment = moment(selectedDatetime).tz(timezone);
     const dayStartMoment = selectedMoment.clone().startOf('day');
-    const DAY_CHUNK_WINDOWS = _.times(8, idx => ({
-      startHour: idx * 3,
-      endHour: idx * 3 + 2,
+    const DAY_CHUNK_WINDOWS = _.times(12, idx => ({
+      startHour: idx * 2,
+      endHour: idx * 2 + 1,
     }));
     const hours = _.map(DAY_CHUNK_WINDOWS, ({ startHour, endHour }) => {
       const startDatetime = dayStartMoment

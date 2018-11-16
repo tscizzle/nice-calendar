@@ -33,12 +33,6 @@
     pointer-events: none;
   }
 
-  &.compact-button {
-    .nice-button-inner {
-      padding: 6px 16px;
-    }
-  }
-
   &.primary-button {
     background-color: $blue;
     color: $lightest;
@@ -69,7 +63,7 @@
     display: inline-flex;
     justify-content: center;
     align-items: center;
-    padding: 12px 20px;
+    padding: 6px 16px;
 
     .button-loading {
       margin-left: 15px;
@@ -158,5 +152,16 @@
 
   &.small-circle-button {
     font-size: 0.85em;
+  }
+}
+
+.link-button {
+  display: inline;
+  font-size: 0.8em;
+  color: $blue;
+  cursor: pointer;
+
+  &:active {
+    color: $activeBlue;
   }
 }

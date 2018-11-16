@@ -5,8 +5,17 @@ const DATABASE = [
       {
         _id: 'u_0',
         email: 'u_0@nicecalendar.com',
-        username: 'username_0',
+        username: 'u_0@nicecalendar.com',
+        password: 'u_0',
         timezone: 'America/New_York',
+        loggedIn: true,
+      },
+      {
+        _id: 'u_1',
+        email: 'u_1@nicecalendar.com',
+        username: 'u_1@nicecalendar.com',
+        password: 'u_1',
+        timezone: 'America/Los_Angeles',
       },
     ],
   },

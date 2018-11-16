@@ -10,7 +10,6 @@ const NiceButton = ({
   className,
   isPrimary,
   isSecondary,
-  isCompact,
   isDisabled,
   isLoading,
   children,
@@ -20,7 +19,6 @@ const NiceButton = ({
     [className]: Boolean(className),
     'primary-button': isPrimary,
     'secondary-button': isSecondary,
-    'compact-button': isCompact,
   });
   const buttonDisabled = isDisabled || isLoading;
   return (
@@ -47,7 +45,6 @@ NiceButton.propTypes = {
   className: PropTypes.string,
   isPrimary: PropTypes.bool,
   isSecondary: PropTypes.bool,
-  isCompact: PropTypes.bool,
   isDisabled: PropTypes.bool,
   isLoading: PropTypes.bool,
 };
@@ -83,6 +80,18 @@ export const CircleButton = ({
 
 CircleButton.propTypes = {
   className: PropTypes.string,
-  color: PropTypes.oneOf(['red', 'blue', 'green', 'yellow', 'gray']),
+  color: PropTypes.oneOf(['red', 'blue', 'green', 'yellow', 'dark', 'gray']),
   isSmall: PropTypes.bool,
+};
+
+export const LinkButton = ({ className, children, ...otherProps }) => {
+  return (
+    <div className="link-button" {...otherProps}>
+      {children}
+    </div>
+  );
+};
+
+LinkButton.propTypes = {
+  className: PropTypes.string,
 };

@@ -1,0 +1,17 @@
+@import '../../vars';
+
+.auth-view-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+}
+
+.center-form {
+  height: 500px;
+  max-height: 90%;
+  width: 500px;
+  border-radius: 5px;
+  box-shadow: 1px 1px 5px $darkGray;
+}

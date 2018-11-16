@@ -20,6 +20,14 @@
     margin-top: 20px;
     font-size: 0.85em;
 
+    .no-unchecked-occurrences {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: $darkGray;
+      font-weight: bold;
+    }
+
     .occurrence-queue-occurrence {
       display: flex;
       flex-direction: column;

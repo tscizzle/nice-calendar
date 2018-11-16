@@ -6,6 +6,8 @@
   justify-content: space-between;
   height: $topbarHeight;
   padding: 8px;
+  background-color: $darkerGray;
+  color: $white;
 
   .topbar-logo {
     height: 100%;
@@ -71,21 +73,6 @@
 
     .next-page-icon {
       margin-left: 2px;
-    }
-  }
-}
-
-.occurrence-queue-toggle {
-  &.opened {
-    background-color: $white;
-    color: $dark;
-
-    &:hover {
-      background-color: $light;
-    }
-
-    &:active {
-      background-color: $lightGray;
     }
   }
 }

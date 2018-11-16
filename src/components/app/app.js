@@ -9,6 +9,7 @@ import { userShape } from 'models/user';
 
 import Topbar from 'components/topbar/topbar';
 import CalendarView from 'components/calendar-view/calendar-view';
+import AuthView from 'components/auth-view/auth-view';
 
 import 'stylesheets/components/app/app.css';
 
@@ -41,8 +42,13 @@ class App extends Component {
     const { loggedInUser } = this.props;
     return (
       <div className="app">
-        <Topbar />
-        <div className="content">{loggedInUser && <CalendarView />}</div>
+        {loggedInUser && <Topbar />}
+        {loggedInUser && (
+          <div className="content">
+            <CalendarView />
+          </div>
+        )}
+        {!loggedInUser && <AuthView />}
       </div>
     );
   }
