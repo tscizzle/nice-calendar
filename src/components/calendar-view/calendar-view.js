@@ -10,7 +10,6 @@ import DayCalendar from 'components/day-calendar/day-calendar';
 import WeekCalendar from 'components/week-calendar/week-calendar';
 import MonthCalendar from 'components/month-calendar/month-calendar';
 import EditEventForm from 'components/edit-event-form/edit-event-form';
-import EventOccurrencesSummary from 'components/event-occurrences-summary/event-occurrences-summary';
 import OccurrenceQueue from 'components/occurrence-queue/occurrence-queue';
 import Divider from 'components/divider/divider';
 
@@ -36,7 +35,6 @@ let CalendarView = ({ selectedZoom, editingEventFormData }) => {
       <div className={calendarViewLeftSidebarClasses}>
         {editingEventFormData && <EditEventForm />}
         <Divider />
-        {editingEventFormData && <EventOccurrencesSummary />}
       </div>
       <div className={calendarContainerClasses}>{calendar}</div>
       <div className="calendar-view-right-sidebar">
