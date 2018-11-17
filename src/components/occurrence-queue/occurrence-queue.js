@@ -9,15 +9,30 @@ import api from 'api';
 import withUser from 'state-management/state-connectors/with-user';
 import withEvents from 'state-management/state-connectors/with-events';
 import withOccurrences from 'state-management/state-connectors/with-occurrences';
+import withNowMinute from 'state-management/state-connectors/with-now-minute';
 import { userShape } from 'models/user';
-import { eventShape } from 'models/event';
+import { eventShape, getNextScheduledOccurrence } from 'models/event';
 import { occurrenceShape, getLatestOccurrences } from 'models/occurrence';
 
 import { CircleButton } from 'components/nice-button/nice-button';
+import Divider from 'components/divider/divider';
 
 import 'stylesheets/components/occurrence-queue/occurrence-queue.css';
 
-let OccurrenceQueue = ({ timezone, allEvents, occurrences }) => {
+let OccurrenceQueue = () => {
+  return (
+    <div className="occurrence-queue">
+      <UncheckedOccurrences />
+      <Divider />
+      <ScheduledOccurrences />
+      <Divider />
+    </div>
+  );
+};
+
+export default OccurrenceQueue;
+
+let UncheckedOccurrences = ({ allEvents, occurrences }) => {
   const uncheckedOccurrences = _.pickBy(
     occurrences,
     ({ checkedOff }) => !checkedOff
@@ -25,50 +40,112 @@ let OccurrenceQueue = ({ timezone, allEvents, occurrences }) => {
   const latestUncheckedOccurrences = getLatestOccurrences({
     occurrences: uncheckedOccurrences,
   });
-  const sortedOccurrences = _.sortBy(
-    _.map(latestUncheckedOccurrences, (occurrence, eventId) => {
+  const uncheckedOccurrencesWithEvents = _.map(
+    latestUncheckedOccurrences,
+    (occurrence, eventId) => {
       const event = allEvents[eventId];
       return { occurrence, event };
-    }),
-    'occurrence.datetime'
-  );
-  const occurrenceQueue = _.map(sortedOccurrences, ({ occurrence, event }) => (
-    <OccurrenceQueueOccurence
-      event={event}
-      occurrence={occurrence}
-      key={occurrence._id}
-    />
-  ));
-  const emptyQueue = (
-    <div className="no-unchecked-occurrences">No Unchecked Occurrences</div>
+    }
   );
   return (
-    <div className="occurrence-queue">
-      <div className="occurrence-queue-top">
-        <div className="occurrence-queue-header">Unchecked</div>
+    <OccurrenceCardsList
+      occurrencesWithEvents={uncheckedOccurrencesWithEvents}
+      headerText="Unchecked"
+      emptyMessage="No Unchecked Occurrences"
+    />
+  );
+};
+
+UncheckedOccurrences.propTypes = {
+  allEvents: PropTypes.objectOf(eventShape).isRequired,
+  occurrences: PropTypes.objectOf(occurrenceShape).isRequired,
+};
+
+UncheckedOccurrences = _.flow([withEvents, withOccurrences])(
+  UncheckedOccurrences
+);
+
+let ScheduledOccurrences = ({ timezone, events, nowMinute }) => {
+  const scheduledOccurrences = [];
+  _.each(events, event => {
+    const nextScheduledOccurrence = getNextScheduledOccurrence({
+      event,
+      timezone,
+      now: nowMinute,
+    });
+    if (nextScheduledOccurrence) {
+      const { event, occurrence } = nextScheduledOccurrence;
+      scheduledOccurrences.push({ event, occurrence, isScheduled: true });
+    }
+  });
+  return (
+    <OccurrenceCardsList
+      occurrencesWithEvents={scheduledOccurrences}
+      headerText="Scheduled"
+      emptyMessage="Nothing Scheduled"
+    />
+  );
+};
+
+ScheduledOccurrences.propTypes = {
+  timezone: PropTypes.string.isRequired,
+  events: PropTypes.objectOf(eventShape).isRequired,
+  nowMinute: PropTypes.instanceOf(Date).isRequired,
+};
+
+ScheduledOccurrences = _.flow([withUser, withEvents, withNowMinute])(
+  ScheduledOccurrences
+);
+
+let OccurrenceCardsList = ({
+  occurrencesWithEvents,
+  headerText,
+  emptyMessage,
+}) => {
+  const sortedOccurrences = _.sortBy(
+    occurrencesWithEvents,
+    'occurrence.datetime'
+  );
+  const occurrenceCards = _.map(
+    sortedOccurrences,
+    ({ event, occurrence, isScheduled }) => (
+      <OccurrenceCard
+        event={event}
+        occurrence={occurrence}
+        isScheduled={isScheduled}
+        key={occurrence._id}
+      />
+    )
+  );
+  const emptyCards = <div className="no-occurrences">{emptyMessage}</div>;
+  return (
+    <div className="occurrence-cards-list">
+      <div className="occurrence-cards-list-top">
+        <div className="occurrence-cards-list-header">{headerText}</div>
       </div>
-      <div className="occurrence-queue-content">
-        {!_.isEmpty(occurrenceQueue) ? occurrenceQueue : emptyQueue}
+      <div className="occurrence-cards-list-content">
+        {!_.isEmpty(occurrenceCards) ? occurrenceCards : emptyCards}
       </div>
     </div>
   );
 };
 
-OccurrenceQueue.propTypes = {
-  timezone: PropTypes.string.isRequired,
-  allEvents: PropTypes.objectOf(eventShape).isRequired,
-  occurrences: PropTypes.objectOf(occurrenceShape).isRequired,
+OccurrenceCardsList.propTypes = {
+  occurrencesWithEvents: PropTypes.arrayOf(
+    PropTypes.shape({
+      event: eventShape.isRequired,
+      occurrence: occurrenceShape.isRequired,
+      isScheduled: PropTypes.bool,
+    })
+  ).isRequired,
+  headerText: PropTypes.string.isRequired,
+  emptyMessage: PropTypes.string.isRequired,
 };
 
-OccurrenceQueue = _.flow([withUser, withEvents, withOccurrences])(
-  OccurrenceQueue
-);
-
-export default OccurrenceQueue;
-
-let OccurrenceQueueOccurence = ({
+let OccurrenceCard = ({
   event,
   occurrence,
+  isScheduled,
   loggedInUser,
   timezone,
   fetchOccurrences,
@@ -92,46 +169,45 @@ let OccurrenceQueueOccurence = ({
       fetchOccurrences({ user: loggedInUser });
     });
   };
-  const occurrenceQueueOccurrencesClasses = classNames(
-    'occurrence-queue-occurrence',
-    { 'checked-off': occurrence.checkedOff }
-  );
+  const occurrenceCardClasses = classNames('occurrence-card', {
+    'checked-off': occurrence.checkedOff,
+    'is-scheduled': isScheduled,
+  });
   return (
-    <div className={occurrenceQueueOccurrencesClasses}>
-      <div className="occurrence-queue-occurrence-top">{event.title}</div>
-      <div className="occurrence-queue-occurrence-bottom">
-        <div className="occurrence-queue-occurrence-datetime">
-          {occurrenceTimeString}
-        </div>
-        <div className="occurrence-queue-occurrence-actions">
-          <CircleButton
-            color={occurrenceButtonColor}
-            isSmall={true}
-            onClick={deleteOccurrence}
-          >
-            <FontAwesomeIcon icon="trash" />
-          </CircleButton>
-          <CircleButton
-            color={occurrenceButtonColor}
-            isSmall={true}
-            onClick={toggleCheckOffOccurrence}
-          >
-            <FontAwesomeIcon icon={occurrenceCheckIcon} />
-          </CircleButton>
-        </div>
+    <div className={occurrenceCardClasses}>
+      <div className="occurrence-card-top">{event.title}</div>
+      <div className="occurrence-card-bottom">
+        <div className="occurrence-card-datetime">{occurrenceTimeString}</div>
+        {!isScheduled && (
+          <div className="occurrence-card-actions">
+            <CircleButton
+              color={occurrenceButtonColor}
+              isSmall={true}
+              onClick={deleteOccurrence}
+            >
+              <FontAwesomeIcon icon="trash" />
+            </CircleButton>
+            <CircleButton
+              color={occurrenceButtonColor}
+              isSmall={true}
+              onClick={toggleCheckOffOccurrence}
+            >
+              <FontAwesomeIcon icon={occurrenceCheckIcon} />
+            </CircleButton>
+          </div>
+        )}
       </div>
     </div>
   );
 };
 
-OccurrenceQueueOccurence.propTypes = {
+OccurrenceCard.propTypes = {
   event: eventShape.isRequired,
   occurrence: occurrenceShape.isRequired,
+  isScheduled: PropTypes.bool,
   loggedInUser: userShape.isRequired,
   timezone: PropTypes.string.isRequired,
   fetchOccurrences: PropTypes.func.isRequired,
 };
 
-OccurrenceQueueOccurence = _.flow([withUser, withOccurrences])(
-  OccurrenceQueueOccurence
-);
+OccurrenceCard = _.flow([withUser, withOccurrences])(OccurrenceCard);

@@ -22,6 +22,7 @@ import {
   NiceFormSubmitRow,
   NiceFormErrorMsg,
 } from 'components/nice-form/nice-form';
+import Divider from 'components/divider/divider';
 
 import 'stylesheets/components/edit-event-form/edit-event-form.css';
 
@@ -356,6 +357,7 @@ class EditEventForm extends Component {
             {isError && <NiceFormErrorMsg errorMsg={validationErrorMsg} />}
           </NiceFormSubmitRow>
         </div>
+        <Divider />
       </div>
     );
   }

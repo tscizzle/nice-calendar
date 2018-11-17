@@ -1,8 +1,16 @@
 @import '../../vars';
 
+$dividerSideMargin: 10px;
+
 .divider {
   height: 1px;
-  width: calc(100% - 20px);
-  margin-left: 10px;
+  width: 100%;
+  margin: 20px 0px;
   background-color: $lightGray;
+
+  &.add-margin {
+    width: calc(100% - 2 * #{$dividerSideMargin});
+    margin-right: $dividerSideMargin;
+    margin-left: $dividerSideMargin;
+  }
 }
