@@ -11,7 +11,7 @@ import withUser from 'state-management/state-connectors/with-user';
 import withSelectedDatetime from 'state-management/state-connectors/with-selected-datetime';
 import withSelectedZoom from 'state-management/state-connectors/with-selected-zoom';
 import withNowMinute from 'state-management/state-connectors/with-now-minute';
-import NiceButton from 'components/nice-button/nice-button';
+import NiceButton, { CircleButton } from 'components/nice-button/nice-button';
 import { NiceSelectButtons } from 'components/nice-select/nice-select';
 import logo from 'assets/images/calendar.svg';
 
@@ -135,11 +135,12 @@ DatetimePager = _.flow([withUser, withSelectedDatetime, withSelectedZoom])(
 
 let LogoutButton = ({ dispatch }) => {
   return (
-    <NiceButton
+    <CircleButton
+      color="dark"
       onClick={() => api.logout().then(() => dispatch(resetAppState()))}
     >
-      Logout
-    </NiceButton>
+      <FontAwesomeIcon icon="sign-out-alt" />
+    </CircleButton>
   );
 };
 

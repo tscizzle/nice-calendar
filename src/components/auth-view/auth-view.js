@@ -186,6 +186,7 @@ class LoginForm extends Component {
             onChange={this.handleChangeEmail}
             placeholder="Email"
             isFull={true}
+            focusOnMount={true}
           />
         </NiceFormRow>
         <NiceFormRow>
