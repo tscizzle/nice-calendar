@@ -13,11 +13,7 @@ const auth = ({ app, passport }) => {
   app.post('/register', (req, res) => {
     const { username, email, password } = req.body;
 
-    const userDoc = {
-      username,
-      email,
-    };
-    User.register(new User(userDoc), password, (err, user) => {
+    User.register(new User({ username, email }), password, (err, user) => {
       if (err) return res.status(500).json({ err });
 
       passport.authenticate('local')(req, res, () => {
@@ -31,7 +27,9 @@ const auth = ({ app, passport }) => {
     passport.authenticate('local', (err, user, info) => {
       if (err) return next(err);
 
-      if (!user) return res.status(401).json({ err: info });
+      if (!user) {
+        return res.status(401).json({ err: info });
+      }
 
       req.login(user, () => {
         return res.json({ message: 'Login succeeded.' });
@@ -60,73 +58,61 @@ const auth = ({ app, passport }) => {
   app.post('/initiateResetPassword', function(req, res) {
     const { email, origin } = req.body;
 
-    User.findOne(
-      {
-        email,
-      },
-      (err, user) => {
-        if (err) return res.status(500).send({ err });
+    User.findOne({ email }, (err, user) => {
+      if (err) return res.status(500).send({ err });
 
-        if (!user) {
-          return res
-            .status(422)
-            .json({ err: 'No user found with that email.' });
-        }
-
-        crypto.randomBytes(20, (err, buf) => {
-          const token = buf.toString('hex');
-
-          User.update(
-            {
-              email,
-            },
-            {
-              $set: {
-                resetPasswordToken: token,
-                resetPasswordExpires: Date.now() + 3600 * 1000, // token expires in an hour
-              },
-            },
-            (err, numAffected) => {
-              if (err) return res.status(500).send({ err });
-
-              const confirmation_link = `${origin}/app/resetPassword?token=${token}`;
-
-              const toEmail = user.email;
-              const subject = 'ModSewing Password Reset';
-              const fromEmail = 'preethivaid@gmail.com';
-              const fromName = 'ModSewing';
-              const email_type = 'text/html';
-              const email_body =
-                `<p>You may follow this link ` +
-                `(<b><a href="${confirmation_link}">${confirmation_link}</a></b>) ` +
-                `to reset your password. The link will be valid for 1 hour.</p>` +
-                `<i style="font-size: 0.9em;">If this was not you, you may ignore this email</i>`;
-
-              const request = sendgridAPI.emptyRequest({
-                method: 'POST',
-                path: '/v3/mail/send',
-                body: {
-                  personalizations: [
-                    {
-                      to: [{ email: toEmail }],
-                      subject: subject,
-                    },
-                  ],
-                  from: { email: fromEmail, name: fromName },
-                  content: [{ type: email_type, value: email_body }],
-                },
-              });
-
-              sendgridAPI.API(request, err => {
-                if (err) return res.status(500).json({ err });
-
-                return res.json({ success: true });
-              });
-            }
-          );
-        });
+      if (!user) {
+        return res.status(422).json({ err: 'No user found with that email.' });
       }
-    );
+
+      crypto.randomBytes(20, (err, buf) => {
+        const token = buf.toString('hex');
+
+        User.update(
+          { email },
+          {
+            $set: {
+              resetPasswordToken: token,
+              resetPasswordExpires: Date.now() + 3600 * 1000, // token expires in an hour
+            },
+          },
+          (err, numAffected) => {
+            if (err) return res.status(500).send({ err });
+
+            const confirmation_link = `${origin}/app/resetPassword?token=${token}`;
+
+            const toEmail = user.email;
+            const subject = 'ModSewing Password Reset';
+            const fromEmail = 'preethivaid@gmail.com';
+            const fromName = 'ModSewing';
+            const email_type = 'text/html';
+            const email_body =
+              `<p>You may follow this link ` +
+              `(<b><a href="${confirmation_link}">${confirmation_link}</a></b>) ` +
+              `to reset your password. The link will be valid for 1 hour.</p>` +
+              `<i style="font-size: 0.9em;">If this was not you, you may ignore this email</i>`;
+
+            const request = sendgridAPI.emptyRequest({
+              method: 'POST',
+              path: '/v3/mail/send',
+              body: {
+                personalizations: [
+                  { to: [{ email: toEmail }], subject: subject },
+                ],
+                from: { email: fromEmail, name: fromName },
+                content: [{ type: email_type, value: email_body }],
+              },
+            });
+
+            sendgridAPI.API(request, err => {
+              if (err) return res.status(500).json({ err });
+
+              return res.json({ success: true });
+            });
+          }
+        );
+      });
+    });
   });
 
   // --- reset a user's password
@@ -142,10 +128,7 @@ const auth = ({ app, passport }) => {
     const { newPassword } = req.body;
 
     User.findOne(
-      {
-        resetPasswordToken: token,
-        resetPasswordExpires: { $gt: Date.now() },
-      },
+      { resetPasswordToken: token, resetPasswordExpires: { $gt: Date.now() } },
       (err, user) => {
         if (err) return res.status(500).send({ err });
 
