@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 import { randomID } from 'ui-helpers';
 
-import DATABASE from 'test-data';
+import MOCK_DB from 'mock-data';
 
 /* Helpers */
 
@@ -20,21 +20,21 @@ const NICE_SERVER_URL =
     ? 'http://localhost:9000'
     : window.location.origin;
 
-export const niceFetch = (...args) => {
+const niceFetch = (...args) => {
   args[0] = NICE_SERVER_URL + args[0];
   args[1] = { credentials: 'include', ...args[1] };
   return fetch(...args);
 };
 
-export const niceFetchJSON = (...args) => {
+const niceFetchJSON = (...args) => {
   return niceFetch(...args).then(res => res.json());
 };
 
-export const niceGET = path => {
+const niceGET = path => {
   return niceFetchJSON(path);
 };
 
-export const nicePOST = (path, body) => {
+const nicePOST = (path, body) => {
   return niceFetchJSON(path, {
     method: 'POST',
     headers: jsonHeaders(),
@@ -44,23 +44,23 @@ export const nicePOST = (path, body) => {
 
 /* API Calls */
 
-export const getLoggedInUser = () => {
+const getLoggedInUser = () => {
   const path = '/loggedInUser?' + Math.random(); // the random number avoids the caching of the response
   return niceGET(path);
 };
 
-export const login = ({ email, password }) => {
+const login = ({ email, password }) => {
   return nicePOST('/login', {
     username: email,
     password,
   });
 };
 
-export const logout = () => {
+const logout = () => {
   return niceGET('/logout');
 };
 
-export const register = ({ email, password }) => {
+const register = ({ email, password }) => {
   return nicePOST('/register', {
     email,
     username: email,
@@ -68,24 +68,79 @@ export const register = ({ email, password }) => {
   });
 };
 
-export const initiateResetPassword = ({ email, origin }) => {
+const initiateResetPassword = ({ email, origin }) => {
   return nicePOST('/initiateResetPassword', {
     email,
     origin,
   });
 };
 
-export const resetPassword = ({ newPassword, token }) => {
+const resetPassword = ({ newPassword, token }) => {
   return nicePOST(`/resetPassword/${token}`, {
     newPassword,
   });
 };
 
+const getEvents = ({ userId }) => {
+  return niceGET(`/get-events/${userId}`);
+};
+
+const upsertEvent = ({ event }) => {
+  return nicePOST('/upsert-event', {
+    eventId: event._id,
+    userId: event.userId,
+    updatedFields: event,
+  });
+};
+
+const deleteEvent = ({ eventId, userId }) => {
+  return nicePOST('/delete-event', {
+    eventId,
+    userId,
+  });
+};
+
+const getOccurrences = ({ userId }) => {
+  return niceGET(`/get-occurrences/${userId}`);
+};
+
+const upsertOccurrence = ({ occurrence }) => {
+  return nicePOST('/upsert-occurrence', {
+    occurrenceId: occurrence._id,
+    userId: occurrence.userId,
+    updatedFields: occurrence,
+  });
+};
+
+const deleteOccurrence = ({ occurrenceId, userId }) => {
+  return nicePOST('/delete-occurrence', {
+    occurrenceId,
+    userId,
+  });
+};
+
+const api = {
+  getLoggedInUser,
+  login,
+  logout,
+  register,
+  initiateResetPassword,
+  resetPassword,
+  getEvents,
+  upsertEvent,
+  deleteEvent,
+  getOccurrences,
+  upsertOccurrence,
+  deleteOccurrence,
+};
+
+export default api;
+
 /* Mock API */
 
 const getLoggedInUserMock = () => {
   return new Promise(function(resolve, reject) {
-    const users = _.find(DATABASE, { collection: 'users' });
+    const users = _.find(MOCK_DB, { collection: 'users' });
     const userDocs = users.documents;
     const user = _.find(userDocs, { loggedIn: true });
     const resp = user ? { user } : { message: 'No user is logged in.' };
@@ -95,7 +150,7 @@ const getLoggedInUserMock = () => {
 
 const loginMock = ({ email, password }) => {
   return logout().then(() => {
-    const users = _.find(DATABASE, { collection: 'users' });
+    const users = _.find(MOCK_DB, { collection: 'users' });
     const userDocs = users.documents;
     const user = _.find(userDocs, { username: email, password });
     let resp;
@@ -111,7 +166,7 @@ const loginMock = ({ email, password }) => {
 
 const logoutMock = () => {
   return new Promise(function(resolve, reject) {
-    const users = _.find(DATABASE, { collection: 'users' });
+    const users = _.find(MOCK_DB, { collection: 'users' });
     const userDocs = users.documents;
     _.each(userDocs, doc => delete doc.loggedIn);
     resolve({ message: 'Logout succeeded.' });
@@ -120,7 +175,7 @@ const logoutMock = () => {
 
 const registerMock = ({ email, password }) => {
   return logout().then(() => {
-    const users = _.find(DATABASE, { collection: 'users' });
+    const users = _.find(MOCK_DB, { collection: 'users' });
     const userDocs = users.documents;
     const user = _.find(userDocs, { username: email });
     let resp;
@@ -154,9 +209,9 @@ const resetPasswordMock = ({ token }) => {
   });
 };
 
-const getEvents = ({ userId }) => {
+const getEventsMock = ({ userId }) => {
   return new Promise(function(resolve, reject) {
-    const events = _.find(DATABASE, { collection: 'events' });
+    const events = _.find(MOCK_DB, { collection: 'events' });
     const eventDocs = events.documents;
     const userEvents = userId ? _.filter(eventDocs, { userId }) : [];
     const eventMap = _.keyBy(userEvents, '_id');
@@ -164,9 +219,9 @@ const getEvents = ({ userId }) => {
   });
 };
 
-const upsertEvent = ({ event }) => {
+const upsertEventMock = ({ event }) => {
   return new Promise(function(resolve, reject) {
-    const events = _.find(DATABASE, { collection: 'events' });
+    const events = _.find(MOCK_DB, { collection: 'events' });
     const eventDocs = events.documents;
     const newEventDocs = _.reject(eventDocs, { _id: event._id });
     const newEvent = { ...event, isDeleted: false };
@@ -176,11 +231,11 @@ const upsertEvent = ({ event }) => {
   });
 };
 
-const deleteEvent = ({ eventId }) => {
+const deleteEventMock = ({ eventId, userId }) => {
   return new Promise(function(resolve, reject) {
-    const events = _.find(DATABASE, { collection: 'events' });
+    const events = _.find(MOCK_DB, { collection: 'events' });
     const eventDocs = events.documents;
-    const event = _.find(eventDocs, { _id: eventId });
+    const event = _.find(eventDocs, { _id: eventId, userId });
     if (event) {
       const newEvent = { ...event, isDeleted: true };
       const newEventDocs = _.reject(eventDocs, { _id: eventId });
@@ -191,9 +246,9 @@ const deleteEvent = ({ eventId }) => {
   });
 };
 
-const getOccurrences = ({ userId }) => {
+const getOccurrencesMock = ({ userId }) => {
   return new Promise(function(resolve, reject) {
-    const occurrences = _.find(DATABASE, { collection: 'occurrences' });
+    const occurrences = _.find(MOCK_DB, { collection: 'occurrences' });
     const occurrenceDocs = occurrences.documents;
     const userOccurrences = userId ? _.filter(occurrenceDocs, { userId }) : [];
     const occurrenceMap = _.keyBy(userOccurrences, '_id');
@@ -201,9 +256,9 @@ const getOccurrences = ({ userId }) => {
   });
 };
 
-const upsertOccurrence = ({ occurrence }) => {
+const upsertOccurrenceMock = ({ occurrence }) => {
   return new Promise(function(resolve, reject) {
-    const occurrences = _.find(DATABASE, { collection: 'occurrences' });
+    const occurrences = _.find(MOCK_DB, { collection: 'occurrences' });
     const occurrenceDocs = occurrences.documents;
     const newOccurrenceDocs = _.reject(occurrenceDocs, { _id: occurrence._id });
     const newOccurrence = { ...occurrence, isDeleted: false };
@@ -213,9 +268,9 @@ const upsertOccurrence = ({ occurrence }) => {
   });
 };
 
-const deleteOccurrence = ({ occurrenceId }) => {
+const deleteOccurrenceMock = ({ occurrenceId, userId }) => {
   return new Promise(function(resolve, reject) {
-    const occurrences = _.find(DATABASE, { collection: 'occurrences' });
+    const occurrences = _.find(MOCK_DB, { collection: 'occurrences' });
     const occurrenceDocs = occurrences.documents;
     const occurrence = _.find(occurrenceDocs, { _id: occurrenceId });
     if (occurrence) {
@@ -228,23 +283,6 @@ const deleteOccurrence = ({ occurrenceId }) => {
   });
 };
 
-const api = {
-  getLoggedInUser,
-  login,
-  logout,
-  register,
-  initiateResetPassword,
-  resetPassword,
-  getEvents,
-  upsertEvent,
-  deleteEvent,
-  getOccurrences,
-  upsertOccurrence,
-  deleteOccurrence,
-};
-
-export default api;
-
 export const mockApi = {
   getLoggedInUser: getLoggedInUserMock,
   login: loginMock,
@@ -252,10 +290,10 @@ export const mockApi = {
   register: registerMock,
   initiateResetPassword: initiateResetPasswordMock,
   resetPassword: resetPasswordMock,
-  getEvents: getEvents,
-  upsertEvent: upsertEvent,
-  deleteEvent: deleteEvent,
-  getOccurrences: getOccurrences,
-  upsertOccurrence: upsertOccurrence,
-  deleteOccurrence: deleteOccurrence,
+  getEvents: getEventsMock,
+  upsertEvent: upsertEventMock,
+  deleteEvent: deleteEventMock,
+  getOccurrences: getOccurrencesMock,
+  upsertOccurrence: upsertOccurrenceMock,
+  deleteOccurrence: deleteOccurrenceMock,
 };

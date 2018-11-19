@@ -20,6 +20,7 @@ export const eventShape = PropTypes.shape({
   isRecurring: PropTypes.bool.isRequired,
   recurringSchedule: recurringScheduleShape, // required if isRecurring: true
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
+  isDeleted: PropTypes.bool,
 });
 
 /* Methods */

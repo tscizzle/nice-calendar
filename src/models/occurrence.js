@@ -9,6 +9,7 @@ export const occurrenceShape = PropTypes.shape({
   eventId: PropTypes.string.isRequired,
   datetime: PropTypes.instanceOf(Date).isRequired,
   checkedOff: PropTypes.bool.isRequired,
+  isDeleted: PropTypes.bool,
 });
 
 /* Methods */

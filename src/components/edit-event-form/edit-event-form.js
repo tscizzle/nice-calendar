@@ -234,7 +234,8 @@ class EditEventForm extends Component {
       setEditingEventFormData,
     } = this.props;
     const eventId = editingEventFormData._id;
-    api.deleteEvent({ eventId }).then(() => {
+    const userId = loggedInUser._id;
+    api.deleteEvent({ eventId, userId }).then(() => {
       setEditingEventFormData({ event: null });
       fetchEvents({ user: loggedInUser });
     });

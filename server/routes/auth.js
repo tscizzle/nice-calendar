@@ -4,7 +4,7 @@ const User = require('../models/user');
 
 const { checkRequiredFields } = require('../middleware');
 
-const auth = (app, passport) => {
+const auth = ({ app, passport }) => {
   // --- register a user
   app.post(
     '/register',

@@ -5,7 +5,7 @@ const {
   checkRequiredFields,
 } = require('../middleware');
 
-const userRoutes = app => {
+const userRoutes = ({ app }) => {
   // --- update a setting for a user
   app.post(
     '/user/settings',

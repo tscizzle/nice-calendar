@@ -1,4 +1,4 @@
-const DATABASE = [
+const MOCK_DB = [
   {
     collection: 'users',
     documents: [
@@ -81,4 +81,4 @@ const DATABASE = [
   },
 ];
 
-export default DATABASE;
+export default MOCK_DB;

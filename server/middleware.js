@@ -8,7 +8,7 @@ const checkLoggedIn = () => {
     req.user ? next() : res.status(401).json({ err: 'User not logged in.' });
 };
 
-const checkRequestedUser = (userFieldPath = ['params', 'user']) => {
+const checkRequestedUser = (userFieldPath = ['body', 'userId']) => {
   return (req, res, next) => {
     let requestedUserID = req;
     _.each(userFieldPath, step => (requestedUserID = requestedUserID[step]));

@@ -1,0 +1,23 @@
+const mongoose = require('mongoose');
+
+const { DefaultSchema } = require('./schema-helpers');
+
+const REPETITION_TYPES = ['everyXUnits'];
+const EVERY_UNIT_TYPES = ['day', 'week', 'month', 'year'];
+
+const eventSchema = DefaultSchema({
+  userId: { type: String, required: true },
+  title: { type: String, required: true },
+  datetime: { type: Date, required: true },
+  isRecurring: { type: Boolean, required: true },
+  // recurringSchedule is required if isRecurring: true
+  recurringSchedule: {
+    repetitionType: { type: String, required: true, enum: REPETITION_TYPES },
+    everyX: { type: Number },
+    everyUnit: { type: String, required: true, enum: EVERY_UNIT_TYPES },
+  },
+  tags: { type: [String], required: true },
+  isDeleted: Boolean,
+});
+
+module.exports = mongoose.model('Event', eventSchema);
