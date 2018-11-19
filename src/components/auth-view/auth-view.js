@@ -137,7 +137,7 @@ class LoginForm extends Component {
       if (!validationErrorMsg) {
         apiCall({ email, password }).then(({ err }) => {
           if (err) {
-            this.setState({ errorFromServer: err });
+            this.setState({ errorFromServer: err.message });
           } else {
             fetchUser();
           }

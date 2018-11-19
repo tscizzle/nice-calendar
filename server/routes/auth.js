@@ -1,5 +1,4 @@
 const crypto = require('crypto');
-const sendgridHelper = require('sendgrid').mail;
 const sendgridAPI = require('../config/sendgrid-api');
 const User = require('../models/user');
 

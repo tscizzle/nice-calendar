@@ -12,6 +12,9 @@
 # production
 /build
 
+# Redis
+dump.rdb
+
 # misc
 .DS_Store
 .env

@@ -4,7 +4,86 @@ import { randomID } from 'ui-helpers';
 
 import DATABASE from 'test-data';
 
-const getLoggedInUser = () => {
+/* Helpers */
+
+const jsonHeaders = () => {
+  return {
+    Accept: 'application/json',
+    'Content-Type': 'application/json',
+  };
+};
+
+/* Fetching */
+
+const NICE_SERVER_URL =
+  window.location.hostname === 'localhost'
+    ? 'http://localhost:9000'
+    : window.location.origin;
+
+export const niceFetch = (...args) => {
+  args[0] = NICE_SERVER_URL + args[0];
+  args[1] = { credentials: 'include', ...args[1] };
+  return fetch(...args);
+};
+
+export const niceFetchJSON = (...args) => {
+  return niceFetch(...args).then(res => res.json());
+};
+
+export const niceGET = path => {
+  return niceFetchJSON(path);
+};
+
+export const nicePOST = (path, body) => {
+  return niceFetchJSON(path, {
+    method: 'POST',
+    headers: jsonHeaders(),
+    body: JSON.stringify(body),
+  });
+};
+
+/* API Calls */
+
+export const getLoggedInUser = () => {
+  const path = '/loggedInUser?' + Math.random(); // the random number avoids the caching of the response
+  return niceGET(path);
+};
+
+export const login = ({ email, password }) => {
+  return nicePOST('/login', {
+    username: email,
+    password,
+  });
+};
+
+export const logout = () => {
+  return niceGET('/logout');
+};
+
+export const register = ({ email, password }) => {
+  return nicePOST('/register', {
+    email,
+    username: email,
+    password,
+  });
+};
+
+export const initiateResetPassword = ({ email, origin }) => {
+  return nicePOST('/initiateResetPassword', {
+    email,
+    origin,
+  });
+};
+
+export const resetPassword = ({ newPassword, token }) => {
+  return nicePOST(`/resetPassword/${token}`, {
+    newPassword,
+  });
+};
+
+/* Mock API */
+
+const getLoggedInUserMock = () => {
   return new Promise(function(resolve, reject) {
     const users = _.find(DATABASE, { collection: 'users' });
     const userDocs = users.documents;
@@ -14,7 +93,7 @@ const getLoggedInUser = () => {
   });
 };
 
-const login = ({ email, password }) => {
+const loginMock = ({ email, password }) => {
   return logout().then(() => {
     const users = _.find(DATABASE, { collection: 'users' });
     const userDocs = users.documents;
@@ -30,7 +109,7 @@ const login = ({ email, password }) => {
   });
 };
 
-const logout = () => {
+const logoutMock = () => {
   return new Promise(function(resolve, reject) {
     const users = _.find(DATABASE, { collection: 'users' });
     const userDocs = users.documents;
@@ -39,7 +118,7 @@ const logout = () => {
   });
 };
 
-const register = ({ email, password }) => {
+const registerMock = ({ email, password }) => {
   return logout().then(() => {
     const users = _.find(DATABASE, { collection: 'users' });
     const userDocs = users.documents;
@@ -63,13 +142,13 @@ const register = ({ email, password }) => {
   });
 };
 
-const initiateResetPassword = () => {
+const initiateResetPasswordMock = () => {
   return new Promise(function(resolve, reject) {
     resolve();
   });
 };
 
-const resetPassword = ({ token }) => {
+const resetPasswordMock = ({ token }) => {
   return new Promise(function(resolve, reject) {
     resolve();
   });
