@@ -228,7 +228,7 @@ const deleteOccurrence = ({ occurrenceId }) => {
   });
 };
 
-export default {
+const api = {
   getLoggedInUser,
   login,
   logout,
@@ -241,4 +241,21 @@ export default {
   getOccurrences,
   upsertOccurrence,
   deleteOccurrence,
+};
+
+export default api;
+
+export const mockApi = {
+  getLoggedInUser: getLoggedInUserMock,
+  login: loginMock,
+  logout: logoutMock,
+  register: registerMock,
+  initiateResetPassword: initiateResetPasswordMock,
+  resetPassword: resetPasswordMock,
+  getEvents: getEvents,
+  upsertEvent: upsertEvent,
+  deleteEvent: deleteEvent,
+  getOccurrences: getOccurrences,
+  upsertOccurrence: upsertOccurrence,
+  deleteOccurrence: deleteOccurrence,
 };
