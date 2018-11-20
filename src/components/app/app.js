@@ -10,12 +10,14 @@ import { userShape } from 'models/user';
 import Topbar from 'components/topbar/topbar';
 import CalendarView from 'components/calendar-view/calendar-view';
 import AuthView from 'components/auth-view/auth-view';
+import { FullPageLoading } from 'components/loading/loading';
 
 import 'stylesheets/components/app/app.css';
 
 class App extends Component {
   static propTypes = {
     loggedInUser: userShape,
+    hasAttemptedFetchUser: PropTypes.bool.isRequired,
     fetchUser: PropTypes.func.isRequired,
     updateNowMinute: PropTypes.func.isRequired,
   };
@@ -23,13 +25,13 @@ class App extends Component {
   componentDidMount() {
     const { fetchUser, updateNowMinute } = this.props;
     fetchUser();
-    const secondsUntilNextMinute = 60 - moment().second() + 1;
     updateNowMinute();
-    setTimeout(() => {
-      this.minuteSettingIntervalId = setInterval(() => {
-        updateNowMinute();
-      }, 60 * 1000);
-    }, secondsUntilNextMinute * 1000);
+
+    const kickOffTimeUpdater = () => {
+      this.minuteSettingIntervalId = setInterval(updateNowMinute, 60 * 1000);
+    };
+    const msUntilNextMinute = (60 - moment().second() + 1) * 1000;
+    setTimeout(kickOffTimeUpdater, msUntilNextMinute);
   }
 
   componentWillUnmount() {
@@ -39,8 +41,8 @@ class App extends Component {
   }
 
   render() {
-    const { loggedInUser } = this.props;
-    return (
+    const { loggedInUser, hasAttemptedFetchUser } = this.props;
+    const app = (
       <div className="app">
         {loggedInUser && <Topbar />}
         {loggedInUser && (
@@ -51,6 +53,8 @@ class App extends Component {
         {!loggedInUser && <AuthView />}
       </div>
     );
+    const loading = <FullPageLoading />;
+    return hasAttemptedFetchUser ? app : loading;
   }
 }
 

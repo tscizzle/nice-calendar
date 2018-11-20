@@ -11,7 +11,6 @@ import {
   SET_SELECTED_ZOOM,
   SET_EDITING_EVENT,
   UPDATE_NOW_MINUTE,
-  RESET_APP_STATE,
 } from 'state-management/actions';
 
 const getInitialState = () => ({
@@ -24,6 +23,7 @@ const getInitialState = () => ({
   nowMinute: moment()
     .startOf('minute')
     .toDate(),
+  hasAttemptedFetchUser: false,
 });
 
 const mainReducer = (state = getInitialState(), action) => {
@@ -37,10 +37,18 @@ const mainReducer = (state = getInitialState(), action) => {
   let newState;
   switch (action.type) {
     case FETCH_USER_SUCCESS:
-      newState = { ...state, loggedInUser: action.user };
+      newState = {
+        ...state,
+        loggedInUser: action.user,
+        hasAttemptedFetchUser: true,
+      };
       break;
     case FETCH_USER_FAILURE:
-      newState = { ...state, loggedInUser: null };
+      newState = {
+        ...state,
+        loggedInUser: null,
+        hasAttemptedFetchUser: true,
+      };
       break;
     case FETCH_EVENTS_SUCCESS:
       newState = { ...state, events: action.events };
@@ -72,9 +80,6 @@ const mainReducer = (state = getInitialState(), action) => {
       break;
     case UPDATE_NOW_MINUTE:
       newState = { ...state, nowMinute: action.datetime };
-      break;
-    case RESET_APP_STATE:
-      newState = getInitialState();
       break;
     default:
       newState = state;

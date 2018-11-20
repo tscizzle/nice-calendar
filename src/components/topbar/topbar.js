@@ -6,7 +6,6 @@ import moment from 'moment';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import api from 'api';
-import { resetAppState } from 'state-management/actions';
 import withUser from 'state-management/state-connectors/with-user';
 import withSelectedDatetime from 'state-management/state-connectors/with-selected-datetime';
 import withSelectedZoom from 'state-management/state-connectors/with-selected-zoom';
@@ -137,7 +136,7 @@ let LogoutButton = ({ dispatch }) => {
   return (
     <CircleButton
       color="dark"
-      onClick={() => api.logout().then(() => dispatch(resetAppState()))}
+      onClick={() => api.logout().then(() => window.location.reload())}
     >
       <FontAwesomeIcon icon="sign-out-alt" />
     </CircleButton>

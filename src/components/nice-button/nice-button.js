@@ -28,14 +28,12 @@ const NiceButton = ({
         disabled={buttonDisabled}
         {...otherProps}
       >
-        <span className="nice-button-inner">
-          {isLoading && (
-            <span className="button-loading">
-              <Loading />
-            </span>
-          )}
-          <div className="loading-hider">{children}</div>
-        </span>
+        {children}
+        {isLoading && (
+          <div className="button-loading">
+            <Loading />
+          </div>
+        )}
       </button>
     </div>
   );

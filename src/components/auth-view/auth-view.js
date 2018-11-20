@@ -156,6 +156,7 @@ class LoginForm extends Component {
     const newForm = { login: 'register', register: 'login' }[loginOrRegister];
     this.setState({
       loginOrRegister: newForm,
+      errorFromServer: null,
       hasAttemptedSubmit: false,
     });
   };
@@ -166,8 +167,8 @@ class LoginForm extends Component {
       email,
       password,
       confirmPassword,
-      hasAttemptedSubmit,
       errorFromServer,
+      hasAttemptedSubmit,
       isLoading,
     } = this.state;
     const formTitle = this.getFormTitle();

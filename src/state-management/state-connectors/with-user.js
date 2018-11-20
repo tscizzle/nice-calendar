@@ -7,6 +7,7 @@ import { getTimezoneFromUser } from 'models/user';
 const withUser = WrappedComponent => {
   const mapStateToProps = state => ({
     loggedInUser: state.loggedInUser,
+    hasAttemptedFetchUser: state.hasAttemptedFetchUser,
     timezone: getTimezoneFromUser(state.loggedInUser),
   });
   const mapDispatchToProps = dispatch => ({
