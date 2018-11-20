@@ -29,12 +29,12 @@ const NiceButton = ({
         {...otherProps}
       >
         <span className="nice-button-inner">
-          {children}
           {isLoading && (
             <span className="button-loading">
               <Loading />
             </span>
           )}
+          <div className="loading-hider">{children}</div>
         </span>
       </button>
     </div>

@@ -10,12 +10,12 @@ const {
 const eventRoutes = ({ app }) => {
   // --- get the events for a user
   app.get(
-    '/get-events',
+    '/get-events/:userId',
     checkLoggedIn(),
     checkRequestedUser(['params', 'userId']),
     checkRequiredFields({ paramFields: ['userId'] })
   );
-  app.get('/events/:userId', (req, res) => {
+  app.get('/get-events/:userId', (req, res) => {
     const { userId } = req.params;
 
     Event.find({ userId }, (err, events) => {

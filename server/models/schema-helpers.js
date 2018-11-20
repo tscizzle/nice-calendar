@@ -1,8 +1,10 @@
 const mongoose = require('mongoose');
-
 const Schema = mongoose.Schema;
 
 const DefaultSchema = (obj, options = {}, ...otherArgs) => {
+  // ensures _id is a string
+  obj._id = { type: String, required: true };
+
   // puts createdAt and updatedAt into the schema
   options.timestamps = true;
 

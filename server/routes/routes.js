@@ -1,4 +1,4 @@
-const routes = (app, passport) => {
+const routes = ({ app, passport }) => {
   require('./auth')({ app, passport });
   require('./user')({ app });
   require('./event')({ app });

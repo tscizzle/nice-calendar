@@ -58,7 +58,7 @@ if (!isProduction) {
 }
 
 // routes
-require('./routes/routes')(app, passport);
+require('./routes/routes')({ app, passport });
 
 // force https on production
 if (isProduction) {

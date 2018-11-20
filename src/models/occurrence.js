@@ -10,6 +10,8 @@ export const occurrenceShape = PropTypes.shape({
   datetime: PropTypes.instanceOf(Date).isRequired,
   checkedOff: PropTypes.bool.isRequired,
   isDeleted: PropTypes.bool,
+  createdAt: PropTypes.instanceOf(Date),
+  updatedAt: PropTypes.instanceOf(Date),
 });
 
 /* Methods */

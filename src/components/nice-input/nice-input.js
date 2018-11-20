@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
 
-import { randomID } from 'ui-helpers';
+import { randomID } from 'common/misc-helpers';
 
 import 'stylesheets/components/nice-input/nice-input.css';
 

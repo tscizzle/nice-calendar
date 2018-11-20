@@ -3,6 +3,7 @@ const sendgridAPI = require('../config/sendgrid-api');
 const User = require('../models/user');
 
 const { checkRequiredFields } = require('../middleware');
+const { randomID } = require('../../src/common/misc-helpers');
 
 const auth = ({ app, passport }) => {
   // --- register a user
@@ -13,7 +14,8 @@ const auth = ({ app, passport }) => {
   app.post('/register', (req, res) => {
     const { username, email, password } = req.body;
 
-    User.register(new User({ username, email }), password, (err, user) => {
+    const _id = randomID();
+    User.register(new User({ _id, username, email }), password, (err, user) => {
       if (err) return res.status(500).json({ err });
 
       passport.authenticate('local')(req, res, () => {

@@ -48,9 +48,9 @@ class LoginForm extends Component {
     email: '',
     password: '',
     confirmPassword: '',
-    errorFromFormValidation: null,
     errorFromServer: null,
     hasAttemptedSubmit: false,
+    isLoading: false,
   };
 
   handleChangeEmail = evt => this.setState({ email: evt.target.value });
@@ -135,12 +135,17 @@ class LoginForm extends Component {
         confirmPassword,
       });
       if (!validationErrorMsg) {
-        apiCall({ email, password }).then(({ err }) => {
-          if (err) {
-            this.setState({ errorFromServer: err.message });
-          } else {
-            fetchUser();
-          }
+        this.setState({ isLoading: true }, () => {
+          apiCall({ email, password }).then(({ err }) => {
+            if (err) {
+              this.setState({
+                errorFromServer: err.message,
+                isLoading: false,
+              });
+            } else {
+              fetchUser();
+            }
+          });
         });
       }
     });
@@ -163,6 +168,7 @@ class LoginForm extends Component {
       confirmPassword,
       hasAttemptedSubmit,
       errorFromServer,
+      isLoading,
     } = this.state;
     const formTitle = this.getFormTitle();
     const switchFormText = this.getSwitchFormText();
@@ -210,7 +216,11 @@ class LoginForm extends Component {
           </NiceFormRow>
         )}
         <NiceFormSubmitRow>
-          <NiceButton isPrimary={true} onClick={this.handleSubmit}>
+          <NiceButton
+            isPrimary={true}
+            isLoading={isLoading}
+            onClick={this.handleSubmit}
+          >
             {buttonText}
           </NiceButton>
           <LinkButton onClick={this.toggleForm}>{switchFormText}</LinkButton>

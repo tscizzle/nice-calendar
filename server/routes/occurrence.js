@@ -10,12 +10,12 @@ const {
 const occurrenceRoutes = ({ app }) => {
   // --- get the occurrences for a user
   app.get(
-    '/get-occurrences',
+    '/get-occurrences/:userId',
     checkLoggedIn(),
     checkRequestedUser(['params', 'userId']),
     checkRequiredFields({ paramFields: ['userId'] })
   );
-  app.get('/occurrences/:userId', (req, res) => {
+  app.get('/get-occurrences/:userId', (req, res) => {
     const { userId } = req.params;
 
     Occurrence.find({ userId }, (err, occurrences) => {

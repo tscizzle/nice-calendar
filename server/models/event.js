@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
 const { DefaultSchema } = require('./schema-helpers');
 
@@ -11,11 +12,12 @@ const eventSchema = DefaultSchema({
   datetime: { type: Date, required: true },
   isRecurring: { type: Boolean, required: true },
   // recurringSchedule is required if isRecurring: true
-  recurringSchedule: {
+  recurringSchedule: new Schema({
     repetitionType: { type: String, required: true, enum: REPETITION_TYPES },
     everyX: { type: Number },
     everyUnit: { type: String, required: true, enum: EVERY_UNIT_TYPES },
-  },
+    _id: false,
+  }),
   tags: { type: [String], required: true },
   isDeleted: Boolean,
 });

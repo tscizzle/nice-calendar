@@ -2,7 +2,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 
-import { randomID } from 'ui-helpers';
+import { randomID } from 'common/misc-helpers';
 
 /* Schema */
 
@@ -21,6 +21,8 @@ export const eventShape = PropTypes.shape({
   recurringSchedule: recurringScheduleShape, // required if isRecurring: true
   tags: PropTypes.arrayOf(PropTypes.string).isRequired,
   isDeleted: PropTypes.bool,
+  createdAt: PropTypes.instanceOf(Date),
+  updatedAt: PropTypes.instanceOf(Date),
 });
 
 /* Methods */
