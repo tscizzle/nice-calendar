@@ -2,7 +2,7 @@ import { connect } from 'react-redux';
 
 import { fetchUser } from 'state-management/actions';
 import { preserveOwnProps } from 'state-management/helpers';
-import { getTimezoneFromUser } from 'models/user';
+import { getTimezoneFromUser } from 'common/model-methods/user';
 
 const withUser = WrappedComponent => {
   const mapStateToProps = state => ({

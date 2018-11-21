@@ -5,7 +5,7 @@ const {
   checkLoggedIn,
   checkRequestedUser,
   checkRequiredFields,
-} = require('../middleware');
+} = require('./middleware');
 
 const eventRoutes = ({ app }) => {
   // --- get the events for a user

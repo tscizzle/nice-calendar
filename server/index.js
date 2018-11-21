@@ -14,7 +14,8 @@ const LocalStrategy = require('passport-local').Strategy;
 const isProduction = process.env.NODE_ENV === 'production';
 
 // mongo database
-require('./config/mongo-database');
+const connectMongo = require('./config/mongo-database');
+connectMongo();
 
 // initialize server
 const app = express();
@@ -58,7 +59,8 @@ if (!isProduction) {
 }
 
 // routes
-require('./routes/routes')({ app, passport });
+const registerRoutes = require('./routes/routes');
+registerRoutes({ app, passport });
 
 // force https on production
 if (isProduction) {
@@ -87,6 +89,10 @@ if (isProduction) {
 // error handling
 const rollbar = require('./config/rollbar-api');
 app.use(rollbar.errorHandler());
+
+// kick off jobs
+const kickOffTasks = require('./tasks/tasks');
+kickOffTasks();
 
 // start server
 const PORT = process.env.PORT || 9000;

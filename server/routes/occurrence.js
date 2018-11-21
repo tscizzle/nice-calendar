@@ -5,7 +5,7 @@ const {
   checkLoggedIn,
   checkRequestedUser,
   checkRequiredFields,
-} = require('../middleware');
+} = require('./middleware');
 
 const occurrenceRoutes = ({ app }) => {
   // --- get the occurrences for a user

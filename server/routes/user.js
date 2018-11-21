@@ -3,7 +3,7 @@ const {
   checkLoggedIn,
   checkRequestedUser,
   checkRequiredFields,
-} = require('../middleware');
+} = require('./middleware');
 
 const userRoutes = ({ app }) => {
   // --- update a setting for a user

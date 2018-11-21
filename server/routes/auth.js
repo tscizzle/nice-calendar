@@ -2,7 +2,7 @@ const crypto = require('crypto');
 const sendgridAPI = require('../config/sendgrid-api');
 const User = require('../models/user');
 
-const { checkRequiredFields } = require('../middleware');
+const { checkRequiredFields } = require('./middleware');
 const { randomID } = require('../../src/common/misc-helpers');
 
 const auth = ({ app, passport }) => {

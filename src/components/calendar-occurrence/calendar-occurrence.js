@@ -11,10 +11,12 @@ import withOccurrences from 'state-management/state-connectors/with-occurrences'
 import withEditingEventFormData from 'state-management/state-connectors/with-editing-event-form-data';
 import withNowMinute from 'state-management/state-connectors/with-now-minute';
 import { userShape } from 'models/user';
-import { eventShape, getNextScheduledOccurrence } from 'models/event';
+import { eventShape } from 'models/event';
 import { occurrenceShape } from 'models/occurrence';
 
 import 'stylesheets/components/calendar-occurrence/calendar-occurrence.css';
+
+const { getNextScheduledOccurrence } = require('common/model-methods/event');
 
 class CalendarOccurrence extends Component {
   static propTypes = {

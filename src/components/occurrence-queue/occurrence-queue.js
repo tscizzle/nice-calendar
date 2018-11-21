@@ -11,13 +11,16 @@ import withEvents from 'state-management/state-connectors/with-events';
 import withOccurrences from 'state-management/state-connectors/with-occurrences';
 import withNowMinute from 'state-management/state-connectors/with-now-minute';
 import { userShape } from 'models/user';
-import { eventShape, getNextScheduledOccurrence } from 'models/event';
-import { occurrenceShape, getLatestOccurrences } from 'models/occurrence';
+import { eventShape } from 'models/event';
+import { occurrenceShape } from 'models/occurrence';
+import { getLatestOccurrences } from 'common/model-methods/occurrence';
 
 import { CircleButton } from 'components/nice-button/nice-button';
 import Divider from 'components/divider/divider';
 
 import 'stylesheets/components/occurrence-queue/occurrence-queue.css';
+
+const { getNextScheduledOccurrence } = require('common/model-methods/event');
 
 let OccurrenceQueue = () => {
   return (

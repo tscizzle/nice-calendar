@@ -1,7 +1,4 @@
 import PropTypes from 'prop-types';
-import _ from 'lodash';
-
-/* Schema */
 
 export const occurrenceShape = PropTypes.shape({
   _id: PropTypes.string.isRequired,
@@ -13,15 +10,3 @@ export const occurrenceShape = PropTypes.shape({
   createdAt: PropTypes.instanceOf(Date),
   updatedAt: PropTypes.instanceOf(Date),
 });
-
-/* Methods */
-
-export const getLatestOccurrences = ({ occurrences }) => {
-  const pendingOccurrencesByEvent = _.groupBy(_.values(occurrences), 'eventId');
-  const latestOccurrences = _.map(
-    _.values(pendingOccurrencesByEvent),
-    eventOccurrences => _.maxBy(eventOccurrences, 'datetime')
-  );
-  const latestOccurrenceByEvent = _.keyBy(latestOccurrences, 'eventId');
-  return latestOccurrenceByEvent;
-};

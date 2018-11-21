@@ -61,6 +61,7 @@ export const CircleButton = ({
     blue: 'blue-circle',
     green: 'green-circle',
     yellow: 'yellow-circle',
+    orange: 'orange-circle',
     dark: 'dark-circle',
     gray: '',
   }[color];
@@ -78,7 +79,15 @@ export const CircleButton = ({
 
 CircleButton.propTypes = {
   className: PropTypes.string,
-  color: PropTypes.oneOf(['red', 'blue', 'green', 'yellow', 'dark', 'gray']),
+  color: PropTypes.oneOf([
+    'red',
+    'blue',
+    'green',
+    'yellow',
+    'orange',
+    'dark',
+    'gray',
+  ]),
   isSmall: PropTypes.bool,
 };
 

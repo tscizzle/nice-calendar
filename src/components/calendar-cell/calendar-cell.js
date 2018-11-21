@@ -13,17 +13,18 @@ import withSelectedZoom from 'state-management/state-connectors/with-selected-zo
 import withEditingEventFormData from 'state-management/state-connectors/with-editing-event-form-data';
 import withNowMinute from 'state-management/state-connectors/with-now-minute';
 import { userShape } from 'models/user';
-import {
-  eventShape,
-  makeNewEventDoc,
-  getScheduledOccurrences,
-} from 'models/event';
+import { eventShape } from 'models/event';
 import { occurrenceShape } from 'models/occurrence';
 
 import CalendarOccurrence from 'components/calendar-occurrence/calendar-occurrence';
 import { CircleButton } from 'components/nice-button/nice-button';
 
 import 'stylesheets/components/calendar-cell/calendar-cell.css';
+
+const {
+  makeNewEventDoc,
+  getScheduledOccurrences,
+} = require('common/model-methods/event');
 
 class CalendarCell extends Component {
   static propTypes = {
