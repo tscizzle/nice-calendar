@@ -71,10 +71,15 @@ const generateOccurrences = async () => {
       return occurrenceExists;
     }
   );
-  let newOccurrenceDocs = [];
-  if (!_.isEmpty(missingOccurrences)) {
-    newOccurrenceDocs = _.map(missingOccurrences, 'occurrence');
+  const newOccurrenceDocs = _.map(missingOccurrences, 'occurrence');
+  if (!_.isEmpty(newOccurrenceDocs)) {
     await Occurrence.insertMany(newOccurrenceDocs);
+  }
+  await TaskInfo.updateOne(
+    { key: 'generate-occurrences' },
+    { $set: { 'taskInfo.pulledUntil': nowDatetime } }
+  ).exec();
+  if (!_.isEmpty(newOccurrenceDocs)) {
     const updatedUsers = _.uniq(_.map(newOccurrenceDocs, 'userId'));
     console.log('updatedUsers', updatedUsers);
     // TODO: send signal on each user's socket room to re-fetch occurrences
