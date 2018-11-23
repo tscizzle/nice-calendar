@@ -99,9 +99,10 @@ const generateOccurrences = () => {
 
   const insertNewOccurrenceDocs = newOccurrenceDocs => {
     if (!_.isEmpty(newOccurrenceDocs)) {
-      const insertRes = Occurrence.insertMany(newOccurrenceDocs);
-      console.info(`Inserted ${insertRes.length} occurrences.`);
-      return insertRes;
+      return Occurrence.insertMany(newOccurrenceDocs).then(insertRes => {
+        console.info(`Occurrences inserted: ${insertRes.length}`);
+        return insertRes;
+      });
     }
   };
 
