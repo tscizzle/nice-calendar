@@ -1,7 +1,6 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
-import moment from 'moment-timezone';
 
 import withUser from 'state-management/state-connectors/with-user';
 import withNowMinute from 'state-management/state-connectors/with-now-minute';
@@ -25,13 +24,8 @@ class App extends Component {
   componentDidMount() {
     const { fetchUser, updateNowMinute } = this.props;
     fetchUser();
-    updateNowMinute();
 
-    const kickOffTimeUpdater = () => {
-      this.minuteSettingIntervalId = setInterval(updateNowMinute, 60 * 1000);
-    };
-    const msUntilNextMinute = (60 - moment().second() + 1) * 1000;
-    setTimeout(kickOffTimeUpdater, msUntilNextMinute);
+    this.minuteSettingIntervalId = setInterval(updateNowMinute, 1000);
   }
 
   componentWillUnmount() {

@@ -34,7 +34,7 @@ const mainReducer = (state = getInitialState(), action) => {
     console.log('Action:', action);
     console.log('State BEFORE:', state);
   }
-  let newState;
+  let newState = state;
   switch (action.type) {
     case FETCH_USER_SUCCESS:
       newState = {
@@ -79,10 +79,13 @@ const mainReducer = (state = getInitialState(), action) => {
       };
       break;
     case UPDATE_NOW_MINUTE:
-      newState = { ...state, nowMinute: action.datetime };
+      const newNowMoment = moment(action.datetime);
+      const nowMoment = moment(state.nowMinute);
+      if (!newNowMoment.isSame(nowMoment, 'minute')) {
+        newState = { ...state, nowMinute: action.datetime };
+      }
       break;
     default:
-      newState = state;
       break;
   }
   if (verbose) {

@@ -77,21 +77,14 @@ const generateOccurrences = () => {
         timezone,
         start: pulledUntilDatetime,
         end: nowDatetime,
-        now: new Date('1971-01-01'), // don't want to filter to only future occurrences
       });
       Array.prototype.push.apply(allScheduledOccurrences, scheduledOccurrences);
     });
-    const hashOccurrence = occurrence => {
-      return getOccurrenceId({
-        eventId: occurrence.eventId,
-        datetime: occurrence.datetime,
-      });
-    };
-    const existingOccurrenceMap = _.keyBy(existingOccurrences, hashOccurrence);
+    const existingOccurrenceMap = _.keyBy(existingOccurrences, getOccurrenceId);
     const missingOccurrences = _.reject(
       allScheduledOccurrences,
       ({ occurrence }) => {
-        const occurrenceHash = hashOccurrence(occurrence);
+        const occurrenceHash = getOccurrenceId(occurrence);
         const occurrenceExists = _.has(existingOccurrenceMap, occurrenceHash);
         return occurrenceExists;
       }

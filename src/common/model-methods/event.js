@@ -76,7 +76,13 @@ const getRecurringEventOccurrences = ({ event, timezone, end }) => {
   }
 };
 
-const getScheduledOccurrences = ({ event, timezone, start, end, now }) => {
+const getScheduledOccurrences = ({
+  event,
+  timezone,
+  start,
+  end,
+  now = new Date('1971-01-01'),
+}) => {
   const eventOccurrences = event.isRecurring
     ? getRecurringEventOccurrences({ event, timezone, end })
     : [getSingleEventOccurrence({ event })];
