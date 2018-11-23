@@ -97,5 +97,5 @@ kickOffTasks();
 // start server
 const PORT = process.env.PORT || 9000;
 server.listen(PORT, () => {
-  console.log(`App listening on port ${PORT}!`);
+  console.info(`App listening on port ${PORT}!`);
 });

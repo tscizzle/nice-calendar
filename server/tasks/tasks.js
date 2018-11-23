@@ -5,7 +5,7 @@ const generateOccurrences = require('./generate-occurrences');
 const SECOND = 1000;
 
 const tasks = [
-  { key: 'generate-occurrences', func: generateOccurrences, ms: 10 * SECOND },
+  { key: 'generate-occurrences', func: generateOccurrences, ms: 5 * SECOND },
 ];
 
 const taskFuncWrapper = ({ key, func }) => {
@@ -13,7 +13,7 @@ const taskFuncWrapper = ({ key, func }) => {
     try {
       func();
     } catch (err) {
-      console.log(`Error in ${key}: ${err.message}`);
+      console.error(`Error in ${key}: ${err.message}`);
     }
   };
 };
