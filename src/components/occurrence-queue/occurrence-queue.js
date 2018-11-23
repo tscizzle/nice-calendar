@@ -159,7 +159,8 @@ let OccurrenceCard = ({
   const occurrenceCheckIcon = occurrence.checkedOff ? 'times' : 'check';
   const deleteOccurrence = () => {
     const occurrenceId = occurrence._id;
-    api.deleteOccurrence({ occurrenceId }).then(() => {
+    const userId = loggedInUser._id;
+    api.deleteOccurrence({ occurrenceId, userId }).then(() => {
       fetchOccurrences({ user: loggedInUser });
     });
   };

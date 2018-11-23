@@ -1,7 +1,6 @@
 @import '../../vars';
 
 .calendar-occurrence {
-  position: relative;
   display: flex;
   padding: 0px 4px;
   border-radius: 2px;
@@ -11,15 +10,11 @@
   --box-shadow-y: 1px;
   --box-shadow-spread-radius: 0px;
   --box-shadow-color: #{$blue};
-  box-shadow:
-    var(--box-shadow-x)
-    var(--box-shadow-y)
-    1px
-    var(--box-shadow-spread-radius)
-    var(--box-shadow-color);
+  box-shadow: var(--box-shadow-x) var(--box-shadow-y) 1px
+    var(--box-shadow-spread-radius) var(--box-shadow-color);
   color: $darkBlue;
   white-space: nowrap;
-  overflow-x: hidden;
+  overflow: hidden;
   cursor: pointer;
 
   &:not(:last-child) {
@@ -27,6 +22,7 @@
   }
 
   &:not(.flow-horizontal) {
+    min-height: 1.5em;
     width: 100%;
   }
 

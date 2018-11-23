@@ -90,44 +90,39 @@ const getScheduledOccurrences = ({ event, timezone, start, end, now }) => {
 };
 
 const getNextScheduledOccurrence = ({ event, timezone, now }) => {
-  if (event.isRecurring) {
-    const { everyX, everyUnit } = event.recurringSchedule;
-    const eventDatetime = getSingleEventOccurrence({ event }).occurrence
-      .datetime;
-    const eventMoment = moment(eventDatetime).tz(timezone);
-    const nowMoment = moment(now).tz(timezone);
-    let numRepeats = _.max([
-      _.ceil(nowMoment.diff(eventMoment, everyUnit) / everyX),
-      0,
-    ]);
-    // since moment.diff doesn't return the fractional amount, that alone may
-    // not tell us enough repeats, so check if it is and add one if needed
-    const candidateOccurrenceMoment = eventMoment
-      .clone()
-      .add(numRepeats * everyX, everyUnit);
-    if (candidateOccurrenceMoment.isBefore(nowMoment)) {
-      numRepeats += 1;
-    }
-    const occurrenceMoment = eventMoment
-      .clone()
-      .add(numRepeats * everyX, everyUnit);
-    const occurrenceDatetime = occurrenceMoment.toDate();
-    const occurrenceId = getOccurrenceId({
-      eventId: event._id,
-      datetime: occurrenceDatetime,
-    });
-    const occurrence = {
-      _id: occurrenceId,
-      userId: event.userId,
-      eventId: event._id,
-      datetime: occurrenceDatetime,
-      checkedOff: false,
-    };
-    return { event, occurrence };
-  } else {
+  const nowMoment = moment(now).tz(timezone);
+  const eventMoment = moment(event.datetime).tz(timezone);
+  if (!eventMoment.isBefore(nowMoment)) {
     const scheduledOccurrence = getSingleEventOccurrence({ event });
-    if (scheduledOccurrence.occurrence.datetime >= now) {
-      return scheduledOccurrence;
+    return scheduledOccurrence;
+  } else {
+    if (event.isRecurring) {
+      const eventOccurrences = getRecurringEventOccurrences({
+        event,
+        timezone,
+        end: now,
+      });
+      const candidateOccurrence = _.last(eventOccurrences);
+      let candidateMoment = moment(candidateOccurrence.occurrence.datetime).tz(
+        timezone
+      );
+      if (candidateMoment.isBefore(nowMoment)) {
+        const { everyX, everyUnit } = event.recurringSchedule;
+        candidateMoment = candidateMoment.clone().add(everyX, everyUnit);
+      }
+      const occurrenceDatetime = candidateMoment.toDate();
+      const occurrenceId = getOccurrenceId({
+        eventId: event._id,
+        datetime: occurrenceDatetime,
+      });
+      const occurrence = {
+        _id: occurrenceId,
+        userId: event.userId,
+        eventId: event._id,
+        datetime: occurrenceDatetime,
+        checkedOff: false,
+      };
+      return { event, occurrence };
     }
   }
 };

@@ -20,6 +20,7 @@ connectMongo();
 // initialize server
 const app = express();
 const server = require('http').Server(app);
+const io = require('socket.io')(server);
 
 // other config
 app.use(morgan('dev'));

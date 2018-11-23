@@ -61,7 +61,8 @@ class CalendarOccurrence extends Component {
     evt.stopPropagation();
     const { occurrence, loggedInUser, fetchOccurrences } = this.props;
     const occurrenceId = occurrence._id;
-    api.deleteOccurrence({ occurrenceId }).then(() => {
+    const userId = loggedInUser._id;
+    api.deleteOccurrence({ occurrenceId, userId }).then(() => {
       fetchOccurrences({ user: loggedInUser });
     });
   };

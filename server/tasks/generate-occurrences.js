@@ -27,7 +27,10 @@ const generateOccurrences = () => {
     const pulledUntilMoment = taskInfoDoc
       ? moment(taskInfoDoc.taskInfo.pulledUntil)
       : dayAgoMoment;
-    const pulledUntilDatetime = pulledUntilMoment.toDate();
+    const pulledUntilDatetime = pulledUntilMoment
+      .clone()
+      .add(-1, 'minute') // sweep up the past minute in case anything was missed
+      .toDate();
     return pulledUntilDatetime;
   };
 
