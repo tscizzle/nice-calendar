@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import _ from 'lodash';
+import moment from 'moment-timezone';
 
 import withUser from 'state-management/state-connectors/with-user';
 import withNowMinute from 'state-management/state-connectors/with-now-minute';
@@ -18,19 +19,27 @@ class App extends Component {
     loggedInUser: userShape,
     hasAttemptedFetchUser: PropTypes.bool.isRequired,
     fetchUser: PropTypes.func.isRequired,
+    nowMinute: PropTypes.instanceOf(Date).isRequired,
     updateNowMinute: PropTypes.func.isRequired,
   };
 
   componentDidMount() {
-    const { fetchUser, updateNowMinute } = this.props;
+    const { fetchUser } = this.props;
     fetchUser();
 
-    this.minuteSettingIntervalId = setInterval(updateNowMinute, 1000);
+    this.nowMinuteIntervalId = setInterval(() => {
+      const { nowMinute, updateNowMinute } = this.props;
+      const nowMinuteMoment = moment(nowMinute);
+      const newNowMinuteMoment = moment().startOf('minute');
+      if (!newNowMinuteMoment.isSame(nowMinuteMoment, 'minute')) {
+        updateNowMinute();
+      }
+    }, 1000);
   }
 
   componentWillUnmount() {
-    if (this.minuteSettingIntervalId) {
-      clearInterval(this.minuteSettingIntervalId);
+    if (this.nowMinuteIntervalId) {
+      clearInterval(this.nowMinuteIntervalId);
     }
   }
 

@@ -68,7 +68,7 @@ UncheckedOccurrences = _.flow([withEvents, withOccurrences])(
   UncheckedOccurrences
 );
 
-let ScheduledOccurrences = ({ timezone, events, nowMinute }) => {
+let ScheduledOccurrences = ({ timezone, events, occurrences, nowMinute }) => {
   const scheduledOccurrences = [];
   _.each(events, event => {
     const nextScheduledOccurrence = getNextScheduledOccurrence({
@@ -93,12 +93,16 @@ let ScheduledOccurrences = ({ timezone, events, nowMinute }) => {
 ScheduledOccurrences.propTypes = {
   timezone: PropTypes.string.isRequired,
   events: PropTypes.objectOf(eventShape).isRequired,
+  occurrences: PropTypes.objectOf(occurrenceShape).isRequired,
   nowMinute: PropTypes.instanceOf(Date).isRequired,
 };
 
-ScheduledOccurrences = _.flow([withUser, withEvents, withNowMinute])(
-  ScheduledOccurrences
-);
+ScheduledOccurrences = _.flow([
+  withUser,
+  withEvents,
+  withOccurrences,
+  withNowMinute,
+])(ScheduledOccurrences);
 
 let OccurrenceCardsList = ({
   occurrencesWithEvents,

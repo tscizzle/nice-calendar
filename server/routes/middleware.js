@@ -12,7 +12,8 @@ const checkRequestedUser = (userFieldPath = ['body', 'userId']) => {
   return (req, res, next) => {
     let requestedUserID = req;
     _.each(userFieldPath, step => (requestedUserID = requestedUserID[step]));
-    // equality check needs to be '==' instead of '===' because req.user._id is not a string
+    // equality check needs to be '==' instead of '===' because req.user._id is
+    // not a string
     const requestedUserLoggedIn =
       requestedUserID && req.user && requestedUserID == req.user._id;
     return requestedUserLoggedIn

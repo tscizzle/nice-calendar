@@ -8,19 +8,20 @@ const tasks = [
   { key: 'generate-occurrences', func: generateOccurrences, ms: 5 * SECOND },
 ];
 
-const taskFuncWrapper = ({ key, func }) => {
+const taskFuncWrapper = ({ key, func, argsObj }) => {
   return () => {
     try {
-      func();
+      func(argsObj);
     } catch (err) {
       console.error(`Error in ${key}: ${err.message}`);
     }
   };
 };
 
-const kickOffTasks = () => {
+const kickOffTasks = ({ io }) => {
+  const argsObj = { io };
   _.each(tasks, ({ key, func, ms }) => {
-    const wrappedFunc = taskFuncWrapper({ key, func });
+    const wrappedFunc = taskFuncWrapper({ key, func, argsObj });
     const delay = ms || 1000;
     wrappedFunc();
     setInterval(wrappedFunc, delay);

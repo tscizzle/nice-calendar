@@ -86,11 +86,14 @@ const getScheduledOccurrences = ({
   const eventOccurrences = event.isRecurring
     ? getRecurringEventOccurrences({ event, timezone, end })
     : [getSingleEventOccurrence({ event })];
-  const boundedStart = _.max([now, start]);
   const eventOccurrencesInWindow = _.filter(
     eventOccurrences,
-    ({ occurrence }) =>
-      boundedStart <= occurrence.datetime && occurrence.datetime <= end
+    ({ occurrence }) => {
+      const isInWindow =
+        start <= occurrence.datetime && occurrence.datetime <= end;
+      const isAfterNow = occurrence.datetime > now;
+      return isInWindow && isAfterNow;
+    }
   );
   return eventOccurrencesInWindow;
 };
@@ -98,7 +101,7 @@ const getScheduledOccurrences = ({
 const getNextScheduledOccurrence = ({ event, timezone, now }) => {
   const nowMoment = moment(now).tz(timezone);
   const eventMoment = moment(event.datetime).tz(timezone);
-  if (!eventMoment.isBefore(nowMoment)) {
+  if (eventMoment.isAfter(nowMoment)) {
     const scheduledOccurrence = getSingleEventOccurrence({ event });
     return scheduledOccurrence;
   } else {
@@ -112,7 +115,7 @@ const getNextScheduledOccurrence = ({ event, timezone, now }) => {
       let candidateMoment = moment(candidateOccurrence.occurrence.datetime).tz(
         timezone
       );
-      if (candidateMoment.isBefore(nowMoment)) {
+      if (!candidateMoment.isAfter(nowMoment)) {
         const { everyX, everyUnit } = event.recurringSchedule;
         candidateMoment = candidateMoment.clone().add(everyX, everyUnit);
       }

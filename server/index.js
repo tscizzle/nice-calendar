@@ -6,8 +6,9 @@ const morgan = require('morgan');
 const methodOverride = require('method-override');
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
-const session = require('express-session');
-const RedisStore = require('connect-redis')(session);
+const expressSession = require('express-session');
+const RedisStore = require('connect-redis')(expressSession);
+const passportSocketIo = require('passport.socketio');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
 
@@ -20,7 +21,7 @@ connectMongo();
 // initialize server
 const app = express();
 const server = require('http').Server(app);
-const io = require('socket.io')(server);
+const io = require('socket.io').listen(server);
 
 // other config
 app.use(morgan('dev'));
@@ -30,15 +31,20 @@ app.use(bodyParser.json());
 app.use(bodyParser.json({ type: 'application/vnd.api+json' }));
 app.use(cookieParser());
 const redisClient = require('./config/redis-client');
-app.use(
-  session({
-    secret: process.env.SESSION_SECRET,
-    maxAge: new Date(253402300000000), // don't expire any time soon
-    store: new RedisStore({ client: redisClient }),
-    resave: false,
-    saveUninitialized: false,
-  })
-);
+const redisStore = new RedisStore({ client: redisClient });
+const sessionMiddleware = expressSession({
+  secret: process.env.SESSION_SECRET,
+  maxAge: new Date(253402300000000), // don't expire any time soon
+  store: redisStore,
+  resave: false,
+  saveUninitialized: false,
+});
+app.use(sessionMiddleware);
+const socketSessionMiddleware = passportSocketIo.authorize({
+  secret: process.env.SESSION_SECRET,
+  store: redisStore,
+});
+io.use(socketSessionMiddleware);
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -61,7 +67,7 @@ if (!isProduction) {
 
 // routes
 const registerRoutes = require('./routes/routes');
-registerRoutes({ app, passport });
+registerRoutes({ app, passport, io });
 
 // force https on production
 if (isProduction) {
@@ -93,7 +99,7 @@ app.use(rollbar.errorHandler());
 
 // kick off jobs
 const kickOffTasks = require('./tasks/tasks');
-kickOffTasks();
+kickOffTasks({ io });
 
 // start server
 const PORT = process.env.PORT || 9000;

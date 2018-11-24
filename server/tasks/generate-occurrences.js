@@ -16,7 +16,7 @@ const { randomID } = require('../../src/common/misc-helpers');
 
 const TASK_KEY = 'generate-occurrences';
 
-const generateOccurrences = () => {
+const generateOccurrences = ({ io }) => {
   const nowDatetime = new Date();
 
   /* Define steps (fetching various docs, generating new occurrences, etc.) */
@@ -126,7 +126,9 @@ const generateOccurrences = () => {
   const pushToUsers = newOccurrenceDocs => {
     if (!_.isEmpty(newOccurrenceDocs)) {
       const updatedUsers = _.uniq(_.map(newOccurrenceDocs, 'userId'));
-      // TODO: send signal on each user's socket room to re-fetch occurrences
+      _.each(updatedUsers, userId => {
+        io.to(userId).emit('update:occurrences');
+      });
       // TODO: send push notification for each occurrence
     }
   };

@@ -25,7 +25,6 @@ const {
   makeNewEventDoc,
   getScheduledOccurrences,
 } = require('common/model-methods/event');
-const { getOccurrenceId } = require('common/model-methods/occurrence');
 
 class CalendarCell extends Component {
   static propTypes = {
@@ -70,18 +69,6 @@ class CalendarCell extends Component {
       nowMinute,
     } = this.props;
     const { isHovered } = this.state;
-    const dayPastOccurrences = [];
-    _.each(_.values(occurrences), occurrence => {
-      const { eventId, datetime } = occurrence;
-      if (startDatetime <= datetime && datetime <= endDatetime) {
-        const event = allEvents[eventId];
-        dayPastOccurrences.push({ event, occurrence, hasOccurred: true });
-      }
-    });
-    const dayPastOccurrencesMap = _.keyBy(
-      dayPastOccurrences,
-      ({ occurrence }) => getOccurrenceId(occurrence)
-    );
     const dayScheduledOccurrences = [];
     _.each(_.values(events), event => {
       let eventOccurrences = getScheduledOccurrences({
@@ -91,11 +78,6 @@ class CalendarCell extends Component {
         end: endDatetime,
         now: nowMinute,
       });
-      eventOccurrences = _.reject(eventOccurrences, ({ occurrence }) => {
-        const occurrenceHash = getOccurrenceId(occurrence);
-        const occurrenceExists = _.has(dayPastOccurrencesMap, occurrenceHash);
-        return occurrenceExists;
-      });
       if (editingEventFormData) {
         eventOccurrences = _.reject(
           eventOccurrences,
@@ -103,6 +85,14 @@ class CalendarCell extends Component {
         );
       }
       dayScheduledOccurrences.push(...eventOccurrences);
+    });
+    const dayPastOccurrences = [];
+    _.each(_.values(occurrences), occurrence => {
+      const { eventId, datetime } = occurrence;
+      if (startDatetime <= datetime && datetime <= endDatetime) {
+        const event = allEvents[eventId];
+        dayPastOccurrences.push({ event, occurrence, hasOccurred: true });
+      }
     });
     const dayEditingEventOccurrences = [];
     if (editingEventFormData) {

@@ -2,7 +2,7 @@ import _ from 'lodash';
 
 /* Fetching */
 
-const NICE_SERVER_URL =
+export const NICE_SERVER_URL =
   window.location.hostname === 'localhost'
     ? 'http://localhost:9000'
     : window.location.origin;

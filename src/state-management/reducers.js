@@ -79,11 +79,7 @@ const mainReducer = (state = getInitialState(), action) => {
       };
       break;
     case UPDATE_NOW_MINUTE:
-      const newNowMoment = moment(action.datetime);
-      const nowMoment = moment(state.nowMinute);
-      if (!newNowMoment.isSame(nowMoment, 'minute')) {
-        newState = { ...state, nowMinute: action.datetime };
-      }
+      newState = { ...state, nowMinute: action.datetime };
       break;
     default:
       break;
