@@ -7,9 +7,9 @@ const REPETITION_TYPES = ['everyXUnits'];
 const EVERY_UNIT_TYPES = ['day', 'week', 'month', 'year'];
 
 const eventSchema = DefaultSchema({
-  userId: { type: String, required: true },
+  userId: { type: String, required: true, index: true },
   title: { type: String, required: true },
-  datetime: { type: Date, required: true },
+  datetime: { type: Date, required: true, index: true },
   isRecurring: { type: Boolean, required: true },
   // recurringSchedule is required if isRecurring: true
   recurringSchedule: new Schema({
@@ -19,7 +19,7 @@ const eventSchema = DefaultSchema({
     _id: false,
   }),
   tags: { type: [String], required: true },
-  isDeleted: Boolean,
+  isDeleted: { type: Boolean, index: true },
 });
 
 module.exports = mongoose.model('Event', eventSchema);

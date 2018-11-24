@@ -1,0 +1,3 @@
+{
+  "watch": ["src/common", "package.json", "server"]
+}
