@@ -19,7 +19,6 @@ const makeNewEventDoc = ({ user, suppliedEvent }) => {
       datetime,
       isRecurring: false,
       recurringSchedule: null,
-      tags: [],
     },
     suppliedEvent
   );

@@ -33,7 +33,6 @@ const MOCK_DB = [
         datetime: new Date('2018-11-20T13:24:00Z'),
         isRecurring: false,
         recurringSchedule: null,
-        tags: ['work', 'important'],
       },
       {
         _id: 'e_1',
@@ -46,7 +45,6 @@ const MOCK_DB = [
           everyX: 2,
           everyUnit: 'week',
         },
-        tags: [],
       },
     ],
   },

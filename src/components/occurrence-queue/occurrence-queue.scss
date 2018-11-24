@@ -1,7 +1,9 @@
 @import '../../vars';
 
 .occurrence-queue {
+  height: 100%;
   padding: 10px;
+  overflow-y: scroll;
 }
 
 .occurrence-cards-list {
@@ -65,7 +67,6 @@
     display: flex;
     width: 100%;
     font-weight: bold;
-    white-space: nowrap;
     overflow-x: hidden;
   }
 

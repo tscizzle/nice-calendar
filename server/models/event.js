@@ -18,7 +18,6 @@ const eventSchema = DefaultSchema({
     everyUnit: { type: String, required: true, enum: EVERY_UNIT_TYPES },
     _id: false,
   }),
-  tags: { type: [String], required: true },
   isDeleted: { type: Boolean, index: true },
 });
 
