@@ -92,9 +92,9 @@ class EditEventForm extends Component {
   };
 
   everyUnitOptions = () => [
-    { value: 'day', label: 'days' },
-    { value: 'week', label: 'weeks' },
-    { value: 'month', label: 'months' },
+    { value: 'day', label: 'day(s)' },
+    { value: 'week', label: 'week(s)' },
+    { value: 'month', label: 'month(s)' },
   ];
 
   closeEditingEventForm = () => {
@@ -163,7 +163,7 @@ class EditEventForm extends Component {
       newEvent.recurringSchedule = {
         repetitionType: 'everyXUnits',
         everyX: 1,
-        everyUnit: 'week',
+        everyUnit: 'day',
       };
     }
     setEditingEventFormData({ event: newEvent });
@@ -189,6 +189,13 @@ class EditEventForm extends Component {
       ...editingEventFormData,
       recurringSchedule: newRecurringSchedule,
     };
+    setEditingEventFormData({ event: newEvent });
+  };
+
+  setNotes = evt => {
+    const { editingEventFormData, setEditingEventFormData } = this.props;
+    const newNotes = evt.target.value;
+    const newEvent = { ...editingEventFormData, notes: newNotes };
     setEditingEventFormData({ event: newEvent });
   };
 
@@ -263,6 +270,7 @@ class EditEventForm extends Component {
       datetime,
       isRecurring,
       recurringSchedule = {},
+      notes,
     } = editingEventFormData;
     const eventMoment = moment(datetime).tz(timezone);
     const eventDateValue = eventMoment.format(this.dayValueFormat);
@@ -357,6 +365,15 @@ class EditEventForm extends Component {
             </CircleButton>
             {isError && <NiceFormErrorMsg errorMsg={validationErrorMsg} />}
           </NiceFormSubmitRow>
+          <NiceFormRow>
+            <NiceInput
+              value={notes}
+              onChange={this.setNotes}
+              placeholder="Notes"
+              isFull={true}
+              isTextArea={true}
+            />
+          </NiceFormRow>
         </div>
         <Divider />
       </div>

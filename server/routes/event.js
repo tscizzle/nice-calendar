@@ -42,7 +42,9 @@ const eventRoutes = ({ app }) => {
       let eventDoc;
       if (existingEvent) {
         eventDoc = existingEvent;
-        _.each(updatedFields, (value, key) => (eventDoc[key] = value));
+        _.each(updatedFields, (value, key) => {
+          eventDoc[key] = value;
+        });
       } else {
         eventDoc = new Event({ ...updatedFields, _id: eventId, userId });
       }

@@ -12,6 +12,7 @@ class NiceInput extends Component {
     inputClassName: PropTypes.string,
     isFull: PropTypes.bool,
     isBold: PropTypes.bool,
+    isTextArea: PropTypes.bool,
     focusOnMount: PropTypes.bool,
     id: PropTypes.string,
     label: PropTypes.string,
@@ -35,6 +36,7 @@ class NiceInput extends Component {
       inputClassName,
       isFull,
       isBold,
+      isTextArea,
       focusOnMount,
       id,
       label,
@@ -51,16 +53,21 @@ class NiceInput extends Component {
     });
     const inputClasses = classNames('nice-input', {
       [inputClassName]: Boolean(inputClassName),
+      'full-input': isFull,
       'bold-input': isBold,
+      'nice-textarea': isTextArea,
     });
-    const inputComponent = (
-      <input
-        id={elId}
-        className={inputClasses}
-        {...typeArg}
-        {...otherProps}
-        {...focusOnMount && { ref: this.refFuncThatFocusesOnMount }}
-      />
+    const inputComponentProps = {
+      id: elId,
+      className: inputClasses,
+      ...typeArg,
+      ...otherProps,
+      ...(focusOnMount && { ref: this.refFuncThatFocusesOnMount }),
+    };
+    const inputComponent = isTextArea ? (
+      <textarea {...inputComponentProps} />
+    ) : (
+      <input {...inputComponentProps} />
     );
     return label ? (
       <label htmlFor={elId} className={containerClasses}>

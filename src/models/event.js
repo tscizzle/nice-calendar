@@ -13,6 +13,7 @@ export const eventShape = PropTypes.shape({
   datetime: PropTypes.instanceOf(Date).isRequired,
   isRecurring: PropTypes.bool.isRequired,
   recurringSchedule: recurringScheduleShape, // required if isRecurring: true
+  notes: PropTypes.string,
   isDeleted: PropTypes.bool,
   createdAt: PropTypes.instanceOf(Date),
   updatedAt: PropTypes.instanceOf(Date),

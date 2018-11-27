@@ -110,7 +110,10 @@ class CalendarCell extends Component {
       dayScheduledOccurrences,
       dayEditingEventOccurrences
     );
-    const sortedOccurrences = _.sortBy(allOccurrences, 'occurrence.datetime');
+    const sortedOccurrences = _.sortBy(allOccurrences, [
+      'occurrence.datetime',
+      'event.createdAt',
+    ]);
     const occurrenceDisplays = _.map(
       sortedOccurrences,
       ({ event, occurrence, hasOccurred }) => (

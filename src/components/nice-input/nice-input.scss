@@ -43,5 +43,9 @@
     &.bold-input {
       font-weight: bold;
     }
+
+    &.full-input.nice-textarea {
+      resize: vertical;
+    }
   }
 }

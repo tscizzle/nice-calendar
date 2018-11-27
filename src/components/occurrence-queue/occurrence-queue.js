@@ -9,6 +9,7 @@ import api from 'api';
 import withUser from 'state-management/state-connectors/with-user';
 import withEvents from 'state-management/state-connectors/with-events';
 import withOccurrences from 'state-management/state-connectors/with-occurrences';
+import withEditingEventFormData from 'state-management/state-connectors/with-editing-event-form-data';
 import withNowMinute from 'state-management/state-connectors/with-now-minute';
 import { userShape } from 'models/user';
 import { eventShape } from 'models/event';
@@ -109,10 +110,10 @@ let OccurrenceCardsList = ({
   headerText,
   emptyMessage,
 }) => {
-  const sortedOccurrences = _.sortBy(
-    occurrencesWithEvents,
-    'occurrence.datetime'
-  );
+  const sortedOccurrences = _.sortBy(occurrencesWithEvents, [
+    'occurrence.datetime',
+    'event.createdAt',
+  ]);
   const occurrenceCards = _.map(
     sortedOccurrences,
     ({ event, occurrence, isScheduled }) => (
@@ -156,11 +157,15 @@ let OccurrenceCard = ({
   loggedInUser,
   timezone,
   fetchOccurrences,
+  setEditingEventFormData,
 }) => {
   const occurrenceMoment = moment(occurrence.datetime).tz(timezone);
   const occurrenceTimeString = occurrenceMoment.format('MMM D, YYYY HH:mm');
   const occurrenceButtonColor = occurrence.checkedOff ? 'green' : 'red';
   const occurrenceCheckIcon = occurrence.checkedOff ? 'times' : 'check';
+  const selectEvent = () => {
+    setEditingEventFormData({ event });
+  };
   const deleteOccurrence = () => {
     const occurrenceId = occurrence._id;
     const userId = loggedInUser._id;
@@ -182,7 +187,7 @@ let OccurrenceCard = ({
     'is-scheduled': isScheduled,
   });
   return (
-    <div className={occurrenceCardClasses}>
+    <div className={occurrenceCardClasses} onClick={selectEvent}>
       <div className="occurrence-card-top">{event.title}</div>
       <div className="occurrence-card-bottom">
         <div className="occurrence-card-datetime">{occurrenceTimeString}</div>
@@ -216,6 +221,9 @@ OccurrenceCard.propTypes = {
   loggedInUser: userShape.isRequired,
   timezone: PropTypes.string.isRequired,
   fetchOccurrences: PropTypes.func.isRequired,
+  setEditingEventFormData: PropTypes.func.isRequired,
 };
 
-OccurrenceCard = _.flow([withUser, withOccurrences])(OccurrenceCard);
+OccurrenceCard = _.flow([withUser, withOccurrences, withEditingEventFormData])(
+  OccurrenceCard
+);
