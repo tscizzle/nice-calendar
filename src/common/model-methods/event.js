@@ -4,25 +4,12 @@ const moment = require('moment-timezone');
 const { getOccurrenceId } = require('./occurrence');
 const { randomID } = require('../misc-helpers');
 
-const makeNewEventDoc = ({ user, suppliedEvent }) => {
-  const _id = randomID();
-  const userId = user._id;
-  const datetime = moment()
-    .add(2, 'hours')
-    .startOf('hour')
-    .toDate();
-  const event = Object.assign(
-    {
-      _id,
-      userId,
-      title: '',
-      datetime,
-      isRecurring: false,
-      recurringSchedule: null,
-    },
-    suppliedEvent
-  );
-  return event;
+const getIsEventBoundedInterval = ({ event }) => {
+  const { isRecurring, recurringSchedule, isStopping } = event;
+  const { repetitionType, everyX, everyUnit } = recurringSchedule || {};
+  const isDaily =
+    repetitionType === 'everyXUnits' && everyX === 1 && everyUnit === 'day';
+  return isRecurring && isDaily && isStopping;
 };
 
 const getSingleEventOccurrence = ({ event }) => {
@@ -140,8 +127,30 @@ const getNextScheduledOccurrence = ({ event, timezone, now }) => {
   }
 };
 
+const makeNewEventDoc = ({ user, suppliedEvent }) => {
+  const _id = randomID();
+  const userId = user._id;
+  const datetime = moment()
+    .add(2, 'hours')
+    .startOf('hour')
+    .toDate();
+  const event = Object.assign(
+    {
+      _id,
+      userId,
+      title: '',
+      datetime,
+      isRecurring: false,
+      recurringSchedule: null,
+    },
+    suppliedEvent
+  );
+  return event;
+};
+
 module.exports = {
-  makeNewEventDoc,
+  getIsEventBoundedInterval,
   getScheduledOccurrences,
   getNextScheduledOccurrence,
+  makeNewEventDoc,
 };

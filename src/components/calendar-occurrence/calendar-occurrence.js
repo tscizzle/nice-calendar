@@ -16,7 +16,10 @@ import { occurrenceShape } from 'models/occurrence';
 
 import 'stylesheets/components/calendar-occurrence/calendar-occurrence.css';
 
-const { getNextScheduledOccurrence } = require('common/model-methods/event');
+const {
+  getIsEventBoundedInterval,
+  getNextScheduledOccurrence,
+} = require('common/model-methods/event');
 
 class CalendarOccurrence extends Component {
   static propTypes = {
@@ -93,6 +96,7 @@ class CalendarOccurrence extends Component {
       editingEventFormData && editingEventFormData._id === event._id;
     const text =
       event.title || (isBeingEdited ? '(Adding event…)' : '(Untitled event)');
+    const isBoundedInterval = getIsEventBoundedInterval({ event });
     const toggleCheckOffIcon = occurrence.checkedOff ? 'times' : 'check';
     const timeString = moment(occurrence.datetime)
       .tz(timezone)
@@ -102,6 +106,7 @@ class CalendarOccurrence extends Component {
       'has-occurred': hasOccurred,
       'flow-horizontal': isFlowHorizontal,
       'being-edited': isBeingEdited,
+      'is-bounded-interval': isBoundedInterval,
     });
     const calendarOccurrenceDetailsClasses = classNames(
       'calendar-occurrence-details',

@@ -64,6 +64,12 @@
     color: $darkBlue;
   }
 
+  &.is-bounded-interval {
+    background-color: $lightPurple;
+    box-shadow: 1px 1px 1px $purple;
+    color: $darkPurple;
+  }
+
   .occurrence-card-top {
     display: flex;
     width: 100%;

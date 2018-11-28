@@ -140,6 +140,30 @@
     }
   }
 
+  &.orange-circle {
+    color: $darkOrange;
+
+    &:hover {
+      background-color: $activeOrange;
+    }
+
+    &:active {
+      background-color: $hoverOrange;
+    }
+  }
+
+  &.purple-circle {
+    color: $darkPurple;
+
+    &:hover {
+      background-color: $activePurple;
+    }
+
+    &:active {
+      background-color: $hoverPurple;
+    }
+  }
+
   &.dark-circle {
     color: $white;
 

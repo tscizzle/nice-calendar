@@ -131,11 +131,16 @@ class EditEventForm extends Component {
       const newDayMoment = moment.tz(value, timezone);
       const { datetime } = editingEventFormData;
       const eventMoment = moment(datetime).tz(timezone);
+      const endOfDayMoment = newDayMoment.clone().endOf('day');
+      const timeReferenceMoment = {
+        datetime: eventMoment,
+        stopDatetime: endOfDayMoment,
+      }[dateField];
       const newDateField = newDayMoment
         .clone()
         .set({
-          hour: eventMoment.hour(),
-          minute: eventMoment.minute(),
+          hour: timeReferenceMoment.hour(),
+          minute: timeReferenceMoment.minute(),
         })
         .toDate();
       const newEvent = {
@@ -186,7 +191,7 @@ class EditEventForm extends Component {
 
   setEveryX = evt => {
     const { editingEventFormData, setEditingEventFormData } = this.props;
-    const newEveryX = evt.target.value;
+    const newEveryX = parseInt(evt.target.value, 10);
     const { recurringSchedule } = editingEventFormData;
     const newRecurringSchedule = { ...recurringSchedule, everyX: newEveryX };
     const newEvent = {
@@ -223,7 +228,13 @@ class EditEventForm extends Component {
         now: nowMinute,
       });
       if (nextScheduledOccurrence) {
-        newEvent.stopDatetime = nextScheduledOccurrence.occurrence.datetime;
+        const newStopDatetime = moment(
+          nextScheduledOccurrence.occurrence.datetime
+        )
+          .tz(timezone)
+          .endOf('day')
+          .toDate();
+        newEvent.stopDatetime = newStopDatetime;
       }
     }
     setEditingEventFormData({ event: newEvent });

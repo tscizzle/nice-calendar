@@ -21,7 +21,10 @@ import Divider from 'components/divider/divider';
 
 import 'stylesheets/components/occurrence-queue/occurrence-queue.css';
 
-const { getNextScheduledOccurrence } = require('common/model-methods/event');
+const {
+  getIsEventBoundedInterval,
+  getNextScheduledOccurrence,
+} = require('common/model-methods/event');
 
 let OccurrenceQueue = () => {
   return (
@@ -161,6 +164,7 @@ let OccurrenceCard = ({
 }) => {
   const occurrenceMoment = moment(occurrence.datetime).tz(timezone);
   const occurrenceTimeString = occurrenceMoment.format('MMM D, YYYY HH:mm');
+  const isBoundedInterval = getIsEventBoundedInterval({ event });
   const occurrenceButtonColor = occurrence.checkedOff ? 'green' : 'red';
   const occurrenceCheckIcon = occurrence.checkedOff ? 'times' : 'check';
   const selectEvent = () => {
@@ -185,6 +189,7 @@ let OccurrenceCard = ({
   const occurrenceCardClasses = classNames('occurrence-card', {
     'checked-off': occurrence.checkedOff,
     'is-scheduled': isScheduled,
+    'is-bounded-interval': isBoundedInterval,
   });
   return (
     <div className={occurrenceCardClasses} onClick={selectEvent}>

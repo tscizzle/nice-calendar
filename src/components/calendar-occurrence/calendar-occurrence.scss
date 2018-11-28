@@ -53,6 +53,13 @@
     font-style: italic;
   }
 
+  &.is-bounded-interval {
+    background-color: $lightPurple;
+    border-color: $lightPurple;
+    --box-shadow-color: #{$purple};
+    color: $darkPurple;
+  }
+
   .calendar-occurrence-details {
     display: flex;
     justify-content: space-between;
