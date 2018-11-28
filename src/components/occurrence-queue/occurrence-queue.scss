@@ -80,6 +80,10 @@
 
     .occurrence-card-datetime {
       font-size: 0.85em;
+
+      .recurring-occurrence-icon {
+        margin-right: 5px;
+      }
     }
 
     .occurrence-card-actions {

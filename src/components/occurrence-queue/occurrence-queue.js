@@ -190,7 +190,16 @@ let OccurrenceCard = ({
     <div className={occurrenceCardClasses} onClick={selectEvent}>
       <div className="occurrence-card-top">{event.title}</div>
       <div className="occurrence-card-bottom">
-        <div className="occurrence-card-datetime">{occurrenceTimeString}</div>
+        <div className="occurrence-card-datetime">
+          {isScheduled &&
+            event.isRecurring && (
+              <FontAwesomeIcon
+                icon="clock"
+                className="recurring-occurrence-icon"
+              />
+            )}
+          {occurrenceTimeString}
+        </div>
         {!isScheduled && (
           <div className="occurrence-card-actions">
             <CircleButton

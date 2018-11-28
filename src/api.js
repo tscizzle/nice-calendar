@@ -101,7 +101,7 @@ const getEvents = ({ userId }) => {
     const processedEventMap = _.mapValues(events, event => {
       return dateify({
         obj: event,
-        dateFieldPaths: ['datetime', 'createdAt', 'updatedAt'],
+        dateFieldPaths: ['datetime', 'stopDatetime', 'createdAt', 'updatedAt'],
       });
     });
     return { events: processedEventMap };

@@ -26,6 +26,8 @@ import Divider from 'components/divider/divider';
 
 import 'stylesheets/components/edit-event-form/edit-event-form.css';
 
+const { getNextScheduledOccurrence } = require('common/model-methods/event');
+
 class EditEventForm extends Component {
   static propTypes = {
     loggedInUser: userShape.isRequired,
@@ -46,7 +48,7 @@ class EditEventForm extends Component {
 
   dayValueFormat = 'YYYY-MM-DD';
 
-  dayOptions = () => {
+  dayOptions = ({ isStopSelector = false }) => {
     const {
       timezone,
       selectedDatetime,
@@ -54,7 +56,8 @@ class EditEventForm extends Component {
       editingEventFormData,
       nowMinute,
     } = this.props;
-    const { datetime } = editingEventFormData;
+    const { datetime, stopDatetime } = editingEventFormData;
+    const editingEventMoment = moment(datetime).tz(timezone);
     const nowMinuteMoment = moment(nowMinute).tz(timezone);
     const selectedMoment = moment(selectedDatetime).tz(timezone);
     const selectionStart = selectedMoment.clone().startOf(selectedZoom);
@@ -63,31 +66,40 @@ class EditEventForm extends Component {
     const valueFormat = this.dayValueFormat;
     const labelFormat = 'MMM D';
     const labelWhenSelectedFormat = 'MMM D, YYYY';
-    const options = [];
+    let options = [];
     _.times(numDays, day => {
       const dayMoment = selectionStart.clone().add(day, 'days');
       const dayEnd = dayMoment.clone().endOf('day');
       const dayIsBeforeNow = dayEnd.isBefore(nowMinuteMoment);
-      if (!dayIsBeforeNow) {
+      const stopDateIsBeforeEvent =
+        isStopSelector && dayEnd.isBefore(editingEventMoment);
+      if (!dayIsBeforeNow && !stopDateIsBeforeEvent) {
         const value = dayMoment.format(valueFormat);
         const label = dayMoment.format(labelFormat);
         const labelWhenSelected = dayMoment.format(labelWhenSelectedFormat);
         options.push({ value, label, labelWhenSelected });
       }
     });
-    const editingEventMoment = moment(datetime).tz(timezone);
-    const editingEventOption = {
-      value: editingEventMoment.format(valueFormat),
-      label: editingEventMoment.format(labelFormat),
-      labelWhenSelected: editingEventMoment.format(labelWhenSelectedFormat),
-    };
-    const isEditingBeforeSelection = selectionStart.isAfter(editingEventMoment);
-    const isEditingAfterSelection = selectionEnd.isBefore(editingEventMoment);
-    if (isEditingBeforeSelection) {
-      options.unshift(editingEventOption);
-    } else if (isEditingAfterSelection) {
+    if (!isStopSelector) {
+      const editingEventOption = {
+        value: editingEventMoment.format(valueFormat),
+        label: editingEventMoment.format(labelFormat),
+        labelWhenSelected: editingEventMoment.format(labelWhenSelectedFormat),
+      };
       options.push(editingEventOption);
+    } else if (isStopSelector) {
+      const editingEventStopMoment = moment(stopDatetime).tz(timezone);
+      const editingEventStopOption = {
+        value: editingEventStopMoment.format(valueFormat),
+        label: editingEventStopMoment.format(labelFormat),
+        labelWhenSelected: editingEventStopMoment.format(
+          labelWhenSelectedFormat
+        ),
+      };
+      options.push(editingEventStopOption);
     }
+    options = _.uniqBy(options, 'value');
+    options = _.sortBy(options, 'value');
     return options;
   };
 
@@ -109,27 +121,30 @@ class EditEventForm extends Component {
     setEditingEventFormData({ event: newEvent });
   };
 
-  setEventDate = ({ value }) => {
-    const {
-      timezone,
-      editingEventFormData,
-      setEditingEventFormData,
-    } = this.props;
-    const newDayMoment = moment.tz(value, timezone);
-    const { datetime } = editingEventFormData;
-    const eventMoment = moment(datetime).tz(timezone);
-    const newDatetime = newDayMoment
-      .clone()
-      .set({
-        hour: eventMoment.hour(),
-        minute: eventMoment.minute(),
-      })
-      .toDate();
-    const newEvent = {
-      ...editingEventFormData,
-      datetime: newDatetime,
+  getSetEventDateFunc = dateField => {
+    const setEventDate = ({ value }) => {
+      const {
+        timezone,
+        editingEventFormData,
+        setEditingEventFormData,
+      } = this.props;
+      const newDayMoment = moment.tz(value, timezone);
+      const { datetime } = editingEventFormData;
+      const eventMoment = moment(datetime).tz(timezone);
+      const newDateField = newDayMoment
+        .clone()
+        .set({
+          hour: eventMoment.hour(),
+          minute: eventMoment.minute(),
+        })
+        .toDate();
+      const newEvent = {
+        ...editingEventFormData,
+        [dateField]: newDateField,
+      };
+      setEditingEventFormData({ event: newEvent });
     };
-    setEditingEventFormData({ event: newEvent });
+    return setEventDate;
   };
 
   getSetEventTimeFunc = unit => {
@@ -192,6 +207,28 @@ class EditEventForm extends Component {
     setEditingEventFormData({ event: newEvent });
   };
 
+  setIsStopping = evt => {
+    const {
+      timezone,
+      editingEventFormData,
+      setEditingEventFormData,
+      nowMinute,
+    } = this.props;
+    const newIsStopping = evt.target.checked;
+    const newEvent = { ...editingEventFormData, isStopping: newIsStopping };
+    if (newEvent.isStopping && !newEvent.stopDatetime) {
+      const nextScheduledOccurrence = getNextScheduledOccurrence({
+        event: editingEventFormData,
+        timezone,
+        now: nowMinute,
+      });
+      if (nextScheduledOccurrence) {
+        newEvent.stopDatetime = nextScheduledOccurrence.occurrence.datetime;
+      }
+    }
+    setEditingEventFormData({ event: newEvent });
+  };
+
   setNotes = evt => {
     const { editingEventFormData, setEditingEventFormData } = this.props;
     const newNotes = evt.target.value;
@@ -201,7 +238,7 @@ class EditEventForm extends Component {
 
   validateEventDoc = eventDoc => {
     const { timezone, nowMinute } = this.props;
-    const { title, datetime } = eventDoc;
+    const { title, datetime, isStopping, stopDatetime } = eventDoc;
     if (!title) {
       return 'Give your Event a title.';
     }
@@ -211,6 +248,13 @@ class EditEventForm extends Component {
     const isTooEarly = eventMoment.isBefore(earliestAllowedMoment);
     if (isTooEarly) {
       return 'Make your Event later than now.';
+    }
+    if (isStopping) {
+      const stopMoment = moment(stopDatetime).tz(timezone);
+      const stopIsTooEarly = stopMoment.isBefore(eventMoment);
+      if (stopIsTooEarly) {
+        return 'Make your Event not stop before it starts.';
+      }
     }
     return '';
   };
@@ -270,12 +314,16 @@ class EditEventForm extends Component {
       datetime,
       isRecurring,
       recurringSchedule = {},
+      isStopping = false,
+      stopDatetime,
       notes,
     } = editingEventFormData;
     const eventMoment = moment(datetime).tz(timezone);
+    const eventStopMoment = moment(stopDatetime).tz(timezone);
     const eventDateValue = eventMoment.format(this.dayValueFormat);
     const eventHourValue = eventMoment.format('HH');
     const eventMinuteValue = eventMoment.format('mm');
+    const eventStopDateValue = eventStopMoment.format(this.dayValueFormat);
     const everyX = recurringSchedule ? recurringSchedule.everyX : 1;
     const everyUnit = recurringSchedule ? recurringSchedule.everyUnit : 'week';
     const validationErrorMsg = this.validateEventDoc(editingEventFormData);
@@ -304,8 +352,8 @@ class EditEventForm extends Component {
           <NiceFormRow>
             <NiceSelect
               containerClassName="edit-event-form-date-select"
-              options={this.dayOptions()}
-              onChange={this.setEventDate}
+              options={this.dayOptions({})}
+              onChange={this.getSetEventDateFunc('datetime')}
               selectedValue={eventDateValue}
             />
             <NiceInput
@@ -348,6 +396,34 @@ class EditEventForm extends Component {
               />
             </NiceFormRow>
           )}
+          {isRecurring && (
+            <NiceFormRow>
+              <NiceInput
+                checked={isStopping}
+                onChange={this.setIsStopping}
+                type="checkbox"
+                label="Stop on…"
+              />
+            </NiceFormRow>
+          )}
+          {isStopping && (
+            <NiceFormRow>
+              <NiceSelect
+                options={this.dayOptions({ isStopSelector: true })}
+                onChange={this.getSetEventDateFunc('stopDatetime')}
+                selectedValue={eventStopDateValue}
+              />
+            </NiceFormRow>
+          )}
+          <NiceFormRow>
+            <NiceInput
+              value={notes}
+              onChange={this.setNotes}
+              placeholder="Notes (optional)"
+              isFull={true}
+              isTextArea={true}
+            />
+          </NiceFormRow>
           <NiceFormSubmitRow>
             <NiceButton
               onClick={this.saveEvent}
@@ -365,17 +441,8 @@ class EditEventForm extends Component {
             </CircleButton>
             {isError && <NiceFormErrorMsg errorMsg={validationErrorMsg} />}
           </NiceFormSubmitRow>
-          <NiceFormRow>
-            <NiceInput
-              value={notes}
-              onChange={this.setNotes}
-              placeholder="Notes"
-              isFull={true}
-              isTextArea={true}
-            />
-          </NiceFormRow>
+          <Divider />
         </div>
-        <Divider />
       </div>
     );
   }

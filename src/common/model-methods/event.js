@@ -47,7 +47,10 @@ const getRecurringEventOccurrences = ({ event, timezone, end }) => {
     const eventDatetime = getSingleEventOccurrence({ event }).occurrence
       .datetime;
     const eventMoment = moment(eventDatetime).tz(timezone);
-    const endMoment = moment(end).tz(timezone);
+    const boundedEnd = event.isStopping
+      ? _.min([end, event.stopDatetime])
+      : end;
+    const endMoment = moment(boundedEnd).tz(timezone);
     if (eventMoment.isAfter(endMoment)) {
       return [];
     }
@@ -119,18 +122,20 @@ const getNextScheduledOccurrence = ({ event, timezone, now }) => {
         candidateMoment = candidateMoment.clone().add(everyX, everyUnit);
       }
       const occurrenceDatetime = candidateMoment.toDate();
-      const occurrenceId = getOccurrenceId({
-        eventId: event._id,
-        datetime: occurrenceDatetime,
-      });
-      const occurrence = {
-        _id: occurrenceId,
-        userId: event.userId,
-        eventId: event._id,
-        datetime: occurrenceDatetime,
-        checkedOff: false,
-      };
-      return { event, occurrence };
+      if (!event.isStopping || occurrenceDatetime <= event.stopDatetime) {
+        const occurrenceId = getOccurrenceId({
+          eventId: event._id,
+          datetime: occurrenceDatetime,
+        });
+        const occurrence = {
+          _id: occurrenceId,
+          userId: event.userId,
+          eventId: event._id,
+          datetime: occurrenceDatetime,
+          checkedOff: false,
+        };
+        return { event, occurrence };
+      }
     }
   }
 };
