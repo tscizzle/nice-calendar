@@ -43,6 +43,10 @@ class EditEventForm extends Component {
   };
 
   state = {
+    typedTitle: '',
+    hasTypedTitle: false,
+    typedNotes: '',
+    hasTypedNotes: false,
     hasAttemptedSave: false,
   };
 
@@ -115,10 +119,11 @@ class EditEventForm extends Component {
   };
 
   setTitle = evt => {
-    const { editingEventFormData, setEditingEventFormData } = this.props;
-    const newTitle = evt.target.value;
-    const newEvent = { ...editingEventFormData, title: newTitle };
-    setEditingEventFormData({ event: newEvent });
+    const typedTitle = evt.target.value;
+    this.setState({
+      typedTitle,
+      hasTypedTitle: true,
+    });
   };
 
   getSetEventDateFunc = dateField => {
@@ -152,6 +157,10 @@ class EditEventForm extends Component {
     return setEventDate;
   };
 
+  setDatetime = this.getSetEventDateFunc('datetime');
+
+  setStopDatetime = this.getSetEventDateFunc('stopDatetime');
+
   getSetEventTimeFunc = unit => {
     const setEventTime = evt => {
       const {
@@ -174,6 +183,10 @@ class EditEventForm extends Component {
     };
     return setEventTime;
   };
+
+  setEventHour = this.getSetEventTimeFunc('hour');
+
+  setEventMinute = this.getSetEventTimeFunc('minute');
 
   setIsRecurring = evt => {
     const { editingEventFormData, setEditingEventFormData } = this.props;
@@ -241,10 +254,25 @@ class EditEventForm extends Component {
   };
 
   setNotes = evt => {
-    const { editingEventFormData, setEditingEventFormData } = this.props;
-    const newNotes = evt.target.value;
-    const newEvent = { ...editingEventFormData, notes: newNotes };
-    setEditingEventFormData({ event: newEvent });
+    const typedNotes = evt.target.value;
+    this.setState({
+      typedNotes,
+      hasTypedNotes: true,
+    });
+  };
+
+  getCurrentEventFormData = () => {
+    const { editingEventFormData } = this.props;
+    const { typedTitle, hasTypedTitle, typedNotes, hasTypedNotes } = this.state;
+    const { title, notes } = editingEventFormData;
+    const currentTitle = hasTypedTitle ? typedTitle : title;
+    const currentNotes = hasTypedNotes ? typedNotes : notes;
+    const currentEventFormData = {
+      ...editingEventFormData,
+      title: currentTitle,
+      notes: currentNotes,
+    };
+    return currentEventFormData;
   };
 
   validateEventDoc = eventDoc => {
@@ -271,16 +299,12 @@ class EditEventForm extends Component {
   };
 
   saveEvent = () => {
-    const {
-      loggedInUser,
-      fetchEvents,
-      editingEventFormData,
-      setEditingEventFormData,
-    } = this.props;
+    const { loggedInUser, fetchEvents, setEditingEventFormData } = this.props;
     this.setState({ hasAttemptedSave: true }, () => {
-      const validationErrorMsg = this.validateEventDoc(editingEventFormData);
+      const currentEventFormData = this.getCurrentEventFormData();
+      const validationErrorMsg = this.validateEventDoc(currentEventFormData);
       if (!validationErrorMsg) {
-        api.upsertEvent({ event: editingEventFormData }).then(() => {
+        api.upsertEvent({ event: currentEventFormData }).then(() => {
           setEditingEventFormData({ event: null });
           fetchEvents({ user: loggedInUser });
         });
@@ -314,12 +338,9 @@ class EditEventForm extends Component {
   }
 
   render() {
-    const {
-      timezone,
-      editingEventFormData,
-      isEditingExistingEvent,
-    } = this.props;
+    const { timezone, isEditingExistingEvent } = this.props;
     const { hasAttemptedSave } = this.state;
+    const currentEventFormData = this.getCurrentEventFormData();
     const {
       title,
       datetime,
@@ -328,7 +349,7 @@ class EditEventForm extends Component {
       isStopping = false,
       stopDatetime,
       notes,
-    } = editingEventFormData;
+    } = currentEventFormData;
     const eventMoment = moment(datetime).tz(timezone);
     const eventStopMoment = moment(stopDatetime).tz(timezone);
     const eventDateValue = eventMoment.format(this.dayValueFormat);
@@ -337,7 +358,7 @@ class EditEventForm extends Component {
     const eventStopDateValue = eventStopMoment.format(this.dayValueFormat);
     const everyX = recurringSchedule ? recurringSchedule.everyX : 1;
     const everyUnit = recurringSchedule ? recurringSchedule.everyUnit : 'week';
-    const validationErrorMsg = this.validateEventDoc(editingEventFormData);
+    const validationErrorMsg = this.validateEventDoc(currentEventFormData);
     const isError = hasAttemptedSave && Boolean(validationErrorMsg);
     return (
       <div className="edit-event-form">
@@ -364,12 +385,12 @@ class EditEventForm extends Component {
             <NiceSelect
               containerClassName="edit-event-form-date-select"
               options={this.dayOptions({})}
-              onChange={this.getSetEventDateFunc('datetime')}
+              onChange={this.setDatetime}
               selectedValue={eventDateValue}
             />
             <NiceInput
               value={eventHourValue}
-              onChange={this.getSetEventTimeFunc('hour')}
+              onChange={this.setEventHour}
               type="number"
               min={0}
               max={23}
@@ -377,7 +398,7 @@ class EditEventForm extends Component {
             :
             <NiceInput
               value={eventMinuteValue}
-              onChange={this.getSetEventTimeFunc('minute')}
+              onChange={this.setEventMinute}
               type="number"
               min={0}
               max={59}
@@ -421,7 +442,7 @@ class EditEventForm extends Component {
             <NiceFormRow>
               <NiceSelect
                 options={this.dayOptions({ isStopSelector: true })}
-                onChange={this.getSetEventDateFunc('stopDatetime')}
+                onChange={this.setStopDatetime}
                 selectedValue={eventStopDateValue}
               />
             </NiceFormRow>
