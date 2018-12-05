@@ -169,6 +169,13 @@ class EditEventForm extends Component {
         setEditingEventFormData,
       } = this.props;
       const value = parseInt(evt.target.value, 10);
+      const { low, high } = {
+        hour: { low: 0, high: 23 },
+        minute: { low: 0, high: 59 },
+      }[unit];
+      if (value < low || value > high) {
+        return;
+      }
       const { datetime } = editingEventFormData;
       const eventMoment = moment(datetime).tz(timezone);
       const newDatetime = eventMoment
