@@ -170,14 +170,16 @@ let OccurrenceCard = ({
   const selectEvent = () => {
     setEditingEventFormData({ event });
   };
-  const deleteOccurrence = () => {
+  const deleteOccurrence = evt => {
+    evt.stopPropagation();
     const occurrenceId = occurrence._id;
     const userId = loggedInUser._id;
     api.deleteOccurrence({ occurrenceId, userId }).then(() => {
       fetchOccurrences({ user: loggedInUser });
     });
   };
-  const toggleCheckOffOccurrence = () => {
+  const toggleCheckOffOccurrence = evt => {
+    evt.stopPropagation();
     const newOccurrence = {
       ...occurrence,
       checkedOff: !occurrence.checkedOff,
