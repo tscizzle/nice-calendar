@@ -51,7 +51,7 @@
   //     - Windows.......: "C:/path/to/npm/prettier" (absolute)
   // ----------------------------------------------------------------------
 
-  "prettier_cli_path": "/Users/Tyler/.nvm/versions/node/v7.10.1/bin/prettier",
+  "prettier_cli_path": "",
 
   // ----------------------------------------------------------------------
   // Node Path
@@ -74,7 +74,7 @@
   // Windows.......: "node_path": "C:/path/to/node.exe"
   // ----------------------------------------------------------------------
 
-  "node_path": "/Users/Tyler/.nvm/versions/node/v7.10.1/bin/node",
+  "node_path": "",
 
   // ----------------------------------------------------------------------
   // Auto Format on Save

@@ -165,13 +165,12 @@ class CalendarCell extends Component {
         </div>
         <div className={calendarCellContentClasses}>{occurrenceDisplays}</div>
         <div className={calendarCellFooterClasses}>
-          {isHovered &&
-            !isInPast && (
-              <CalendarCellEditEventButton
-                startDatetime={startDatetime}
-                endDatetime={endDatetime}
-              />
-            )}
+          {isHovered && !isInPast && (
+            <CalendarCellEditEventButton
+              startDatetime={startDatetime}
+              endDatetime={endDatetime}
+            />
+          )}
         </div>
       </div>
     );
