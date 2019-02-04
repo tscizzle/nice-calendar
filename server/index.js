@@ -93,7 +93,7 @@ if (isProduction) {
   });
 }
 
-// error handling
+// error handling (TODO: NOT SET UP IN PRODUCTION YET)
 const rollbar = require('./config/rollbar-api');
 app.use(rollbar.errorHandler());
 
