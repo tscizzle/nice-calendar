@@ -69,7 +69,7 @@ class CalendarCell extends Component {
       nowMinute,
     } = this.props;
     const { isHovered } = this.state;
-    const dayScheduledOccurrences = [];
+    const cellScheduledOccurrences = [];
     _.each(_.values(events), event => {
       let eventOccurrences = getScheduledOccurrences({
         event,
@@ -84,17 +84,17 @@ class CalendarCell extends Component {
           ({ event }) => event._id === editingEventFormData._id
         );
       }
-      dayScheduledOccurrences.push(...eventOccurrences);
+      cellScheduledOccurrences.push(...eventOccurrences);
     });
-    const dayPastOccurrences = [];
+    const cellPastOccurrences = [];
     _.each(_.values(occurrences), occurrence => {
       const { eventId, datetime } = occurrence;
       if (startDatetime <= datetime && datetime <= endDatetime) {
         const event = allEvents[eventId];
-        dayPastOccurrences.push({ event, occurrence, hasOccurred: true });
+        cellPastOccurrences.push({ event, occurrence, hasOccurred: true });
       }
     });
-    const dayEditingEventOccurrences = [];
+    const cellEditingEventOccurrences = [];
     if (editingEventFormData) {
       const editingEventOccurrences = getScheduledOccurrences({
         event: editingEventFormData,
@@ -103,12 +103,12 @@ class CalendarCell extends Component {
         end: endDatetime,
         now: nowMinute,
       });
-      dayEditingEventOccurrences.push(...editingEventOccurrences);
+      cellEditingEventOccurrences.push(...editingEventOccurrences);
     }
     const allOccurrences = _.concat(
-      dayPastOccurrences,
-      dayScheduledOccurrences,
-      dayEditingEventOccurrences
+      cellPastOccurrences,
+      cellScheduledOccurrences,
+      cellEditingEventOccurrences
     );
     const sortedOccurrences = _.sortBy(allOccurrences, [
       'occurrence.datetime',
@@ -116,15 +116,19 @@ class CalendarCell extends Component {
     ]);
     const occurrenceDisplays = _.map(
       sortedOccurrences,
-      ({ event, occurrence, hasOccurred }) => (
-        <CalendarOccurrence
-          event={event}
-          occurrence={occurrence}
-          hasOccurred={hasOccurred}
-          isFlowHorizontal={isFlowHorizontal}
-          key={occurrence._id}
-        />
-      )
+      ({ event, occurrence, hasOccurred }) => {
+        if (event) {
+          return (
+            <CalendarOccurrence
+              event={event}
+              occurrence={occurrence}
+              hasOccurred={hasOccurred}
+              isFlowHorizontal={isFlowHorizontal}
+              key={occurrence._id}
+            />
+          );
+        }
+      }
     );
     const isNowCell = startDatetime <= nowMinute && nowMinute <= endDatetime;
     const startMoment = moment(startDatetime).tz(timezone);

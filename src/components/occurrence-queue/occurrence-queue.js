@@ -119,14 +119,18 @@ let OccurrenceCardsList = ({
   ]);
   const occurrenceCards = _.map(
     sortedOccurrences,
-    ({ event, occurrence, isScheduled }) => (
-      <OccurrenceCard
-        event={event}
-        occurrence={occurrence}
-        isScheduled={isScheduled}
-        key={occurrence._id}
-      />
-    )
+    ({ event, occurrence, isScheduled }) => {
+      if (event) {
+        return (
+          <OccurrenceCard
+            event={event}
+            occurrence={occurrence}
+            isScheduled={isScheduled}
+            key={occurrence._id}
+          />
+        );
+      }
+    }
   );
   const emptyCards = <div className="no-occurrences">{emptyMessage}</div>;
   return (
@@ -198,13 +202,12 @@ let OccurrenceCard = ({
       <div className="occurrence-card-top">{event.title}</div>
       <div className="occurrence-card-bottom">
         <div className="occurrence-card-datetime">
-          {isScheduled &&
-            event.isRecurring && (
-              <FontAwesomeIcon
-                icon="clock"
-                className="recurring-occurrence-icon"
-              />
-            )}
+          {isScheduled && event.isRecurring && (
+            <FontAwesomeIcon
+              icon="clock"
+              className="recurring-occurrence-icon"
+            />
+          )}
           {occurrenceTimeString}
         </div>
         {!isScheduled && (
