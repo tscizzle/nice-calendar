@@ -395,21 +395,25 @@ class EditEventForm extends Component {
               onChange={this.setDatetime}
               selectedValue={eventDateValue}
             />
-            <NiceInput
-              value={eventHourValue}
-              onChange={this.setEventHour}
-              type="number"
-              min={0}
-              max={23}
-            />
-            :
-            <NiceInput
-              value={eventMinuteValue}
-              onChange={this.setEventMinute}
-              type="number"
-              min={0}
-              max={59}
-            />
+            <div>
+              <NiceInput
+                containerClassName="edit-event-form-hour-select"
+                value={eventHourValue}
+                onChange={this.setEventHour}
+                type="number"
+                min={0}
+                max={23}
+              />
+              :
+              <NiceInput
+                containerClassName="edit-event-form-minute-select"
+                value={eventMinuteValue}
+                onChange={this.setEventMinute}
+                type="number"
+                min={0}
+                max={59}
+              />
+            </div>
           </NiceFormRow>
           <NiceFormRow>
             <NiceInput

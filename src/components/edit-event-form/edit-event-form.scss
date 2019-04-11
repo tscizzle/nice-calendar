@@ -20,7 +20,13 @@
     margin-top: 30px;
 
     .edit-event-form-date-select {
+      max-width: 50%;
       margin-right: 8px;
+    }
+
+    .edit-event-form-hour-select,
+    .edit-event-form-minute-select {
+      max-width: 50px;
     }
   }
 }
