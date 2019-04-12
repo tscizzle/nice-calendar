@@ -357,8 +357,6 @@ class EditEventForm extends Component {
     const eventMoment = moment(datetime).tz(timezone);
     const eventStopMoment = moment(stopDatetime).tz(timezone);
     const eventDateValue = eventMoment.format(this.dayValueFormat);
-    const eventHourValue = eventMoment.format('HH');
-    const eventMinuteValue = eventMoment.format('mm');
     const eventStopDateValue = eventStopMoment.format(this.dayValueFormat);
     const everyX = recurringSchedule ? recurringSchedule.everyX : 1;
     const everyUnit = recurringSchedule ? recurringSchedule.everyUnit : 'week';
