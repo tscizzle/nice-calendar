@@ -3,6 +3,7 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import TimePicker from 'rc-time-picker';
 
 import api from 'api';
 import withUser from 'state-management/state-connectors/with-user';
@@ -24,6 +25,7 @@ import {
 } from 'components/nice-form/nice-form';
 import Divider from 'components/divider/divider';
 
+import 'rc-time-picker/assets/index.css';
 import 'stylesheets/components/edit-event-form/edit-event-form.css';
 
 const { getNextScheduledOccurrence } = require('common/model-methods/event');
@@ -163,39 +165,30 @@ class EditEventForm extends Component {
 
   setStopDatetime = this.getSetEventDateFunc('stopDatetime');
 
-  getSetEventTimeFunc = unit => {
-    const setEventTime = evt => {
-      const {
-        timezone,
-        editingEventFormData,
-        setEditingEventFormData,
-      } = this.props;
-      const value = parseInt(evt.target.value, 10);
-      const { low, high } = {
-        hour: { low: 0, high: 23 },
-        minute: { low: 0, high: 59 },
-      }[unit];
-      if (value < low || value > high) {
-        return;
-      }
-      const { datetime } = editingEventFormData;
-      const eventMoment = moment(datetime).tz(timezone);
-      const newDatetime = eventMoment
-        .clone()
-        .set({ [unit]: value })
-        .toDate();
-      const newEvent = {
-        ...editingEventFormData,
-        datetime: newDatetime,
-      };
-      setEditingEventFormData({ event: newEvent });
+  setEventTime = changedMoment => {
+    const {
+      timezone,
+      editingEventFormData,
+      setEditingEventFormData,
+    } = this.props;
+    const newTimeMoment = moment(changedMoment).tz(timezone);
+    const newHour = newTimeMoment.hour();
+    const newMinute = newTimeMoment.minute();
+    if (_.isNaN(newHour) || _.isNaN(newMinute)) {
+      return;
+    }
+    const { datetime } = editingEventFormData;
+    const eventMoment = moment(datetime).tz(timezone);
+    const newDatetime = eventMoment
+      .clone()
+      .set({ hour: newHour, minute: newMinute })
+      .toDate();
+    const newEvent = {
+      ...editingEventFormData,
+      datetime: newDatetime,
     };
-    return setEventTime;
+    setEditingEventFormData({ event: newEvent });
   };
-
-  setEventHour = this.getSetEventTimeFunc('hour');
-
-  setEventMinute = this.getSetEventTimeFunc('minute');
 
   setIsRecurring = evt => {
     const { editingEventFormData, setEditingEventFormData } = this.props;
@@ -399,25 +392,13 @@ class EditEventForm extends Component {
               onChange={this.setDatetime}
               selectedValue={eventDateValue}
             />
-            <div>
-              <NiceInput
-                containerClassName="edit-event-form-hour-select"
-                value={eventHourValue}
-                onChange={this.setEventHour}
-                type="number"
-                min={0}
-                max={23}
-              />
-              :
-              <NiceInput
-                containerClassName="edit-event-form-minute-select"
-                value={eventMinuteValue}
-                onChange={this.setEventMinute}
-                type="number"
-                min={0}
-                max={59}
-              />
-            </div>
+            <TimePicker
+              className="edit-event-form-time-select"
+              value={eventMoment}
+              onChange={this.setEventTime}
+              showSecond={false}
+              allowEmpty={false}
+            />
           </NiceFormRow>
           <NiceFormRow>
             <NiceInput
