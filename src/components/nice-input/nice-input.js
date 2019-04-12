@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import classNames from 'classnames';
+import TimePicker from 'rc-time-picker';
 
 import { randomID } from 'common/misc-helpers';
 
+import 'rc-time-picker/assets/index.css';
 import 'stylesheets/components/nice-input/nice-input.css';
 
 class NiceInput extends Component {
@@ -13,6 +15,7 @@ class NiceInput extends Component {
     isFull: PropTypes.bool,
     isBold: PropTypes.bool,
     isTextArea: PropTypes.bool,
+    isTimeInput: PropTypes.bool,
     focusOnMount: PropTypes.bool,
     id: PropTypes.string,
     label: PropTypes.string,
@@ -37,6 +40,7 @@ class NiceInput extends Component {
       isFull,
       isBold,
       isTextArea,
+      isTimeInput,
       focusOnMount,
       id,
       label,
@@ -64,11 +68,14 @@ class NiceInput extends Component {
       ...otherProps,
       ...(focusOnMount && { ref: this.refFuncThatFocusesOnMount }),
     };
-    const inputComponent = isTextArea ? (
-      <textarea {...inputComponentProps} />
-    ) : (
-      <input {...inputComponentProps} />
-    );
+    let inputComponent;
+    if (isTextArea) {
+      inputComponent = <textarea {...inputComponentProps} />;
+    } else if (isTimeInput) {
+      inputComponent = <TimePicker {...inputComponentProps} />;
+    } else {
+      inputComponent = <input {...inputComponentProps} />;
+    }
     return label ? (
       <label htmlFor={elId} className={containerClasses}>
         {inputComponent} {label}

@@ -3,7 +3,6 @@ import PropTypes from 'prop-types';
 import _ from 'lodash';
 import moment from 'moment-timezone';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import TimePicker from 'rc-time-picker';
 
 import api from 'api';
 import withUser from 'state-management/state-connectors/with-user';
@@ -25,7 +24,6 @@ import {
 } from 'components/nice-form/nice-form';
 import Divider from 'components/divider/divider';
 
-import 'rc-time-picker/assets/index.css';
 import 'stylesheets/components/edit-event-form/edit-event-form.css';
 
 const { getNextScheduledOccurrence } = require('common/model-methods/event');
@@ -390,10 +388,11 @@ class EditEventForm extends Component {
               onChange={this.setDatetime}
               selectedValue={eventDateValue}
             />
-            <TimePicker
-              className="edit-event-form-time-select"
+            <NiceInput
+              containerClassName="edit-event-form-time-select"
               value={eventMoment}
               onChange={this.setEventTime}
+              isTimeInput={true}
               showSecond={false}
               allowEmpty={false}
             />
