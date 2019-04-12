@@ -120,9 +120,11 @@ class EditEventForm extends Component {
 
   setTitle = evt => {
     const typedTitle = evt.target.value;
+    const { editingEventFormData } = this.props;
+    const { _id } = editingEventFormData;
     this.setState({
       typedTitle,
-      hasTypedTitle: true,
+      hasTypedTitle: _id,
     });
   };
 
@@ -262,18 +264,20 @@ class EditEventForm extends Component {
 
   setNotes = evt => {
     const typedNotes = evt.target.value;
+    const { editingEventFormData } = this.props;
+    const { _id } = editingEventFormData;
     this.setState({
       typedNotes,
-      hasTypedNotes: true,
+      hasTypedNotes: _id,
     });
   };
 
   getCurrentEventFormData = () => {
     const { editingEventFormData } = this.props;
     const { typedTitle, hasTypedTitle, typedNotes, hasTypedNotes } = this.state;
-    const { title, notes } = editingEventFormData;
-    const currentTitle = hasTypedTitle ? typedTitle : title;
-    const currentNotes = hasTypedNotes ? typedNotes : notes;
+    const { _id, title, notes } = editingEventFormData;
+    const currentTitle = hasTypedTitle === _id ? typedTitle : title;
+    const currentNotes = hasTypedNotes === _id ? typedNotes : notes || '';
     const currentEventFormData = {
       ...editingEventFormData,
       title: currentTitle,
