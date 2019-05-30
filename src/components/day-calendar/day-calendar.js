@@ -8,7 +8,6 @@ import withEvents from 'state-management/state-connectors/with-events';
 import withOccurrences from 'state-management/state-connectors/with-occurrences';
 import withSelectedDatetime from 'state-management/state-connectors/with-selected-datetime';
 import { userShape } from 'models/user';
-import { eventShape } from 'models/event';
 import { occurrenceShape } from 'models/occurrence';
 
 import CalendarCell from 'components/calendar-cell/calendar-cell';
@@ -19,7 +18,6 @@ class DayCalendar extends Component {
   static propTypes = {
     loggedInUser: userShape.isRequired,
     timezone: PropTypes.string.isRequired,
-    events: PropTypes.objectOf(eventShape).isRequired,
     fetchEvents: PropTypes.func.isRequired,
     occurrences: PropTypes.objectOf(occurrenceShape).isRequired,
     fetchOccurrences: PropTypes.func.isRequired,
