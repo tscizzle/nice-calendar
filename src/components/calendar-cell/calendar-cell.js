@@ -210,7 +210,16 @@ let CalendarCellEditEventButton = ({
     const isFutureCell = startMoment.isAfter(nowMinuteMoment);
     let datetime;
     if (isFutureCell) {
-      datetime = startDatetime;
+      const morning9 = startMoment
+        .clone()
+        .set({ hour: 9 })
+        .startOf('hour')
+        .toDate();
+      if (startDatetime <= morning9 && morning9 < endDatetime) {
+        datetime = morning9;
+      } else {
+        datetime = startDatetime;
+      }
     } else {
       const candidateEventMoment = nowMinuteMoment
         .clone()
