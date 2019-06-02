@@ -1,7 +1,7 @@
 import moment from 'moment-timezone';
 
 import api from 'api';
-import socket from 'connect-socket';
+import connectSocket from 'connect-socket';
 
 /* Action Types */
 
@@ -38,7 +38,7 @@ export const fetchUser = () => {
       .then(({ user }) => {
         if (user) {
           dispatch(fetchUserSuccess({ user }));
-          socket.emit('subscribeToUser');
+          const socket = connectSocket();
           socket.on('update:occurrences', () => {
             dispatch(fetchOccurrences({ userId: user._id }));
           });
