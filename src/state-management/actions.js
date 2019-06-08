@@ -39,9 +39,11 @@ export const fetchUser = () => {
         if (user) {
           dispatch(fetchUserSuccess({ user }));
           const socket = connectSocket();
-          socket.on('update:occurrences', () => {
+          const triggerOccurrenceFetch = () => {
             dispatch(fetchOccurrences({ userId: user._id }));
-          });
+          };
+          socket.on('update:occurrences', triggerOccurrenceFetch);
+          socket.on('reconnect', triggerOccurrenceFetch);
         } else {
           dispatch(fetchUserFailure());
         }
