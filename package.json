@@ -64,6 +64,7 @@
     "start-client-dev": "npm-run-all -p wipe-css build-css watch-css start-react",
     "start-mongo-dev:osx": "mongod",
     "start-mongo-dev:linux": "sudo service mongod start",
+    "stop-mongo-dev:linux": "sudo service mongod stop",
     "start-redis-dev": "redis-server",
     "start-server-dev": "nodemon server",
     "start": "node server",
