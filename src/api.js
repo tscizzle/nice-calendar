@@ -54,7 +54,7 @@ const dateify = ({ obj, dateFieldPaths }) => {
 /* API Calls */
 
 const getLoggedInUser = () => {
-  const path = '/loggedInUser?' + Math.random(); // the random number avoids the caching of the response
+  const path = '/loggedInUser?' + Math.random(); // the random number avoids using a cached response
   return niceGET(path).then(({ user }) => {
     const processedUser = dateify({
       obj: user,
