@@ -109,6 +109,7 @@ class EditEventForm extends Component {
     { value: 'day', label: 'day(s)' },
     { value: 'week', label: 'week(s)' },
     { value: 'month', label: 'month(s)' },
+    { value: 'year', label: 'year(s)' },
   ];
 
   closeEditingEventForm = () => {
