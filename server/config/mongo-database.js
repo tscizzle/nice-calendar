@@ -6,7 +6,7 @@ const connectMongo = () => {
   const isProduction = process.env.NODE_ENV === 'production';
 
   const MONGO_CONNECTION_STRING =
-    process.env.MONGODB_URI || 'mongodb://localhost:27017/nice-calendar';
+    process.env.ATLAS_MONGODB_URI || 'mongodb://localhost:27017/nice-calendar';
 
   // configure mongo options
   const options = {
