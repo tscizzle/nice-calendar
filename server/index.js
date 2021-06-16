@@ -11,6 +11,7 @@ const RedisStore = require('connect-redis')(expressSession);
 const passportSocketIo = require('passport.socketio');
 const passport = require('passport');
 const LocalStrategy = require('passport-local').Strategy;
+const _ = require("lodash");
 
 const isProduction = process.env.NODE_ENV === 'production';
 
@@ -57,7 +58,12 @@ passport.deserializeUser(User.deserializeUser());
 // allow CORS in development
 if (!isProduction) {
   const allowCORS = (req, res, next) => {
-    res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+    // NOTE: possible there is a need for another line here when using ionic
+    const allowedOrigins = ['http://localhost:3000', 'http://localhost:8100'];
+    const requestOrigin = req.headers.origin;
+    if (_.includes(allowedOrigins, requestOrigin)) {
+      res.header('Access-Control-Allow-Origin', requestOrigin);
+    }
     res.header('Access-Control-Allow-Headers', 'Content-Type');
     res.header('Access-Control-Allow-Credentials', true);
     next();
