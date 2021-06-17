@@ -84,9 +84,9 @@ const auth = ({ app, passport }) => {
             const confirmation_link = `${origin}/app/resetPassword?token=${token}`;
 
             const toEmail = user.email;
-            const subject = 'ModSewing Password Reset';
-            const fromEmail = 'preethivaid@gmail.com';
-            const fromName = 'ModSewing';
+            const subject = 'NiceCalendar Password Reset';
+            const fromEmail = 'tscizzle@gmail.com';
+            const fromName = 'Bob at NiceCalendar';
             const email_type = 'text/html';
             const email_body =
               `<p>You may follow this link ` +

@@ -35,7 +35,7 @@ class MonthCalendar extends Component {
     const selectedMoment = moment(selectedDatetime).tz(timezone);
     const monthStart = selectedMoment.clone().startOf('month');
     const monthEnd = selectedMoment.clone().endOf('month');
-    const startDayOfWeekOffset = _.toNumber(monthStart.format('E'));
+    const startDayOfWeekOffset = monthStart.day();
     const numDays = monthEnd.diff(monthStart, 'days') + 1;
     const numWeeks = _.ceil((startDayOfWeekOffset + numDays) / 7);
     const weeks = _.times(numWeeks, week => {

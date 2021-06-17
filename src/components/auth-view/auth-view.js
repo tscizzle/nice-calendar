@@ -151,6 +151,12 @@ class LoginForm extends Component {
     });
   };
 
+  handleKeyDown = evt => {
+    if (evt.keyCode === 13) {
+      this.handleSubmit();
+    }
+  };
+
   toggleForm = () => {
     const { loginOrRegister } = this.state;
     const newForm = { login: 'register', register: 'login' }[loginOrRegister];
@@ -160,6 +166,14 @@ class LoginForm extends Component {
       hasAttemptedSubmit: false,
     });
   };
+
+  componentDidMount() {
+    document.addEventListener('keydown', this.handleKeyDown);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('keydown', this.handleKeyDown);
+  }
 
   render() {
     const {
