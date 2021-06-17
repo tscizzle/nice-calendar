@@ -1,0 +1,6 @@
+{
+	"appId": "space.nicecalendar.www",
+	"appName": "Nice Calendar",
+	"webDir": "build",
+	"bundledWebRuntime": false
+}
