@@ -10,7 +10,7 @@ import mainReducer from 'state-management/reducers';
 
 import Main from 'components/main/main';
 
-import 'stylesheets/index.css';
+import 'index.scss';
 
 // redux
 

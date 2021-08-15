@@ -4,7 +4,7 @@ import _ from 'lodash';
 import classNames from 'classnames';
 import enhanceWithClickOutside from 'react-click-outside';
 
-import 'stylesheets/components/nice-select/nice-select.css';
+import 'components/nice-select/nice-select.scss';
 
 class NiceSelect extends Component {
   static propTypes = {

@@ -14,7 +14,7 @@ import { userShape } from 'models/user';
 import { eventShape } from 'models/event';
 import { occurrenceShape } from 'models/occurrence';
 
-import 'stylesheets/components/calendar-occurrence/calendar-occurrence.css';
+import 'components/calendar-occurrence/calendar-occurrence.scss';
 
 const {
   getIsEventBoundedInterval,

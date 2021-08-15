@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import 'stylesheets/components/divider/divider.css';
+import 'components/divider/divider.scss';
 
 const Divider = ({ addMargin }) => {
   const dividerClasses = classNames('divider', { 'add-margin': addMargin });

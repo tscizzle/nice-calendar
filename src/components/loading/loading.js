@@ -1,7 +1,7 @@
 import React from 'react';
 import classNames from 'classnames';
 
-import 'stylesheets/components/loading/loading.css';
+import 'components/loading/loading.scss';
 
 const Loading = ({ className }) => {
   const loadingClassNames = classNames('spinner', {

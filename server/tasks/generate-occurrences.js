@@ -118,7 +118,7 @@ const generateOccurrences = ({ io }) => {
           key: TASK_KEY,
           taskInfo: { pulledUntil: nowDatetime },
         };
-        return TaskInfo.create(newTaskInfoDoc).exec();
+        return TaskInfo.create(newTaskInfoDoc);
       }
     });
   };

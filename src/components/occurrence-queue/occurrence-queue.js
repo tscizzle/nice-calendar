@@ -19,7 +19,7 @@ import { getLatestOccurrences } from 'common/model-methods/occurrence';
 import { CircleButton } from 'components/nice-button/nice-button';
 import Divider from 'components/divider/divider';
 
-import 'stylesheets/components/occurrence-queue/occurrence-queue.css';
+import 'components/occurrence-queue/occurrence-queue.scss';
 
 const {
   getIsEventBoundedInterval,

@@ -13,7 +13,7 @@ import { occurrenceShape } from 'models/occurrence';
 
 import CalendarCell from 'components/calendar-cell/calendar-cell';
 
-import 'stylesheets/components/week-calendar/week-calendar.css';
+import 'components/week-calendar/week-calendar.scss';
 
 class WeekCalendar extends Component {
   static propTypes = {

@@ -4,7 +4,7 @@ import classNames from 'classnames';
 
 import Loading from 'components/loading/loading';
 
-import 'stylesheets/components/nice-button/nice-button.css';
+import 'components/nice-button/nice-button.scss';
 
 const NiceButton = ({
   className,

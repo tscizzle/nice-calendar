@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 
-import 'stylesheets/components/nice-form/nice-form.css';
+import 'components/nice-form/nice-form.scss';
 
 export const NiceFormRow = ({ children }) => (
   <div className="nice-form-row">{children}</div>

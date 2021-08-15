@@ -23,7 +23,7 @@ import {
 } from 'components/nice-form/nice-form';
 import Divider from 'components/divider/divider';
 
-import 'stylesheets/components/edit-event-form/edit-event-form.css';
+import 'components/edit-event-form/edit-event-form.scss';
 
 const { getNextScheduledOccurrence } = require('common/model-methods/event');
 
