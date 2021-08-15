@@ -12,7 +12,7 @@ import { occurrenceShape } from 'models/occurrence';
 
 import CalendarCell from 'components/calendar-cell/calendar-cell';
 
-import 'stylesheets/components/day-calendar/day-calendar.css';
+import 'components/day-calendar/day-calendar.scss';
 
 class DayCalendar extends Component {
   static propTypes = {

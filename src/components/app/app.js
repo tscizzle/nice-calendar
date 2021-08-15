@@ -12,7 +12,7 @@ import CalendarView from 'components/calendar-view/calendar-view';
 import AuthView from 'components/auth-view/auth-view';
 import { FullPageLoading } from 'components/loading/loading';
 
-import 'stylesheets/components/app/app.css';
+import 'components/app/app.scss';
 
 class App extends Component {
   static propTypes = {

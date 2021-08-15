@@ -53,22 +53,21 @@
   },
   "devDependencies": {
     "nodemon": "^2.0.7",
-    "npm-run-all": "^4.1.3"
+    "run-script-os": "^1.1.6"
   },
   "scripts": {
-    "wipe-css": "rm -r src/stylesheets ||:",
-    "build-css": "node-sass src/ -o src/stylesheets",
-    "watch-css": "node-sass src/ -o src/stylesheets --watch --recursive",
-    "start-react": "BROWSER=none react-scripts start",
-    "//": "in development, use these 4 commands (client, mongo, redis, server)",
-    "start-client-dev": "npm-run-all -p wipe-css build-css watch-css start-react",
+    "start-react": "run-script-os",
+    "start-react:windows": "set BROWSER=none&& react-scripts start",
+    "start-react:nix": "BROWSER=none react-scripts start",
+    "start-mongo-dev": "run-script-os",
     "start-mongo-dev:macos": "mongod",
     "start-mongo-dev:linux": "sudo service mongod start",
+    "stop-mongo-dev": "run-script-os",
     "stop-mongo-dev:linux": "sudo service mongod stop",
     "start-redis-dev": "redis-server",
     "start-server-dev": "nodemon server",
     "start": "node server",
-    "build": "npm run build-css && react-scripts build",
+    "build": "react-scripts build",
     "heroku-postbuild": "npm run build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject"

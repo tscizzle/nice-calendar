@@ -14,7 +14,7 @@ import NiceButton, { CircleButton } from 'components/nice-button/nice-button';
 import { NiceSelectButtons } from 'components/nice-select/nice-select';
 import logo from 'assets/images/calendar.svg';
 
-import 'stylesheets/components/topbar/topbar.css';
+import 'components/topbar/topbar.scss';
 
 let Topbar = ({ timezone, selectedDatetime, selectedZoom }) => {
   const selectedMoment = moment(selectedDatetime).tz(timezone);

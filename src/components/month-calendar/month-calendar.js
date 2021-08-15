@@ -13,7 +13,7 @@ import { userShape } from 'models/user';
 
 import CalendarCell from 'components/calendar-cell/calendar-cell';
 
-import 'stylesheets/components/month-calendar/month-calendar.css';
+import 'components/month-calendar/month-calendar.scss';
 
 class MonthCalendar extends Component {
   static propTypes = {

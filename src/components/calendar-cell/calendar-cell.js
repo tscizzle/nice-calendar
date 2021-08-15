@@ -19,7 +19,7 @@ import { occurrenceShape } from 'models/occurrence';
 import CalendarOccurrence from 'components/calendar-occurrence/calendar-occurrence';
 import { CircleButton } from 'components/nice-button/nice-button';
 
-import 'stylesheets/components/calendar-cell/calendar-cell.css';
+import 'components/calendar-cell/calendar-cell.scss';
 
 const {
   makeNewEventDoc,

@@ -13,7 +13,7 @@ import NiceInput from 'components/nice-input/nice-input';
 import NiceButton, { LinkButton } from 'components/nice-button/nice-button';
 import logo from 'assets/images/calendar.svg';
 
-import 'stylesheets/components/auth-view/auth-view.css';
+import 'components/auth-view/auth-view.scss';
 
 class AuthView extends Component {
   state = {

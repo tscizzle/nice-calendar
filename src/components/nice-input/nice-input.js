@@ -6,7 +6,7 @@ import TimePicker from 'rc-time-picker';
 import { randomID } from 'common/misc-helpers';
 
 import 'rc-time-picker/assets/index.css';
-import 'stylesheets/components/nice-input/nice-input.css';
+import 'components/nice-input/nice-input.scss';
 
 class NiceInput extends Component {
   static propTypes = {

@@ -12,7 +12,7 @@ import MonthCalendar from 'components/month-calendar/month-calendar';
 import EditEventForm from 'components/edit-event-form/edit-event-form';
 import OccurrenceQueue from 'components/occurrence-queue/occurrence-queue';
 
-import 'stylesheets/components/calendar-view/calendar-view.css';
+import 'components/calendar-view/calendar-view.scss';
 
 let CalendarView = ({ selectedZoom, editingEventFormData }) => {
   const calendarComponent = {
