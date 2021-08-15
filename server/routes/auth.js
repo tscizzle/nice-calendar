@@ -70,7 +70,7 @@ const auth = ({ app, passport }) => {
       crypto.randomBytes(20, (err, buf) => {
         const token = buf.toString('hex');
 
-        User.update(
+        User.updateOne(
           { email },
           {
             $set: {
