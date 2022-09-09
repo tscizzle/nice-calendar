@@ -20,15 +20,15 @@ https://redis.io/download
 
 Windows: https://github.com/microsoftarchive/redis
 
-### Set `.env` Values
+### Set `.env` values
 
 #### SESSION_SECRET
 
 Can be anything. Used by one of our third-party packages for maintaining user sessions (staying logged in even when you refresh the page).
 
-## Development
+## Development scripts
 
-There's a few commands needed to start the appropriate databases and servers. They are shown in package.json under "scripts".
+There's a few commands needed to start the appropriate databases and servers. They are shown in `package.json` under `"scripts"`.
 
 ### npm run start-react
 
@@ -55,3 +55,11 @@ Note: On Windows, we don't need a command to start Redis because the default ins
 Run the node backend server, which is what serves the HTTP API.
 
 In production, the node backend server serves the HTTP API as well as the page itself, but in development the create-react-app development server serves the page.
+
+## Helpful things to remember
+
+### Debugging Redis things
+
+To connect to local Redis instance, run `redis-cli -n 1` in a Terminal (connects to redis database number 1. redis databases don't have names, they have numbers). Defaults to host of `localhost` and port of `6379`.
+
+Count the total number of keys with `info keyspace`. List all the keys with `keys *`.
