@@ -32,6 +32,13 @@
     margin-left: 8px;
   }
 
+  &.is-bounded-interval {
+    background-color: $lightPurple;
+    border-color: $lightPurple;
+    --box-shadow-color: #{$purple};
+    color: $darkPurple;
+  }
+
   &.has-occurred {
     background-color: $lightRed;
     border-color: $lightRed;
@@ -51,13 +58,6 @@
     --box-shadow-y: 0px;
     --box-shadow-spread-radius: 3px;
     font-style: italic;
-  }
-
-  &.is-bounded-interval {
-    background-color: $lightPurple;
-    border-color: $lightPurple;
-    --box-shadow-color: #{$purple};
-    color: $darkPurple;
   }
 
   .calendar-occurrence-details {
