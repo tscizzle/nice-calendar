@@ -8,6 +8,7 @@
   border-left: solid 1px $light;
   font-size: 0.8em;
   overflow-y: hidden;
+  position: relative;
 
   &:not(.flow-horizontal) {
     flex-direction: column;
@@ -74,13 +75,10 @@
   .calendar-cell-footer {
     display: flex;
     justify-content: flex-end;
-    height: 2em;
+    padding: 0px 4px 4px;
     font-size: 0.8em;
-
-    &.flow-horizontal {
-      flex-direction: column;
-      height: initial;
-      width: 2em;
-    }
+    position: absolute;
+    right: 0px;
+    bottom: 0px;
   }
 }
