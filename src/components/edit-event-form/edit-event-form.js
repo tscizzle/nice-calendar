@@ -430,7 +430,7 @@ class EditEventForm extends Component {
               />
             </NiceFormRow>
           )}
-          {isStopping && (
+          {isRecurring && isStopping && (
             <NiceFormRow>
               <NiceSelect
                 options={this.dayOptions({ isStopSelector: true })}
